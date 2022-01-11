@@ -1,0 +1,68 @@
+version: "2.4"
+networks:
+  localdev:
+    external: true
+volumes:
+  azuresqldata_dietMenu:
+    external: true 
+  rabbitmqdata_dietMenu:
+    external: true 
+  seqdata_dietMenu:
+    external: true 
+services:
+  rabbitmq:    
+    image: rabbitmq:3.9.1
+    restart: unless-stopped
+    volumes:          
+      - ./plugins/rabbitmq_delayed_message_exchange-3.9.0.ez:/opt/rabbitmq/plugins/rabbitmq_delayed_message_exchange-3.9.0.ez
+      - ./enabled_plugins:/etc/rabbitmq/enabled_plugins 
+      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - rabbitmqdata_dietMenu:/var/lib/rabbitmq            
+    networks:
+      - localdev
+    ports:
+      - "5672:5672"
+      - "15672:15672" 
+  seq:
+    image: datalust/seq:latest
+    environment:
+      ACCEPT_EULA: "Y"
+      SEQ_FIRSTRUN_ADMINUSERNAME: "${DEFAULT_USERNAME:-admin}"
+      SEQ_FIRSTRUN_ADMINPASSWORDHASH: FL6x1NNpca5LonfiH1pumrjVZdF2yoPW4DWPJ03VyqwnWmmErw==
+    ports:
+      - 9000:80
+    networks:
+      - localdev
+    volumes:
+      - seqdata_dietMenu:/data
+    restart: unless-stopped
+    mem_limit: 256m
+  smtp4dev:
+    image: rnwood/smtp4dev
+    ports:
+      - "3001:80"
+      - "2525:25"
+    networks:
+      - localdev
+    environment:
+      - RelayOptions__Login=admin
+      - RelayOptions__Password=P@ssw0rd
+  sqlserver:
+    image: mcr.microsoft.com/azure-sql-edge:latest
+    restart: unless-stopped
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "${DEFAULT_PASSWORD:-P@ssw0rd}"
+      MSSQL_PID: "Developer"
+    networks:
+      - localdev
+    ports:
+      - ${SQLSERVER_TCP_PORT:-1433}:1433
+    volumes:
+      - azuresqldata_dietMenu:/var/opt/mssql:rw
+    healthcheck:
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "$$MSSQL_SA_PASSWORD" -Q "SELECT 1" || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s         
