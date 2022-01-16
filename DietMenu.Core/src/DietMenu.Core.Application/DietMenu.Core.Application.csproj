@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	
+  <PropertyGroup>
+	<TargetFramework>net6.0</TargetFramework>
+	<ImplicitUsings>enable</ImplicitUsings>
+	<Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+	<Using Include="MediatR" />
+  </ItemGroup>
+	
+  <ItemGroup>
+	<InternalsVisibleTo Include="DietMenu.Core.UnitTests" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="10.3.6" />
+	<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
+	<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<ProjectReference Include="..\DietMenu.Core.Domain\DietMenu.Core.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+   <InternalsVisibleTo Include="DietMenu.Core.IntegrationTests" />
+   <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+  </ItemGroup>
+
+</Project>
