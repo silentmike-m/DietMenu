@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	<TargetFramework>net6.0</TargetFramework>
+	<ImplicitUsings>enable</ImplicitUsings>
+	<Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+   <PackageReference Include="AspNetCore.HealthChecks.Rabbitmq" Version="6.0.1" />
+   <PackageReference Include="AspNetCore.HealthChecks.SqlServer" Version="6.0.1" />
+   <PackageReference Include="MassTransit.AspNetCore" Version="7.3.0" />
+   <PackageReference Include="MassTransit.RabbitMQ" Version="7.3.0" />
+   <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.1" />
+   <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.1" />
+   <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.1" />
+   <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.1">
+	 <PrivateAssets>all</PrivateAssets>
+	 <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+   </PackageReference>
+   <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
+	<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" />
+	<PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="6.0.1" />
+	<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="6.0.0" />
+  </ItemGroup>
+	
+  <ItemGroup>
+	<ProjectReference Include="..\SilentMike.DietMenu.Core.Application\SilentMike.DietMenu.Core.Application.csproj" />
+	<ProjectReference Include="..\SilentMike.DietMenu.Shared\SilentMike.DietMenu.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<InternalsVisibleTo Include="SilentMike.DietMenu.Core.IntegrationTests" />
+	<InternalsVisibleTo Include="SilentMike.DietMenu.Core.UnitTests" />
+	<InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+  </ItemGroup>
+
+</Project>

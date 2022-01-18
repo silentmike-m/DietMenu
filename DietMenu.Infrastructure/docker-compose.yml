@@ -46,7 +46,7 @@ services:
       - localdev
     environment:
       - RelayOptions__Login=admin
-      - RelayOptions__Password=P@ssw0rd
+      - RelayOptions__Password=P@ssw0rd    
   sqlserver:
     image: mcr.microsoft.com/azure-sql-edge:latest
     restart: unless-stopped
