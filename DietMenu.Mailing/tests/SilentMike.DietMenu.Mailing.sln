@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SilentMike.DietMenu.Mailing.Application", "..\src\SilentMike.DietMenu.Mailing.Application\SilentMike.DietMenu.Mailing.Application.csproj", "{BB8FD35D-8A60-4AB9-9D7A-FAF9D6E2005C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SilentMike.DietMenu.Mailing.Infrastructure", "..\src\SilentMike.DietMenu.Mailing.Infrastructure\SilentMike.DietMenu.Mailing.Infrastructure.csproj", "{6D12BF0E-A598-4863-A089-E6639C19AA3E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SilentMike.DietMenu.Mailing.WebApi", "..\src\SilentMike.DietMenu.Mailing.WebApi\SilentMike.DietMenu.Mailing.WebApi.csproj", "{BF011614-CD63-4A77-A33E-2193EDB6E093}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SilentMike.DietMenu.Shared", "..\src\SilentMike.DietMenu.Shared\SilentMike.DietMenu.Shared.csproj", "{B3A91F88-B2E9-436C-AB0F-DB051BE1ED11}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SilentMike.DietMenu.Mailing.UnitTests", "SilentMike.DietMenu.Mailing.UnitTests\SilentMike.DietMenu.Mailing.UnitTests.csproj", "{5C17EC1B-A835-43D3-A6A7-73C4281FB2A2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SilentMike.DietMenu.Mailing.IntegrationTests", "SilentMike.DietMenu.Mailing.IntegrationTests\SilentMike.DietMenu.Mailing.IntegrationTests.csproj", "{01E3B7CD-71E5-441B-BDFD-E66C06865EDA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BB8FD35D-8A60-4AB9-9D7A-FAF9D6E2005C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB8FD35D-8A60-4AB9-9D7A-FAF9D6E2005C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB8FD35D-8A60-4AB9-9D7A-FAF9D6E2005C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB8FD35D-8A60-4AB9-9D7A-FAF9D6E2005C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D12BF0E-A598-4863-A089-E6639C19AA3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D12BF0E-A598-4863-A089-E6639C19AA3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D12BF0E-A598-4863-A089-E6639C19AA3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D12BF0E-A598-4863-A089-E6639C19AA3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF011614-CD63-4A77-A33E-2193EDB6E093}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF011614-CD63-4A77-A33E-2193EDB6E093}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF011614-CD63-4A77-A33E-2193EDB6E093}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF011614-CD63-4A77-A33E-2193EDB6E093}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3A91F88-B2E9-436C-AB0F-DB051BE1ED11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3A91F88-B2E9-436C-AB0F-DB051BE1ED11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3A91F88-B2E9-436C-AB0F-DB051BE1ED11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3A91F88-B2E9-436C-AB0F-DB051BE1ED11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C17EC1B-A835-43D3-A6A7-73C4281FB2A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C17EC1B-A835-43D3-A6A7-73C4281FB2A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C17EC1B-A835-43D3-A6A7-73C4281FB2A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C17EC1B-A835-43D3-A6A7-73C4281FB2A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01E3B7CD-71E5-441B-BDFD-E66C06865EDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01E3B7CD-71E5-441B-BDFD-E66C06865EDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01E3B7CD-71E5-441B-BDFD-E66C06865EDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01E3B7CD-71E5-441B-BDFD-E66C06865EDA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6E56DAEF-AAC8-49C7-9C99-9553E846AB5F}
+	EndGlobalSection
+EndGlobal
