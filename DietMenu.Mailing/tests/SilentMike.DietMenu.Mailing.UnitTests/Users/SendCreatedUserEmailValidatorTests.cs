@@ -13,14 +13,13 @@ public sealed class SendCreatedUserEmailValidatorTests
     public void ShouldPassValidation()
     {
         //GIVEN
-        var command = new SendCreatedUserEmail
+        var command = new SendVerifyEmail
         {
             Email = "test@test.pl",
-            FamilyName = "FamilyName",
             UserName = "UserName",
         };
 
-        var validator = new SendCreatedUserEmailValidator();
+        var validator = new SendVerifyEmailValidator();
 
         //WHEN
         var result = validator.Validate(command);
@@ -37,30 +36,26 @@ public sealed class SendCreatedUserEmailValidatorTests
     public void ShouldThrowValidationExceptionWhenParametersAreEmpty()
     {
         //GIVEN
-        var command = new SendCreatedUserEmail
+        var command = new SendVerifyEmail
         {
             Email = string.Empty,
-            FamilyName = string.Empty,
             UserName = string.Empty,
         };
 
-        var validator = new SendCreatedUserEmailValidator();
+        var validator = new SendVerifyEmailValidator();
 
         //WHEN
         var result = validator.Validate(command);
 
         //THEN
         result.Errors.Should()
-            .HaveCount(4)
+            .HaveCount(3)
             .And
-            .Contain(i => i.ErrorCode == ValidationErrorCodes.SEND_CREATED_USER_EMPTY_FAMILY_NAME
-                          && i.ErrorMessage == ValidationErrorCodes.SEND_CREATED_USER_EMPTY_FAMILY_NAME_MESSAGE)
+            .Contain(i => i.ErrorCode == ValidationErrorCodes.SEND_VERIFY_EMAIL_EMPTY_USER_NAME
+                          && i.ErrorMessage == ValidationErrorCodes.SEND_VERIFY_EMAIL_EMPTY_USER_NAME_MESSAGE)
             .And
-            .Contain(i => i.ErrorCode == ValidationErrorCodes.SEND_CREATED_USER_EMPTY_USER_NAME
-                          && i.ErrorMessage == ValidationErrorCodes.SEND_CREATED_USER_EMPTY_USER_NAME_MESSAGE)
-            .And
-            .Contain(i => i.ErrorCode == ValidationErrorCodes.SEND_CREATED_USER_INCORRECT_EMAIL_FORMAT
-                          && i.ErrorMessage == ValidationErrorCodes.SEND_CREATED_USER_INCORRECT_EMAIL_FORMAT_MESSAGE)
+            .Contain(i => i.ErrorCode == ValidationErrorCodes.SEND_VERIFY_EMAIL_INCORRECT_EMAIL_FORMAT
+                          && i.ErrorMessage == ValidationErrorCodes.SEND_VERIFY_EMAIL_INCORRECT_EMAIL_FORMAT_MESSAGE)
             ;
 
         result.IsValid.Should()
@@ -72,14 +67,13 @@ public sealed class SendCreatedUserEmailValidatorTests
     public void ShouldPassValidationExceptionWhenEmailIsIncorrectFormat()
     {
         //GIVEN
-        var command = new SendCreatedUserEmail
+        var command = new SendVerifyEmail
         {
             Email = "test.test.pl",
-            FamilyName = "FamilyName",
             UserName = "UserName",
         };
 
-        var validator = new SendCreatedUserEmailValidator();
+        var validator = new SendVerifyEmailValidator();
 
         //WHEN
         var result = validator.Validate(command);
@@ -88,8 +82,8 @@ public sealed class SendCreatedUserEmailValidatorTests
         result.Errors.Should()
             .HaveCount(1)
             .And
-            .Contain(i => i.ErrorCode == ValidationErrorCodes.SEND_CREATED_USER_INCORRECT_EMAIL_FORMAT
-                          && i.ErrorMessage == ValidationErrorCodes.SEND_CREATED_USER_INCORRECT_EMAIL_FORMAT_MESSAGE)
+            .Contain(i => i.ErrorCode == ValidationErrorCodes.SEND_VERIFY_EMAIL_INCORRECT_EMAIL_FORMAT
+                          && i.ErrorMessage == ValidationErrorCodes.SEND_VERIFY_EMAIL_INCORRECT_EMAIL_FORMAT_MESSAGE)
             ;
 
         result.IsValid.Should()

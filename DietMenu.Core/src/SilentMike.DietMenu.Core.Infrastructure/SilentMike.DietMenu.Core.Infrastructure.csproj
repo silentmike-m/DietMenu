@@ -12,6 +12,7 @@
    <PackageReference Include="MassTransit.AspNetCore" Version="7.3.0" />
    <PackageReference Include="MassTransit.RabbitMQ" Version="7.3.0" />
    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.1" />
+   <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.1" />
    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.1" />
    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.1" />
    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.1">
@@ -22,6 +23,7 @@
 	<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" />
 	<PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="6.0.1" />
 	<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="6.0.0" />
+   <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 	
   <ItemGroup>
@@ -33,6 +35,11 @@
 	<InternalsVisibleTo Include="SilentMike.DietMenu.Core.IntegrationTests" />
 	<InternalsVisibleTo Include="SilentMike.DietMenu.Core.UnitTests" />
 	<InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<Folder Include="Identity\EventHandlers\" />
+	<Folder Include="Swagger\" />
   </ItemGroup>
 
 </Project>

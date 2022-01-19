@@ -16,7 +16,7 @@ internal static class DependencyInjection
 
         services.AddMassTransit(configure =>
         {
-            configure.AddConsumer<SendCreatedUserMessageConsumer>();
+            configure.AddConsumer<SendVerifyEmailRequestConsumer>();
 
             configure.UsingRabbitMq((context, cfg) =>
             {

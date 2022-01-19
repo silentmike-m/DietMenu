@@ -1,4 +1,4 @@
-﻿namespace SilentMike.DietMenu.Core.Application.Exceptions.Users;
+﻿namespace SilentMike.DietMenu.Core.Application.Exceptions.Auth;
 
 using System;
 using System.Runtime.Serialization;

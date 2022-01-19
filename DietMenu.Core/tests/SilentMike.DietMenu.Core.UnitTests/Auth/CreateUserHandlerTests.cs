@@ -1,4 +1,4 @@
-﻿namespace SilentMike.DietMenu.Core.UnitTests.Users;
+﻿namespace SilentMike.DietMenu.Core.UnitTests.Auth;
 
 using System;
 using System.Collections.Generic;
@@ -12,13 +12,13 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using SilentMike.DietMenu.Core.Application.Auth.Commands;
+using SilentMike.DietMenu.Core.Application.Auth.Events;
+using SilentMike.DietMenu.Core.Application.Auth.ViewModels;
 using SilentMike.DietMenu.Core.Application.Common.Constants;
 using SilentMike.DietMenu.Core.Application.Exceptions;
+using SilentMike.DietMenu.Core.Application.Exceptions.Auth;
 using SilentMike.DietMenu.Core.Application.Exceptions.Families;
-using SilentMike.DietMenu.Core.Application.Exceptions.Users;
-using SilentMike.DietMenu.Core.Application.Users.Commands;
-using SilentMike.DietMenu.Core.Application.Users.Events;
-using SilentMike.DietMenu.Core.Application.Users.ViewModels;
 using SilentMike.DietMenu.Core.Domain.Entities;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Interfaces;
 using SilentMike.DietMenu.Core.Infrastructure.Identity.CommandHandlers;
@@ -31,7 +31,6 @@ using IdentityOptions = SilentMike.DietMenu.Core.Infrastructure.Identity.Identit
 public sealed class CreateUserHandlerTests
 {
     private const string CREATE_USER_CODE = "create_user_code";
-    private const string LOGIN_URL = "login_url";
 
     private readonly string existingFamilyName = "FamilyName";
 
@@ -46,7 +45,6 @@ public sealed class CreateUserHandlerTests
         this.options = Options.Create<IdentityOptions>(new IdentityOptions
         {
             CreateUserCode = CREATE_USER_CODE,
-            LoginUrl = LOGIN_URL,
         });
 
         var families = new List<FamilyEntity>
@@ -290,9 +288,6 @@ public sealed class CreateUserHandlerTests
             ;
         createdUserNotification.Id.Should()
             .Be(userToCreate.Id)
-            ;
-        createdUserNotification.LoginUrl.Should()
-            .Be(LOGIN_URL)
             ;
         createdUserNotification.UserName.Should()
             .Be(userToCreate.UserName)

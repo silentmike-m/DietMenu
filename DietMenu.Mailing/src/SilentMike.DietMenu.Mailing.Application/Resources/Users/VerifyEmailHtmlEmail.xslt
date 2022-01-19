@@ -2,7 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml">
   <xsl:output method="html" indent="yes" omit-xml-declaration="yes" doctype-public="-//W3C//DTD XHTML 1.1//EN" doctype-system="http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"/>
     
-  <xsl:template match="SendCreatedUserEmail">
+  <xsl:template match="SendVerifyEmail">
     <html>
       <head>
         <style>
@@ -99,15 +99,15 @@
             </div>
             <div class="content-text">
               <p>Hello,</p>
-              <p>DietMenu <strong><xsl:value-of select="UserName"/></strong> account was created in a family <strong><xsl:value-of select="FamilyName"/></strong>.</p>
-              <p>You can login by clicking the link below:</p>
+              <p>DietMenu <strong><xsl:value-of select="UserName"/></strong> account was created.</p>
+              <p>You activate Your account by clicking the link below:</p>
               <div style="text-align: center">
                 <p>
                   <a class="content-button">
                     <xsl:attribute name="href">
-                      <xsl:value-of select="LoginUrl"/>
+                      <xsl:value-of select="Url"/>
                     </xsl:attribute>
-                    LOGIN
+                    ACTIVATE
                   </a>
                 </p>
               </div>

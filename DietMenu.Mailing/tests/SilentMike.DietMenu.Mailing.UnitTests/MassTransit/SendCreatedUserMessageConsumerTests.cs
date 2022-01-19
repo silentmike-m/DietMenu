@@ -16,41 +16,37 @@ using SilentMike.DietMenu.Shared.MassTransit;
 public sealed class SendCreatedUserMessageConsumerTests
 {
     private const string EMAIL = "test@test.pl";
-    private const string FAMILY_NAME = "family_name";
-    private const string LOGIN_URL = "login_url";
+    private const string URL = "login_url";
     private const string USER_NAME = "user_name";
 
     [TestMethod]
     public async Task ShouldSendCreatedUserEmail()
     {
-        SendCreatedUserEmail? command = null;
+        SendVerifyEmail? command = null;
 
         //GIVEN
-        var logger = new NullLogger<SendCreatedUserMessageConsumer>();
+        var logger = new NullLogger<SendVerifyEmailRequestConsumer>();
 
         var mediator = new Mock<IMediator>();
-        mediator.Setup(i => i.Send(It.IsAny<SendCreatedUserEmail>(), It.IsAny<CancellationToken>()))
-            .Callback<IRequest<Unit>, CancellationToken>((request, _) => command = request as SendCreatedUserEmail);
+        mediator.Setup(i => i.Send(It.IsAny<SendVerifyEmail>(), It.IsAny<CancellationToken>()))
+            .Callback<IRequest<Unit>, CancellationToken>((request, _) => command = request as SendVerifyEmail);
 
-        var message = new Mock<ISendCreatedUserMessage>();
+        var message = new Mock<ISendVerifyEmailRequest>();
         message.Setup(i => i.Email)
             .Returns(EMAIL)
             ;
-        message.Setup(i => i.FamilyName)
-            .Returns(FAMILY_NAME)
-            ;
-        message.Setup(i => i.LoginUrl)
-            .Returns(LOGIN_URL)
+        message.Setup(i => i.Url)
+            .Returns(URL)
             ;
         message.Setup(i => i.UserName)
             .Returns(USER_NAME)
             ;
 
-        var context = new Mock<ConsumeContext<ISendCreatedUserMessage>>();
+        var context = new Mock<ConsumeContext<ISendVerifyEmailRequest>>();
         context.Setup(i => i.Message)
             .Returns(message.Object);
 
-        var consumer = new SendCreatedUserMessageConsumer(logger, mediator.Object);
+        var consumer = new SendVerifyEmailRequestConsumer(logger, mediator.Object);
 
         //WHEN
         await consumer.Consume(context.Object);
@@ -62,11 +58,8 @@ public sealed class SendCreatedUserMessageConsumerTests
         command!.Email.Should()
             .Be(EMAIL)
             ;
-        command.FamilyName.Should()
-            .Be(FAMILY_NAME)
-            ;
-        command.LoginUrl.Should()
-            .Be(LOGIN_URL)
+        command.Url.Should()
+            .Be(URL)
             ;
         command.UserName.Should()
             .Be(USER_NAME)

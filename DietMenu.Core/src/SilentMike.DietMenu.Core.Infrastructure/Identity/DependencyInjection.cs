@@ -12,7 +12,7 @@ using SilentMike.DietMenu.Core.Infrastructure.Identity.Models;
 
 internal static class DependencyInjection
 {
-    public static void AddIdentity(this IServiceCollection services, IConfiguration configuration)
+    public static void AddDietMenuIdentity(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
         services.Configure<IdentityOptions>(configuration.GetSection(IdentityOptions.SectionName));
@@ -47,15 +47,14 @@ internal static class DependencyInjection
                 options.Password.RequireNonAlphanumeric = true;
                 options.Password.RequireUppercase = true;
                 options.Password.RequireLowercase = true;
-                options.SignIn.RequireConfirmedAccount = false;
+                options.SignIn.RequireConfirmedAccount = true;
             })
             .AddDefaultTokenProviders()
             .AddEntityFrameworkStores<ApplicationDbContext>();
     }
 
-    public static void UseIdentity(IServiceScope serviceScope)
+    public static void UseDietMenuIdentity(ApplicationDbContext context)
     {
-        var context = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         context.Database.Migrate();
     }
 }

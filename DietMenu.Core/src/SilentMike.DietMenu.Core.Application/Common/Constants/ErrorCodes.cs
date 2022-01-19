@@ -2,6 +2,7 @@
 
 public static class ErrorCodes
 {
+    public static readonly string ACTIVATE_EMAIL = "ACTIVATE_EMAIL";
     public static readonly string CREATE_USER = "CREATE_USER";
     public static readonly string FAMILY_ALREADY_EXISTS = "FAMILY_ALREADY_EXISTS";
     public static readonly string GET_TOKEN = "GET_TOKEN";

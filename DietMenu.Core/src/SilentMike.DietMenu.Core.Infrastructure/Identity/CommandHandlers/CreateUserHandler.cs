@@ -6,13 +6,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using SilentMike.DietMenu.Core.Application.Auth.Commands;
+using SilentMike.DietMenu.Core.Application.Auth.Events;
 using SilentMike.DietMenu.Core.Application.Common;
 using SilentMike.DietMenu.Core.Application.Common.Constants;
 using SilentMike.DietMenu.Core.Application.Exceptions;
+using SilentMike.DietMenu.Core.Application.Exceptions.Auth;
 using SilentMike.DietMenu.Core.Application.Exceptions.Families;
-using SilentMike.DietMenu.Core.Application.Exceptions.Users;
-using SilentMike.DietMenu.Core.Application.Users.Commands;
-using SilentMike.DietMenu.Core.Application.Users.Events;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Interfaces;
 using SilentMike.DietMenu.Core.Infrastructure.Identity.Models;
 using IdentityOptions = global::SilentMike.DietMenu.Core.Infrastructure.Identity.IdentityOptions;
@@ -80,6 +80,7 @@ internal sealed class CreateUserHandler : IRequestHandler<CreateUser>
         user = new DietMenuUser
         {
             Email = request.User.Email,
+            EmailConfirmed = false,
             FamilyId = Guid.NewGuid(),
             FirstName = request.User.FirstName,
             Id = request.User.Id,
@@ -102,7 +103,6 @@ internal sealed class CreateUserHandler : IRequestHandler<CreateUser>
             FamilyId = user.FamilyId,
             FamilyName = request.User.FamilyName,
             Id = user.Id,
-            LoginUrl = this.options.LoginUrl,
             UserName = user.UserName,
         };
 

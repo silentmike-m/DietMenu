@@ -16,19 +16,19 @@ using SilentMike.DietMenu.Mailing.Application.Extensions;
 using SilentMike.DietMenu.Mailing.Application.Interfaces;
 using SilentMike.DietMenu.Mailing.Application.Users.Commands;
 
-internal sealed class SendCreatedUserEmailHandler : IRequestHandler<SendCreatedUserEmail>
+internal sealed class SendVerifyEmailHandler : IRequestHandler<SendVerifyEmail>
 {
     private const string LOGO_RESOURCE_NAME = "SilentMike.DietMenu.Mailing.Application.Resources.logo64x64.png";
-    private const string XSLT_HTML_RESOURCE_NAME = "SilentMike.DietMenu.Mailing.Application.Resources.Users.CreatedUserHtmlEmail.xslt";
-    private const string XSLT_PLAIN_TEXT_RESOURCE_NAME = "SilentMike.DietMenu.Mailing.Application.Resources.Users.CreatedUserPlainTextEmail.xslt";
+    private const string XSLT_HTML_RESOURCE_NAME = "SilentMike.DietMenu.Mailing.Application.Resources.Users.VerifyEmailHtmlEmail.xslt";
+    private const string XSLT_PLAIN_TEXT_RESOURCE_NAME = "SilentMike.DietMenu.Mailing.Application.Resources.Users.VerifyEmailPlainTextEmail.xslt";
 
 
-    private readonly ILogger<SendCreatedUserEmailHandler> logger;
+    private readonly ILogger<SendVerifyEmailHandler> logger;
     private readonly IMediator mediator;
     private readonly IXmlService xmlService;
 
-    public SendCreatedUserEmailHandler(
-        ILogger<SendCreatedUserEmailHandler> logger,
+    public SendVerifyEmailHandler(
+        ILogger<SendVerifyEmailHandler> logger,
         IMediator mediator,
         IXmlService xmlService)
     {
@@ -37,17 +37,16 @@ internal sealed class SendCreatedUserEmailHandler : IRequestHandler<SendCreatedU
         this.xmlService = xmlService;
     }
 
-    public async Task<Unit> Handle(SendCreatedUserEmail request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(SendVerifyEmail request, CancellationToken cancellationToken)
     {
         using var loggerScope = this.logger.BeginPropertyScope(
             ("Email", request.Email),
-            ("FamilyName", request.FamilyName),
             ("UserName", request.UserName)
         );
 
         this.logger.LogInformation("Try to prepare created user email");
 
-        var serializer = new XmlSerializer(typeof(SendCreatedUserEmail));
+        var serializer = new XmlSerializer(typeof(SendVerifyEmail));
         var requestXml = serializer.Serialize(request);
 
         var htmlXsltString = this.xmlService.GetXsltString(XSLT_HTML_RESOURCE_NAME);

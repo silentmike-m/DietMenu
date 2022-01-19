@@ -11,6 +11,7 @@ using SilentMike.DietMenu.Core.Infrastructure.EntityFramework;
 using SilentMike.DietMenu.Core.Infrastructure.HealthChecks;
 using SilentMike.DietMenu.Core.Infrastructure.Identity;
 using SilentMike.DietMenu.Core.Infrastructure.MassTransit;
+using SilentMike.DietMenu.Core.Infrastructure.Swagger;
 
 [ExcludeFromCodeCoverage]
 public static class DependencyInjection
@@ -19,16 +20,18 @@ public static class DependencyInjection
     {
         services.AddHealthChecks(configuration);
 
+        services.AddSwagger();
+
         services.AddMediatR(Assembly.GetExecutingAssembly());
 
-        services.AddIdentity(configuration);
+        services.AddDietMenuIdentity(configuration);
 
         services.AddEntityFramework(configuration);
 
         services.AddMassTransit(configuration);
     }
 
-    public static void UseInfrastructure(this IApplicationBuilder app)
+    public static void UseInfrastructure(this IApplicationBuilder app, IConfiguration configuration)
     {
         using var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>()!.CreateScope();
 
@@ -37,9 +40,13 @@ public static class DependencyInjection
 
         try
         {
+            var context = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
             app.UseHealthChecks();
 
-            SilentMike.DietMenu.Core.Infrastructure.Identity.DependencyInjection.UseIdentity(serviceScope);
+            app.UseSwagger(configuration);
+
+            Identity.DependencyInjection.UseDietMenuIdentity(context);
         }
         catch (Exception exception)
         {

@@ -1,6 +1,5 @@
 using System.Reflection;
 using System.Text.Json.Serialization;
-using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Sinks.Graylog;
 using SilentMike.DietMenu.Core.Application;
@@ -58,17 +57,6 @@ try
     builder.Services
         .AddEndpointsApiExplorer();
 
-    builder.Services
-        .AddSwaggerGen(c =>
-        {
-            c.CustomSchemaIds(s => s.FullName);
-            c.SwaggerDoc("v1", new OpenApiInfo
-            {
-                Title = "DietMenu Core WebApi",
-                Version = "v1",
-            });
-        });
-
     var app = builder.Build();
 
     app.UseKestrelResponseHandlerMiddleware();
@@ -79,10 +67,9 @@ try
     //    await next();
     //});
 
-    app.UseInfrastructure();
+    app.UseInfrastructure(builder.Configuration);
 
-    app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("v1/swagger.json", "DietMenu Core WebApi v1"));
+
 
     app.UseSerilogRequestLogging(options =>
     {

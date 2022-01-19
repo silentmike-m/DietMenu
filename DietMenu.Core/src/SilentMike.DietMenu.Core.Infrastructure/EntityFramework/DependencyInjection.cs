@@ -15,6 +15,8 @@ internal static class DependencyInjection
     {
         var defaultConnectionString = configuration.GetConnectionString("DefaultConnection");
 
+        services.AddDatabaseDeveloperPageExceptionFilter();
+
         services.AddScoped<ApplicationDbContext>();
 
         services.AddDbContext<IApplicationDbContext, ApplicationDbContext>(options => options.UseSqlServer(defaultConnectionString));
