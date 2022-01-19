@@ -2,6 +2,7 @@
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SilentMike.DietMenu.Core.Application.Auth.Queries;
 using SilentMike.DietMenu.Core.Application.Users.Commands;
 
 [ApiController]
@@ -20,5 +21,12 @@ public sealed class UserController : ControllerBase
         _ = await this.mediator.Send(request);
 
         return await Task.FromResult(Ok());
+    }
+
+    [AllowAnonymous]
+    [HttpPost(Name = "Login")]
+    public async Task<string> Login(GetToken login)
+    {
+        return await this.mediator.Send(login, CancellationToken.None);
     }
 }

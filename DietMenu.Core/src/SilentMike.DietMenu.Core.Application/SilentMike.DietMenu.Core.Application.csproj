@@ -8,6 +8,7 @@
 
   <ItemGroup>
 	<Using Include="MediatR" />
+	<Using Include="Microsoft.Extensions.Logging" />
   </ItemGroup>
 
   <ItemGroup>
