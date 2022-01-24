@@ -44,7 +44,6 @@ public static class DependencyInjection
 
             app.UseHealthChecks();
 
-            app.UseSwagger(configuration);
             app.UseDietMenuSwagger();
 
             app.UseIdentity(context);
