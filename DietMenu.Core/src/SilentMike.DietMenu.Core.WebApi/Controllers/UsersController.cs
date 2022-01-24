@@ -1,5 +1,4 @@
 ﻿namespace SilentMike.DietMenu.Core.WebApi.Controllers;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SilentMike.DietMenu.Core.Application.Auth.Commands;
@@ -7,11 +6,11 @@ using SilentMike.DietMenu.Core.Application.Auth.Queries;
 
 [ApiController]
 [Route("[controller]/[action]")]
-public sealed class UserController : ControllerBase
+public sealed class UsersController : ControllerBase
 {
     private readonly IMediator mediator;
 
-    public UserController(IMediator mediator)
+    public UsersController(IMediator mediator)
         => this.mediator = mediator;
 
     [AllowAnonymous]

@@ -2,6 +2,7 @@
 
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -53,7 +54,7 @@ internal static class DependencyInjection
             .AddEntityFrameworkStores<ApplicationDbContext>();
     }
 
-    public static void UseDietMenuIdentity(ApplicationDbContext context)
+    public static void UseIdentity(this IApplicationBuilder _, ApplicationDbContext context)
     {
         context.Database.Migrate();
     }
