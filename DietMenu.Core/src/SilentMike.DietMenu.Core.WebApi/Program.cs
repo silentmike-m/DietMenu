@@ -1,12 +1,12 @@
 using System.Reflection;
 using System.Text.Json.Serialization;
-using Microsoft.OpenApi.Models;
 using Serilog;
-using Serilog.Sinks.Graylog;
 using SilentMike.DietMenu.Core.Application;
 using SilentMike.DietMenu.Core.Infrastructure;
 using SilentMike.DietMenu.Core.WebApi.Extensions;
 using SilentMike.DietMenu.Core.WebApi.Filters;
+
+var seqAddress = Environment.GetEnvironmentVariable("SEQ_ADDRESS") ?? "http://localhost:5341";
 
 var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json")
@@ -15,11 +15,7 @@ var configuration = new ConfigurationBuilder()
 
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(configuration)
-    .WriteTo.Graylog(new GraylogSinkOptions
-    {
-        HostnameOrAddress = Environment.GetEnvironmentVariable("GRAYLOG_ADDRESS") ?? "localhost",
-        Port = 12201,
-    })
+    .WriteTo.Seq(seqAddress)
     .CreateLogger();
 
 try
@@ -28,10 +24,14 @@ try
 
     var builder = WebApplication.CreateBuilder(args);
 
-    builder.Host
-        .UseSerilog()
-        .ConfigureAppConfiguration((_, config) => { config.AddEnvironmentVariables(prefix: "CONFIG_"); })
-        ;
+    builder.Configuration.AddEnvironmentVariables("CONFIG_");
+
+    builder.Host.UseSerilog((_, lc) =>
+        lc.Enrich.WithProperty("AppName", "SilentMike DietMenu")
+            .Enrich.WithProperty("Version", "1.0.0")
+            .WriteTo.Console()
+            .WriteTo.Seq(seqAddress)
+    );
 
     builder.Services
         .AddMediatR(Assembly.GetExecutingAssembly());
@@ -58,31 +58,11 @@ try
     builder.Services
         .AddEndpointsApiExplorer();
 
-    builder.Services
-        .AddSwaggerGen(c =>
-        {
-            c.CustomSchemaIds(s => s.FullName);
-            c.SwaggerDoc("v1", new OpenApiInfo
-            {
-                Title = "DietMenu Core WebApi",
-                Version = "v1",
-            });
-        });
-
     var app = builder.Build();
 
     app.UseKestrelResponseHandlerMiddleware();
 
-    //app.Use(async (context, next) =>
-    //{
-    //    context.Request.PathBase = new PathString("/api");
-    //    await next();
-    //});
-
     app.UseInfrastructure();
-
-    app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("v1/swagger.json", "DietMenu Core WebApi v1"));
 
     app.UseSerilogRequestLogging(options =>
     {
