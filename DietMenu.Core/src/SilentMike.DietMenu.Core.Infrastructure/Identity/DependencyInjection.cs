@@ -2,6 +2,7 @@
 
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -53,9 +54,8 @@ internal static class DependencyInjection
             .AddEntityFrameworkStores<ApplicationDbContext>();
     }
 
-    public static void UseIdentity(IServiceScope serviceScope)
+    public static void UseIdentity(this IApplicationBuilder _, ApplicationDbContext context)
     {
-        var context = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         context.Database.Migrate();
     }
 }
