@@ -62,7 +62,8 @@ try
 
     app.UseKestrelResponseHandlerMiddleware();
 
-    app.UseInfrastructure();
+    app.UseInfrastructure(builder.Configuration);
+
 
     app.UseSerilogRequestLogging(options =>
     {

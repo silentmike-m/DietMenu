@@ -24,14 +24,14 @@ public static class DependencyInjection
 
         services.AddMediatR(Assembly.GetExecutingAssembly());
 
-        services.AddIdentity(configuration);
+        services.AddDietMenuIdentity(configuration);
 
         services.AddEntityFramework(configuration);
 
         services.AddMassTransit(configuration);
     }
 
-    public static void UseInfrastructure(this IApplicationBuilder app)
+    public static void UseInfrastructure(this IApplicationBuilder app, IConfiguration configuration)
     {
         using var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>()!.CreateScope();
 

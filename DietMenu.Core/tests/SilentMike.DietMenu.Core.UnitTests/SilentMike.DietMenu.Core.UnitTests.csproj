@@ -31,9 +31,4 @@
 	<InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
   </ItemGroup>
 
-
-  <ItemGroup>
-    <Folder Include="Auth\" />
-  </ItemGroup>
-
 </Project>

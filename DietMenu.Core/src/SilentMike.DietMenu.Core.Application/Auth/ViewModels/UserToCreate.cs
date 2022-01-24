@@ -1,4 +1,4 @@
-﻿namespace SilentMike.DietMenu.Core.Application.Users.ViewModels;
+﻿namespace SilentMike.DietMenu.Core.Application.Auth.ViewModels;
 
 using System.Text.Json.Serialization;
 

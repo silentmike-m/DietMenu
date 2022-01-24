@@ -1,10 +1,10 @@
-﻿namespace SilentMike.DietMenu.Core.Infrastructure.Families.EventHandlers;
+﻿namespace SilentMike.DietMenu.Core.Infrastructure.Identity.EventHandlers;
 
 using MediatR;
 using Microsoft.Extensions.Logging;
+using SilentMike.DietMenu.Core.Application.Auth.Commands;
 using SilentMike.DietMenu.Core.Application.Auth.Events;
 using SilentMike.DietMenu.Core.Application.Common;
-using SilentMike.DietMenu.Core.Application.Families.Commands;
 
 internal sealed class CreatedUserHandler : INotificationHandler<CreatedUser>
 {
@@ -17,17 +17,17 @@ internal sealed class CreatedUserHandler : INotificationHandler<CreatedUser>
     public async Task Handle(CreatedUser notification, CancellationToken cancellationToken)
     {
         using var loggerScope = this.logger.BeginPropertyScope(
-            ("UserId", notification.Id),
-            ("FamilyId", notification.FamilyId),
-            ("FamilyName", notification.FamilyName)
+            ("FamilyName", notification.FamilyName),
+            ("UserName", notification.UserName)
         );
 
-        var createFamilyRequest = new CreateFamilyIfNotExists
+        this.logger.LogInformation("User has been created");
+
+        var command = new CreateEmailConfirmationToken
         {
-            Id = notification.FamilyId,
-            Name = notification.FamilyName,
+            Email = notification.Email,
         };
 
-        _ = await this.mediator.Send(createFamilyRequest, cancellationToken);
+        _ = await this.mediator.Send(command, cancellationToken);
     }
 }

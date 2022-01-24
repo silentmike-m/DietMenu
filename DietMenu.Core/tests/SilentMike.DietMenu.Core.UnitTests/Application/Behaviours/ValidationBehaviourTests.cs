@@ -8,11 +8,11 @@ using FluentAssertions;
 using FluentValidation;
 using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SilentMike.DietMenu.Core.Application.Auth.Commands;
+using SilentMike.DietMenu.Core.Application.Auth.Validators;
+using SilentMike.DietMenu.Core.Application.Auth.ViewModels;
 using SilentMike.DietMenu.Core.Application.Common.Behaviours;
 using SilentMike.DietMenu.Core.Application.Common.Constants;
-using SilentMike.DietMenu.Core.Application.Users.Commands;
-using SilentMike.DietMenu.Core.Application.Users.Validators;
-using SilentMike.DietMenu.Core.Application.Users.ViewModels;
 using ValidationException = SilentMike.DietMenu.Core.Application.Exceptions.ValidationException;
 
 [TestClass]

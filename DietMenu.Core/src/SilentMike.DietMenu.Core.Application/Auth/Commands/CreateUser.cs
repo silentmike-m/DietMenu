@@ -1,8 +1,8 @@
-﻿namespace SilentMike.DietMenu.Core.Application.Users.Commands;
+﻿namespace SilentMike.DietMenu.Core.Application.Auth.Commands;
 
 using System.Text.Json.Serialization;
 using MediatR;
-using SilentMike.DietMenu.Core.Application.Users.ViewModels;
+using SilentMike.DietMenu.Core.Application.Auth.ViewModels;
 
 public sealed record CreateUser : IRequest
 {

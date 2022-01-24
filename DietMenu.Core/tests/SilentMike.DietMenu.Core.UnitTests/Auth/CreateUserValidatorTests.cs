@@ -1,12 +1,12 @@
-﻿namespace SilentMike.DietMenu.Core.UnitTests.Users;
+﻿namespace SilentMike.DietMenu.Core.UnitTests.Auth;
 
 using System;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SilentMike.DietMenu.Core.Application.Auth.Commands;
+using SilentMike.DietMenu.Core.Application.Auth.Validators;
+using SilentMike.DietMenu.Core.Application.Auth.ViewModels;
 using SilentMike.DietMenu.Core.Application.Common.Constants;
-using SilentMike.DietMenu.Core.Application.Users.Commands;
-using SilentMike.DietMenu.Core.Application.Users.Validators;
-using SilentMike.DietMenu.Core.Application.Users.ViewModels;
 
 [TestClass]
 public sealed class CreateUserValidatorTests

@@ -22,15 +22,15 @@ public sealed class SendCreatedUserEmailHandlerTests
     public void ShouldThrowExceptionOnInvalidHtmlTransform()
     {
         //GIVEN
-        const string plainTextResourceName = "SilentMike.DietMenu.Mailing.Application.Resources.Users.CreatedUserPlainTextEmail.xslt";
+        const string plainTextResourceName = "SilentMike.DietMenu.Mailing.Application.Resources.Users.VerifyEmailPlainTextEmail.xslt";
 
-        var command = new SendCreatedUserEmail
+        var command = new SendVerifyEmail
         {
             Email = "test_email",
             UserName = "test_user",
-            LoginUrl = "login_url",
+            Url = "url",
         };
-        var serializer = new XmlSerializer(typeof(SendCreatedUserEmail));
+        var serializer = new XmlSerializer(typeof(SendVerifyEmail));
         var commandXml = serializer.Serialize(command);
         var xmlService = new XmlService();
         var htmlXsltString = xmlService.GetXsltString(plainTextResourceName);
@@ -55,17 +55,16 @@ public sealed class SendCreatedUserEmailHandlerTests
         mediator.Setup(i => i.Send(It.IsAny<SendEmail>(), It.IsAny<CancellationToken>()))
             .Callback<IRequest<Unit>, CancellationToken>((command, _) => sendEmailCommand = command as SendEmail);
 
-        var command = new SendCreatedUserEmail
+        var command = new SendVerifyEmail
         {
             Email = "test_email",
-            FamilyName = "family_name",
             UserName = "test_user",
-            LoginUrl = "login_url",
+            Url = "url",
         };
 
-        var logger = new NullLogger<SendCreatedUserEmailHandler>();
+        var logger = new NullLogger<SendVerifyEmailHandler>();
 
-        var commandHandler = new SendCreatedUserEmailHandler(logger, mediator.Object, new XmlService());
+        var commandHandler = new SendVerifyEmailHandler(logger, mediator.Object, new XmlService());
 
         //WHEN
         commandHandler.Handle(command, CancellationToken.None).Wait();
@@ -90,10 +89,7 @@ public sealed class SendCreatedUserEmailHandlerTests
             ;
 
         htmlBody.InnerHtml.Should()
-            .Contain(command.FamilyName)
-            ;
-        htmlBody.InnerHtml.Should()
-            .Contain(command.LoginUrl)
+            .Contain(command.Url)
             ;
         htmlBody.InnerHtml.Should()
             .Contain(command.UserName)

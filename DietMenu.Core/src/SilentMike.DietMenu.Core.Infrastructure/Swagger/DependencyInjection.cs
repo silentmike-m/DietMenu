@@ -7,8 +7,7 @@ internal static class DependencyInjection
 {
     public static void AddSwagger(this IServiceCollection services)
     {
-        services
-            .AddSwaggerGen(c =>
+        services.AddSwaggerGen(c =>
             {
                 c.CustomSchemaIds(s => s.FullName);
                 c.SwaggerDoc("v1", new OpenApiInfo

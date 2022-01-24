@@ -1,10 +1,10 @@
-﻿namespace SilentMike.DietMenu.Core.Application.Users.Validators;
+﻿namespace SilentMike.DietMenu.Core.Application.Auth.Validators;
 
 using FluentValidation;
+using SilentMike.DietMenu.Core.Application.Auth.Commands;
 using SilentMike.DietMenu.Core.Application.Common.Constants;
-using SilentMike.DietMenu.Core.Application.Users.Commands;
 
-public sealed class CreateUserValidator : AbstractValidator<CreateUser>
+internal sealed class CreateUserValidator : AbstractValidator<CreateUser>
 {
     public CreateUserValidator()
     {

@@ -6,15 +6,15 @@ using Microsoft.Extensions.Logging;
 using SilentMike.DietMenu.Mailing.Application.Users.Commands;
 using SilentMike.DietMenu.Shared.MassTransit;
 
-internal sealed class SendCreatedUserMessageConsumer : IConsumer<ISendCreatedUserMessage>
+internal sealed class SendVerifyEmailRequestConsumer : IConsumer<ISendVerifyEmailRequest>
 {
-    private readonly ILogger<SendCreatedUserMessageConsumer> logger;
+    private readonly ILogger<SendVerifyEmailRequestConsumer> logger;
     private readonly IMediator mediator;
 
-    public SendCreatedUserMessageConsumer(ILogger<SendCreatedUserMessageConsumer> logger, IMediator mediator)
+    public SendVerifyEmailRequestConsumer(ILogger<SendVerifyEmailRequestConsumer> logger, IMediator mediator)
         => (this.logger, this.mediator) = (logger, mediator);
 
-    public async Task Consume(ConsumeContext<ISendCreatedUserMessage> context)
+    public async Task Consume(ConsumeContext<ISendVerifyEmailRequest> context)
     {
         this.logger.LogInformation("Receive created user message");
 
@@ -23,11 +23,10 @@ internal sealed class SendCreatedUserMessageConsumer : IConsumer<ISendCreatedUse
             throw new TimeoutException();
         }
 
-        var command = new SendCreatedUserEmail
+        var command = new SendVerifyEmail
         {
             Email = context.Message.Email,
-            FamilyName = context.Message.FamilyName,
-            LoginUrl = context.Message.LoginUrl,
+            Url = context.Message.Url,
             UserName = context.Message.UserName,
         };
 
