@@ -36,13 +36,13 @@ internal sealed class FamilyRepository : IFamilyRepository
 
     public Task Save(FamilyEntity family, CancellationToken cancellationToken = default)
     {
-        if (entities.ContainsKey(family.Id))
+        if (entities.ContainsKey(family.FamilyId))
         {
-            entities[family.Id] = family;
+            entities[family.FamilyId] = family;
         }
         else
         {
-            entities.Add(family.Id, family);
+            entities.Add(family.FamilyId, family);
         }
 
         return Task.CompletedTask;

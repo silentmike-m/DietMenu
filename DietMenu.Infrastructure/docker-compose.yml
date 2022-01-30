@@ -1,6 +1,6 @@
 version: "2.4"
 networks:
-  localdev:
+  dietmenu-dev:
     external: true
 volumes:
   azuresqldata_dietMenu:
@@ -17,31 +17,17 @@ services:
       - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
       - rabbitmqdata_dietMenu:/var/lib/rabbitmq            
     networks:
-      - localdev
+      - dietmenu-dev
     ports:
       - "5672:5672"
       - "15672:15672" 
-  # seq:
-    # image: datalust/seq:latest
-    # environment:
-      # ACCEPT_EULA: "Y"
-      # SEQ_FIRSTRUN_ADMINUSERNAME: "${DEFAULT_USERNAME:-admin}"
-      # SEQ_FIRSTRUN_ADMINPASSWORDHASH: FL6x1NNpca5LonfiH1pumrjVZdF2yoPW4DWPJ03VyqwnWmmErw==
-    # ports:
-      # - 5341:80
-    # networks:
-      # - localdev
-    # volumes:
-      # - seqdata_dietMenu:/data
-    # restart: unless-stopped
-    # mem_limit: 256m
   smtp4dev:
     image: rnwood/smtp4dev
     ports:
       - "3001:80"
       - "2525:25"
     networks:
-      - localdev
+      - dietmenu-dev
     environment:
       - RelayOptions__Login=admin
       - RelayOptions__Password=P@ssw0rd    
@@ -53,7 +39,7 @@ services:
       MSSQL_SA_PASSWORD: "${DEFAULT_PASSWORD:-P@ssw0rd}"
       MSSQL_PID: "Developer"
     networks:
-      - localdev
+      - dietmenu-dev
     ports:
       - ${SQLSERVER_TCP_PORT:-1433}:1433
     volumes:

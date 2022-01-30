@@ -4,6 +4,8 @@ using System.Diagnostics.CodeAnalysis;
 using global::MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SilentMike.DietMenu.Core.Infrastructure.MassTransit.Consumers;
+using SilentMike.DietMenu.Core.Infrastructure.MassTransit.Middlewares;
 
 [ExcludeFromCodeCoverage]
 internal static class DependencyInjection
@@ -14,8 +16,14 @@ internal static class DependencyInjection
 
         services.AddMassTransit(configure =>
         {
+            configure.AddConsumer<CreatedFamilyMessageConsumer>();
+
             configure.UsingRabbitMq((context, cfg) =>
             {
+                cfg.UseConsumeFilter(typeof(ExceptionLoggerFilter<>), context);
+                cfg.UseConsumeFilter(typeof(ValidationFilter<>), context);
+                cfg.UseConsumeFilter(typeof(RetryFilter<>), context);
+
                 cfg.Host(rabbitMqOptions.Server, host =>
                 {
                     host.Username(rabbitMqOptions.User);

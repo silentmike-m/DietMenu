@@ -1,0 +1,41 @@
+﻿{
+  "ReverseProxy": {
+    "Clusters": {
+      "UiCluster": {
+        "Destinations": {
+          "SterlingUi": {
+            "Address": "http://localhost:30001"
+          }
+        }
+      },
+      "ApiCluster": {
+        "Destinations": {
+          "SterlingApi": {
+            "Address": "http://localhost:30002"
+          }
+        }
+      }
+    },
+    "Routes": {
+      "ApiRoute": {
+        "ClusterId": "ApiCluster",
+        "AuthorizationPolicy": "uiPolicy",
+        "Match": {
+          "Path": "/api/{**catch-all}"
+        },
+        "Transforms": [
+          {
+            "PathRemovePrefix": "/api"
+          }
+        ]
+      },
+      "UiRoute": {
+        "ClusterId": "UiCluster",
+        "AuthorizationPolicy": "uiPolicy",
+        "Match": {
+          "Path": "{**catch-all}"
+        }
+      }
+    }
+  }
+}

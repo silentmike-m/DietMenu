@@ -1,11 +1,12 @@
 ﻿namespace SilentMike.DietMenu.Core.Infrastructure.EntityFramework;
 
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SilentMike.DietMenu.Core.Domain.Repositories;
-using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Interfaces;
+using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Data;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Services;
 
 [ExcludeFromCodeCoverage]
@@ -17,10 +18,15 @@ internal static class DependencyInjection
 
         services.AddDatabaseDeveloperPageExceptionFilter();
 
-        services.AddScoped<ApplicationDbContext>();
+        services.AddScoped<DietMenuDbContext>();
 
-        services.AddDbContext<IApplicationDbContext, ApplicationDbContext>(options => options.UseSqlServer(defaultConnectionString));
+        services.AddDbContext<IDietMenuDbContext, DietMenuDbContext>(options => options.UseSqlServer(defaultConnectionString));
 
         services.AddScoped<IFamilyRepository, FamilyRepository>();
+    }
+
+    public static void UseEntityFramework(this IApplicationBuilder _, DietMenuDbContext context)
+    {
+        context.Database.Migrate();
     }
 }

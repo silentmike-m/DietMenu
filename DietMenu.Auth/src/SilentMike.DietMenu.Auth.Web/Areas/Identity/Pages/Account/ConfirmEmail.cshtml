@@ -1,0 +1,23 @@
+@page
+@model ConfirmEmailModel
+@{
+    ViewData["Title"] = "Potwierdü konto";
+}
+<div class="content-title">
+    <img src="~/img/logo64x64.png" alt="DietMenu" class="content-logo">
+    <span class="font-weight-light">Potwierdzenie konta</span>
+</div>
+
+<div class="content-text">
+    <form id="account" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-error"></div>
+    </form>
+
+    <div class="content-center">
+        <button type="submit" form="account" class="content-button content-button-primary content-button-elevated"><span class="content-button-text">POTWIERDè KONTO</span></button>
+    </div>
+</div>
+
+@section Scripts {
+<partial name="_ValidationScriptsPartial" />
+}

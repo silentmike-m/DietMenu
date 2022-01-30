@@ -10,27 +10,27 @@ var seqAddress = Environment.GetEnvironmentVariable("SEQ_ADDRESS") ?? "http://lo
 
 var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json")
-    .AddEnvironmentVariables()
+    .AddEnvironmentVariables("CONFIG_")
     .Build();
 
-Log.Logger = new LoggerConfiguration()
+var logger = new LoggerConfiguration()
     .ReadFrom.Configuration(configuration)
     .WriteTo.Seq(seqAddress)
     .CreateLogger();
 
 try
 {
-    Log.Information("Starting host...");
+    logger.Information("Starting host...");
 
     var builder = WebApplication.CreateBuilder(args);
 
     builder.Configuration.AddEnvironmentVariables("CONFIG_");
 
-    builder.Host.UseSerilog((_, lc) =>
-        lc.Enrich.WithProperty("AppName", "SilentMike DietMenu")
-            .Enrich.WithProperty("Version", "1.0.0")
-            .WriteTo.Console()
-            .WriteTo.Seq(seqAddress)
+    builder.Host.UseSerilog((ctx, lc) => lc
+        .ReadFrom.Configuration(builder.Configuration)
+        .Enrich.WithProperty("AppName", "SilentMike DietMenu Core")
+        .Enrich.WithProperty("Version", "1.0.0")        
+        .WriteTo.Seq(seqAddress)
     );
 
     builder.Services
@@ -105,9 +105,5 @@ try
 }
 catch (Exception exception)
 {
-    Log.Fatal(exception, "Host terminated unexpectedly.");
-}
-finally
-{
-    Log.CloseAndFlush();
+    logger.Fatal(exception, "Host terminated unexpectedly.");
 }

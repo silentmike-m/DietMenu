@@ -2,35 +2,36 @@ using System.Reflection;
 using System.Text.Json.Serialization;
 using Microsoft.OpenApi.Models;
 using Serilog;
-using Serilog.Sinks.Graylog;
 using SilentMike.DietMenu.Mailing.Application;
 using SilentMike.DietMenu.Mailing.Infrastructure;
 using SilentMike.DietMenu.Mailing.WebApi.Filters;
 
+var seqAddress = Environment.GetEnvironmentVariable("SEQ_ADDRESS") ?? "http://localhost:5341";
+
 var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json")
-    .AddEnvironmentVariables()
+    .AddEnvironmentVariables("CONFIG_")
     .Build();
 
-Log.Logger = new LoggerConfiguration()
+var logger = new LoggerConfiguration()
     .ReadFrom.Configuration(configuration)
-    .WriteTo.Graylog(new GraylogSinkOptions
-    {
-        HostnameOrAddress = Environment.GetEnvironmentVariable("GRAYLOG_ADDRESS") ?? "localhost",
-        Port = 12201,
-    })
+    .WriteTo.Seq(seqAddress)
     .CreateLogger();
 
 try
 {
-    Log.Information("Starting host...");
+    logger.Information("Starting host...");
 
     var builder = WebApplication.CreateBuilder(args);
 
-    builder.Host
-        .UseSerilog()
-        .ConfigureAppConfiguration((_, config) => { config.AddEnvironmentVariables(prefix: "CONFIG_"); })
-        ;
+    builder.Configuration.AddEnvironmentVariables("CONFIG_");
+
+    builder.Host.UseSerilog((ctx, lc) => lc
+        .ReadFrom.Configuration(builder.Configuration)
+        .Enrich.WithProperty("AppName", "SilentMike DietMenu Mailing")
+        .Enrich.WithProperty("Version", "1.0.0")        
+        .WriteTo.Seq(seqAddress)
+    );
 
     builder.Services
         .AddMediatR(Assembly.GetExecutingAssembly());
@@ -120,9 +121,5 @@ try
 }
 catch (Exception exception)
 {
-    Log.Fatal(exception, "Host terminated unexpectedly.");
-}
-finally
-{
-    Log.CloseAndFlush();
+    logger.Fatal(exception, "Host terminated unexpectedly.");
 }
