@@ -8,8 +8,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework;
+using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Data;
 using SilentMike.DietMenu.Core.Infrastructure.HealthChecks;
-using SilentMike.DietMenu.Core.Infrastructure.Identity;
+using SilentMike.DietMenu.Core.Infrastructure.IdentityServer4;
 using SilentMike.DietMenu.Core.Infrastructure.MassTransit;
 using SilentMike.DietMenu.Core.Infrastructure.Swagger;
 
@@ -20,11 +21,11 @@ public static class DependencyInjection
     {
         services.AddHealthChecks(configuration);
 
-        services.AddSwagger();
+        services.AddSwagger(configuration);
 
         services.AddMediatR(Assembly.GetExecutingAssembly());
 
-        services.AddDietMenuIdentity(configuration);
+        services.AddIdentityServer4(configuration);
 
         services.AddEntityFramework(configuration);
 
@@ -40,13 +41,13 @@ public static class DependencyInjection
 
         try
         {
-            var context = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var context = serviceScope.ServiceProvider.GetRequiredService<DietMenuDbContext>();
 
             app.UseHealthChecks();
 
             app.UseDietMenuSwagger();
 
-            app.UseIdentity(context);
+            app.UseEntityFramework(context);
         }
         catch (Exception exception)
         {

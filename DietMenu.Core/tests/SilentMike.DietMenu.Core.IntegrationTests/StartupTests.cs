@@ -62,7 +62,7 @@ public sealed class StartupTests
             ;
 
         baseResponse.Response.HealthChecks.Should()
-            .ContainSingle(i => i.Component == "Identity")
+            .ContainSingle(i => i.Component == "Db Context")
             ;
         baseResponse.Response.HealthChecks.Should()
             .ContainSingle(i => i.Component == "RabbitMQ")

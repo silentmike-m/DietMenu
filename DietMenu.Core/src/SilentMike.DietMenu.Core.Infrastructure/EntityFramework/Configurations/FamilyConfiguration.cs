@@ -12,9 +12,7 @@ internal sealed class FamilyConfiguration : IEntityTypeConfiguration<FamilyEntit
     {
         builder.Property(i => i.Name).IsRequired().HasMaxLength(100);
 
-        builder.HasKey(i => i.Identifier);
-
-        builder.HasIndex(i => i.Id).IsUnique();
+        builder.HasIndex(i => i.FamilyId).IsUnique();
         builder.HasIndex(i => i.Name).IsUnique();
     }
 }

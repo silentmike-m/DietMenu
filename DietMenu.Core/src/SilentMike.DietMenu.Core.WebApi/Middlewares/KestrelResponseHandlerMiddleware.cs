@@ -99,6 +99,7 @@ internal sealed class KestrelResponseHandlerMiddleware
         }
         else if (isResponseContentTypeOctetStream)
         {
+            //ignore
         }
         else
         {

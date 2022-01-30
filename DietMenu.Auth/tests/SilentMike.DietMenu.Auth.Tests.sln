@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SilentMike.DietMenu.Auth.IntegrationTests", "SilentMike.DietMenu.Auth.IntegrationTests\SilentMike.DietMenu.Auth.IntegrationTests.csproj", "{B61C226B-19E7-4C4C-8CB1-4D529B31243C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SilentMike.DietMenu.Auth.UnitTests", "SilentMike.DietMenu.Auth.UnitTests\SilentMike.DietMenu.Auth.UnitTests.csproj", "{8AF74AC6-D831-4A9B-8684-64F36FCC0D46}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SilentMike.DietMenu.Auth.Application", "..\src\SilentMike.DietMenu.Auth.Application\SilentMike.DietMenu.Auth.Application.csproj", "{211A9452-14E0-4172-B455-03E42C77E4D4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SilentMike.DietMenu.Auth.Infrastructure", "..\src\SilentMike.DietMenu.Auth.Infrastructure\SilentMike.DietMenu.Auth.Infrastructure.csproj", "{A6C4B13A-D356-4C72-928B-350C95BBB88E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SilentMike.DietMenu.Auth.Web", "..\src\SilentMike.DietMenu.Auth.Web\SilentMike.DietMenu.Auth.Web.csproj", "{84C245C4-7F07-4B8C-A9C8-1CE10DA11949}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SilentMike.DietMenu.Shared", "..\src\SilentMike.DietMenu.Shared\SilentMike.DietMenu.Shared.csproj", "{A8B5B3C7-4F2E-46BA-B598-62A567114BE5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B61C226B-19E7-4C4C-8CB1-4D529B31243C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B61C226B-19E7-4C4C-8CB1-4D529B31243C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B61C226B-19E7-4C4C-8CB1-4D529B31243C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B61C226B-19E7-4C4C-8CB1-4D529B31243C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8AF74AC6-D831-4A9B-8684-64F36FCC0D46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8AF74AC6-D831-4A9B-8684-64F36FCC0D46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8AF74AC6-D831-4A9B-8684-64F36FCC0D46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8AF74AC6-D831-4A9B-8684-64F36FCC0D46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{211A9452-14E0-4172-B455-03E42C77E4D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{211A9452-14E0-4172-B455-03E42C77E4D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{211A9452-14E0-4172-B455-03E42C77E4D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{211A9452-14E0-4172-B455-03E42C77E4D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6C4B13A-D356-4C72-928B-350C95BBB88E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6C4B13A-D356-4C72-928B-350C95BBB88E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6C4B13A-D356-4C72-928B-350C95BBB88E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6C4B13A-D356-4C72-928B-350C95BBB88E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84C245C4-7F07-4B8C-A9C8-1CE10DA11949}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84C245C4-7F07-4B8C-A9C8-1CE10DA11949}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84C245C4-7F07-4B8C-A9C8-1CE10DA11949}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84C245C4-7F07-4B8C-A9C8-1CE10DA11949}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8B5B3C7-4F2E-46BA-B598-62A567114BE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8B5B3C7-4F2E-46BA-B598-62A567114BE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8B5B3C7-4F2E-46BA-B598-62A567114BE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8B5B3C7-4F2E-46BA-B598-62A567114BE5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B6FA649F-5358-4B7A-A953-B28DBB7B986C}
+	EndGlobalSection
+EndGlobal

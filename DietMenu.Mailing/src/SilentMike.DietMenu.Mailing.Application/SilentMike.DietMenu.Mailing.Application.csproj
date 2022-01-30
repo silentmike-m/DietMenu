@@ -13,7 +13,7 @@
 	<ItemGroup>
 		<EmbeddedResource Include="Resources\**" />
 	</ItemGroup>
-
+	
 	<ItemGroup>
 		<InternalsVisibleTo Include="SilentMike.DietMenu.Mailing.UnitTests" />
 			
