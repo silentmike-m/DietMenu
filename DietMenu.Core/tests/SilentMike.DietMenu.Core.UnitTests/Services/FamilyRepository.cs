@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using SilentMike.DietMenu.Core.Domain.Entities;
@@ -23,13 +22,6 @@ internal sealed class FamilyRepository : IFamilyRepository
         var result = this.entities.ContainsKey(id)
             ? this.entities[id]
             : null;
-
-        return Task.FromResult(result);
-    }
-
-    public Task<FamilyEntity?> Get(string name, CancellationToken cancellationToken = default)
-    {
-        var result = this.entities.Values.SingleOrDefault(i => i.Name == name);
 
         return Task.FromResult(result);
     }

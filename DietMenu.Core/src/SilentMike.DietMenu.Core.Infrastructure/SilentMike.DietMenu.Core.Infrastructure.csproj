@@ -35,5 +35,5 @@
 	<InternalsVisibleTo Include="SilentMike.DietMenu.Core.UnitTests" />
 	<InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
   </ItemGroup>
-	
+
 </Project>

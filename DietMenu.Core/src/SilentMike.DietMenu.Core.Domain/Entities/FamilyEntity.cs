@@ -9,4 +9,5 @@ public sealed class FamilyEntity
     public Guid FamilyId { get; private set; }
     public int Id { get; private set; }
     public string Name { get; set; } = string.Empty;
+    public List<MealTypeEntity> MealTypes { get; set; } = new();
 }

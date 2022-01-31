@@ -1,9 +1,10 @@
 ﻿namespace SilentMike.DietMenu.Core.Application.Exceptions;
 
+using System;
 using System.Runtime.Serialization;
 using FluentValidation.Results;
-using SilentMike.DietMenu.Core.Application.Common;
 using SilentMike.DietMenu.Core.Application.Common.Constants;
+using ApplicationException = SilentMike.DietMenu.Core.Application.Common.ApplicationException;
 
 [Serializable]
 public sealed class ValidationException : ApplicationException

@@ -22,6 +22,7 @@ internal static class DependencyInjection
 
         services.AddDbContext<IDietMenuDbContext, DietMenuDbContext>(options => options.UseSqlServer(defaultConnectionString));
 
+        services.AddScoped<IMealTypeRepository, MealTypeRepository>();
         services.AddScoped<IFamilyRepository, FamilyRepository>();
     }
 
