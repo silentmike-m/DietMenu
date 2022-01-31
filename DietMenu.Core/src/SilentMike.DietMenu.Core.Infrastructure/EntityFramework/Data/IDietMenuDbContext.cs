@@ -8,5 +8,9 @@ internal interface IDietMenuDbContext
     DbSet<FamilyEntity> Families { get; }
     DbSet<MealTypeEntity> MealTypes { get; }
 
-    Task Save<TEntity>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : class;
+    Task Save<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
+        where TEntity : class;
+
+    Task Save<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+        where TEntity : class;
 }

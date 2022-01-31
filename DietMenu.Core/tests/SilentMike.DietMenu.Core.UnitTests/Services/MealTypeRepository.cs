@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using SilentMike.DietMenu.Core.Domain.Entities;
@@ -30,6 +31,13 @@ internal sealed class MealTypeRepository : IMealTypeRepository
         return Task.FromResult(result);
     }
 
+    public Task<IEnumerable<MealTypeEntity>> Get(Guid familyId, CancellationToken cancellationToken = default)
+    {
+        var result = this.entities.Values.Where(i => i.FamilyId == familyId);
+
+        return Task.FromResult(result);
+    }
+
     public Task Save(MealTypeEntity mealType, CancellationToken cancellationToken = default)
     {
         if (entities.ContainsKey(mealType.MealTypeId))
@@ -39,6 +47,16 @@ internal sealed class MealTypeRepository : IMealTypeRepository
         else
         {
             entities.Add(mealType.MealTypeId, mealType);
+        }
+
+        return Task.CompletedTask;
+    }
+
+    public Task Save(IEnumerable<MealTypeEntity> mealTypes, CancellationToken cancellationToken = default)
+    {
+        foreach (var mealType in mealTypes)
+        {
+            this.Save(mealType, cancellationToken);
         }
 
         return Task.CompletedTask;

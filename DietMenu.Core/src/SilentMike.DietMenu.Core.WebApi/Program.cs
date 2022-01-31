@@ -8,6 +8,8 @@ using SilentMike.DietMenu.Core.WebApi.Extensions;
 using SilentMike.DietMenu.Core.WebApi.Filters;
 using SilentMike.DietMenu.Core.WebApi.Services;
 
+var hangFireServerName = $"Default:{Guid.NewGuid()}";
+
 var seqAddress = Environment.GetEnvironmentVariable("SEQ_ADDRESS") ?? "http://localhost:5341";
 
 var configuration = new ConfigurationBuilder()
@@ -42,7 +44,7 @@ try
         .AddApplication();
 
     builder.Services
-        .AddInfrastructure(builder.Configuration);
+        .AddInfrastructure(builder.Configuration, hangFireServerName);
 
     builder.Services
         .AddHttpContextAccessor();
@@ -69,7 +71,7 @@ try
 
     app.UseKestrelResponseHandlerMiddleware();
 
-    app.UseInfrastructure(builder.Configuration);
+    app.UseInfrastructure(builder.Configuration, hangFireServerName);
 
 
     app.UseSerilogRequestLogging(options =>

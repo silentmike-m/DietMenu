@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Data;
+using SilentMike.DietMenu.Core.Infrastructure.Hangfire;
 using SilentMike.DietMenu.Core.Infrastructure.HealthChecks;
 using SilentMike.DietMenu.Core.Infrastructure.IdentityServer4;
 using SilentMike.DietMenu.Core.Infrastructure.MassTransit;
@@ -17,7 +18,7 @@ using SilentMike.DietMenu.Core.Infrastructure.Swagger;
 [ExcludeFromCodeCoverage]
 public static class DependencyInjection
 {
-    public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+    public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration, string hangFireServerName)
     {
         services.AddHealthChecks(configuration);
 
@@ -30,9 +31,11 @@ public static class DependencyInjection
         services.AddEntityFramework(configuration);
 
         services.AddMassTransit(configuration);
+
+        services.AddHangfire(configuration, hangFireServerName);
     }
 
-    public static void UseInfrastructure(this IApplicationBuilder app, IConfiguration configuration)
+    public static void UseInfrastructure(this IApplicationBuilder app, IConfiguration configuration, string hangFireServerName)
     {
         using var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>()!.CreateScope();
 
@@ -48,6 +51,8 @@ public static class DependencyInjection
             app.UseDietMenuSwagger();
 
             app.UseEntityFramework(context);
+
+            app.UseHangfire(hangFireServerName);
         }
         catch (Exception exception)
         {

@@ -24,10 +24,17 @@ internal sealed class DietMenuDbContext : DbContext, IDietMenuDbContext
 
     }
 
-    public async Task Save<TEntity>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : class
+    public async Task Save<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
+        where TEntity : class
     {
         this.Update(entity);
         await this.SaveChangesAsync(cancellationToken);
     }
 
+    public async Task Save<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+        where TEntity : class
+    {
+        this.UpdateRange(entities);
+        await this.SaveChangesAsync(cancellationToken);
+    }
 }

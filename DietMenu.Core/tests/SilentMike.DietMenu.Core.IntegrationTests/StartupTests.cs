@@ -58,7 +58,7 @@ public sealed class StartupTests
             .NotBeNull()
             ;
         baseResponse.Response!.HealthChecks.Count.Should()
-            .Be(4)
+            .Be(5)
             ;
 
         baseResponse.Response.HealthChecks.Should()
@@ -69,6 +69,9 @@ public sealed class StartupTests
             ;
         baseResponse.Response.HealthChecks.Should()
             .ContainSingle(i => i.Component == "SQL Default")
+            ;
+        baseResponse.Response.HealthChecks.Should()
+            .ContainSingle(i => i.Component == "SQL Hangfire")
             ;
     }
 
