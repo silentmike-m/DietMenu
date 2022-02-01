@@ -14,7 +14,7 @@ internal sealed class MealTypeRepository : IMealTypeRepository
     public async Task<MealTypeEntity?> Get(Guid familyId, Guid mealTypeId, CancellationToken cancellationToken = default)
     {
         return await this.context.MealTypes
-            .SingleOrDefaultAsync(i => i.FamilyId == familyId && i.MealTypeId == mealTypeId, cancellationToken);
+            .SingleOrDefaultAsync(i => i.FamilyId == familyId && i.Id == mealTypeId, cancellationToken);
     }
 
     public async Task<IEnumerable<MealTypeEntity>> Get(Guid familyId, CancellationToken cancellationToken = default)

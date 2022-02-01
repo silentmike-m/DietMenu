@@ -226,7 +226,7 @@ public sealed class UpsertMealTypesHandlerTests
         mealType.InternalName.Should()
             .NotBeEmpty()
             ;
-        mealType.MealTypeId.Should()
+        mealType.Id.Should()
             .Be(mealTypeToUpsert.Id)
             ;
     }

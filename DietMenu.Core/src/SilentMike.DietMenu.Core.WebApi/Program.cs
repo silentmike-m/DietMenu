@@ -71,7 +71,7 @@ try
 
     app.UseKestrelResponseHandlerMiddleware();
 
-    app.UseInfrastructure(builder.Configuration, hangFireServerName);
+    app.UseInfrastructure(hangFireServerName);
 
 
     app.UseSerilogRequestLogging(options =>

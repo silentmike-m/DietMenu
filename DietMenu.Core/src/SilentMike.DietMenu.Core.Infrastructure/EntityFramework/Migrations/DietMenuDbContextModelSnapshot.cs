@@ -25,13 +25,8 @@ namespace SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Migrations
 
             modelBuilder.Entity("SilentMike.DietMenu.Core.Domain.Entities.FamilyEntity", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<Guid>("FamilyId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
@@ -41,25 +36,14 @@ namespace SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FamilyId")
-                        .IsUnique();
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
                     b.ToTable("Families", "SilentMike");
                 });
 
             modelBuilder.Entity("SilentMike.DietMenu.Core.Domain.Entities.MealTypeEntity", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int?>("FamilyEntityId")
-                        .HasColumnType("int");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("FamilyId")
                         .HasColumnType("uniqueidentifier");
@@ -68,28 +52,21 @@ namespace SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<Guid>("MealTypeId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("Order")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(1);
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FamilyEntityId");
+                    b.HasIndex("FamilyId");
 
-                    b.HasIndex("InternalName")
+                    b.HasIndex("Id", "InternalName")
                         .IsUnique();
 
-                    b.HasIndex("MealTypeId");
-
-                    b.HasIndex("Name")
+                    b.HasIndex("Id", "Name")
                         .IsUnique();
 
                     b.ToTable("MealTypes", "SilentMike");
@@ -97,9 +74,13 @@ namespace SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Migrations
 
             modelBuilder.Entity("SilentMike.DietMenu.Core.Domain.Entities.MealTypeEntity", b =>
                 {
-                    b.HasOne("SilentMike.DietMenu.Core.Domain.Entities.FamilyEntity", null)
+                    b.HasOne("SilentMike.DietMenu.Core.Domain.Entities.FamilyEntity", "FamilyEntity")
                         .WithMany("MealTypes")
-                        .HasForeignKey("FamilyEntityId");
+                        .HasForeignKey("FamilyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FamilyEntity");
                 });
 
             modelBuilder.Entity("SilentMike.DietMenu.Core.Domain.Entities.FamilyEntity", b =>

@@ -6,6 +6,7 @@ using global::Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SilentMike.DietMenu.Core.Infrastructure.Hangfire.Filters;
 
 [ExcludeFromCodeCoverage]
 internal static class DependencyInjection
@@ -28,8 +29,13 @@ internal static class DependencyInjection
         });
     }
 
-    public static void UseHangfire(this IApplicationBuilder _, string hangFireServerName)
+    public static void UseHangfire(this IApplicationBuilder app, string hangFireServerName)
     {
+        app.UseHangfireDashboard("/hangfire", new DashboardOptions
+        {
+            Authorization = new[] { new HangfireAuthorizationFilter() },
+        });
+
         ClearHangfireServers(hangFireServerName);
     }
 

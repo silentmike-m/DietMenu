@@ -10,13 +10,12 @@ internal sealed class MealTypeConfiguration : IEntityTypeConfiguration<MealTypeE
 {
     public void Configure(EntityTypeBuilder<MealTypeEntity> builder)
     {
-        builder.Property(i => i.FamilyId).IsRequired();
-        builder.Property(i => i.InternalName).IsRequired();
-        builder.Property(i => i.Name).IsRequired();
-        builder.Property(i => i.Order).IsRequired().HasDefaultValue(1);
+        builder
+            .HasIndex(i => new { i.Id, i.InternalName })
+            .IsUnique();
 
-        builder.HasIndex(i => i.MealTypeId);
-        builder.HasIndex(i => i.InternalName).IsUnique();
-        builder.HasIndex(i => i.Name).IsUnique();
+        builder
+            .HasIndex(i => new { i.Id, i.Name })
+            .IsUnique();
     }
 }

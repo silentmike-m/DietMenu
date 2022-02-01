@@ -40,13 +40,13 @@ internal sealed class MealTypeRepository : IMealTypeRepository
 
     public Task Save(MealTypeEntity mealType, CancellationToken cancellationToken = default)
     {
-        if (entities.ContainsKey(mealType.MealTypeId))
+        if (entities.ContainsKey(mealType.Id))
         {
-            entities[mealType.MealTypeId] = mealType;
+            entities[mealType.Id] = mealType;
         }
         else
         {
-            entities.Add(mealType.MealTypeId, mealType);
+            entities.Add(mealType.Id, mealType);
         }
 
         return Task.CompletedTask;

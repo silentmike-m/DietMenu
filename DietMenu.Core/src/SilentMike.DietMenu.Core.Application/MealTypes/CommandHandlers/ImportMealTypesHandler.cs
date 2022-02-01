@@ -23,56 +23,28 @@ internal sealed class ImportMealTypesHandler : IRequestHandler<ImportMealTypes>
 
         var mealTypes = new List<MealTypeEntity>();
 
-        var mealTypeFirstBreakfast = new MealTypeEntity(Guid.NewGuid())
-        {
-            FamilyId = request.FamilyId,
-            InternalName = "FirstBreakfast",
-            Name = "I śniadanie",
-        };
-        mealTypes.Add(mealTypeFirstBreakfast);
-
-        var mealTypeSecondBreakfast = new MealTypeEntity(Guid.NewGuid())
-        {
-            FamilyId = request.FamilyId,
-            InternalName = "SecondBreakfast",
-            Name = "II śniadanie",
-        };
-        mealTypes.Add(mealTypeSecondBreakfast);
-
-        var mealTypeDinner = new MealTypeEntity(Guid.NewGuid())
-        {
-            FamilyId = request.FamilyId,
-            InternalName = "Dinner",
-            Name = "Obiad",
-        };
-        mealTypes.Add(mealTypeDinner);
-
-        var mealTypeSupper = new MealTypeEntity(Guid.NewGuid())
-        {
-            FamilyId = request.FamilyId,
-            InternalName = "Supper",
-            Name = "Kolacja",
-        };
-        mealTypes.Add(mealTypeSupper);
-
-        var mealTypeSnack = new MealTypeEntity(Guid.NewGuid())
-        {
-            FamilyId = request.FamilyId,
-            InternalName = "Snack",
-            Name = "Przekąska",
-        };
-        mealTypes.Add(mealTypeSnack);
-
-        var mealTypeDessert = new MealTypeEntity(Guid.NewGuid())
-        {
-            FamilyId = request.FamilyId,
-            InternalName = "Dessert",
-            Name = "Deser",
-        };
-        mealTypes.Add(mealTypeDessert);
+        Add(mealTypes, request.FamilyId, "FirstBreakfast", "I śniadanie", 1);
+        Add(mealTypes, request.FamilyId, "SecondBreakfast", "II śniadanie", 2);
+        Add(mealTypes, request.FamilyId, "Snack", "Przekąska", 3);
+        Add(mealTypes, request.FamilyId, "Dinner", "Obiad", 4);
+        Add(mealTypes, request.FamilyId, "Dessert", "Deser", 5);
+        Add(mealTypes, request.FamilyId, "Supper", "Kolacja", 6);
 
         await this.repository.Save(mealTypes, cancellationToken);
 
         return await Task.FromResult(Unit.Value);
+    }
+
+    private static void Add(ICollection<MealTypeEntity> self, Guid familyId, string internalName, string name, int order)
+    {
+        var mealType = new MealTypeEntity(Guid.NewGuid())
+        {
+            FamilyId = familyId,
+            InternalName = internalName,
+            Name = name,
+            Order = order,
+        };
+
+        self.Add(mealType);
     }
 }

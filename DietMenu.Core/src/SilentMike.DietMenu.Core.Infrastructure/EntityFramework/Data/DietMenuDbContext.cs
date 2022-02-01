@@ -27,14 +27,46 @@ internal sealed class DietMenuDbContext : DbContext, IDietMenuDbContext
     public async Task Save<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
         where TEntity : class
     {
-        this.Update(entity);
-        await this.SaveChangesAsync(cancellationToken);
+        var track = this.Entry(entity);
+
+        switch (track.State)
+        {
+            case EntityState.Added or EntityState.Detached:
+                this.Add(entity);
+                await this.SaveChangesAsync(cancellationToken);
+                break;
+            case EntityState.Modified:
+                this.Update(entity);
+                await this.SaveChangesAsync(cancellationToken);
+                break;
+        }
     }
 
     public async Task Save<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
         where TEntity : class
     {
-        this.UpdateRange(entities);
-        await this.SaveChangesAsync(cancellationToken);
+        var saveChanges = false;
+
+        foreach (var entity in entities)
+        {
+            var track = this.Entry(entity);
+
+            switch (track.State)
+            {
+                case EntityState.Added or EntityState.Detached:
+                    this.Add(entity);
+                    saveChanges = true;
+                    break;
+                case EntityState.Modified:
+                    this.Update(entity);
+                    saveChanges = true;
+                    break;
+            }
+        }
+
+        if (saveChanges)
+        {
+            await this.SaveChangesAsync(cancellationToken);
+        }
     }
 }

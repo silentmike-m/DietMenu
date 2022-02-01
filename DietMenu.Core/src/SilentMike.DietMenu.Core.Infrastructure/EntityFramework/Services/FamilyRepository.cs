@@ -13,7 +13,7 @@ internal sealed class FamilyRepository : IFamilyRepository
 
     public async Task<FamilyEntity?> Get(Guid id, CancellationToken cancellationToken = default)
     {
-        return await this.context.Families.SingleOrDefaultAsync(i => i.FamilyId == id, cancellationToken);
+        return await this.context.Families.SingleOrDefaultAsync(i => i.Id == id, cancellationToken);
     }
 
     public async Task Save(FamilyEntity family, CancellationToken cancellationToken = default)

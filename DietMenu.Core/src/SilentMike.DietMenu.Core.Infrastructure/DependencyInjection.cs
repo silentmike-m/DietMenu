@@ -26,6 +26,8 @@ public static class DependencyInjection
 
         services.AddMediatR(Assembly.GetExecutingAssembly());
 
+        services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
         services.AddIdentityServer4(configuration);
 
         services.AddEntityFramework(configuration);
@@ -35,7 +37,7 @@ public static class DependencyInjection
         services.AddHangfire(configuration, hangFireServerName);
     }
 
-    public static void UseInfrastructure(this IApplicationBuilder app, IConfiguration configuration, string hangFireServerName)
+    public static void UseInfrastructure(this IApplicationBuilder app, string hangFireServerName)
     {
         using var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>()!.CreateScope();
 
