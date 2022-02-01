@@ -2,9 +2,13 @@ using System.Reflection;
 using System.Text.Json.Serialization;
 using Serilog;
 using SilentMike.DietMenu.Core.Application;
+using SilentMike.DietMenu.Core.Application.Common;
 using SilentMike.DietMenu.Core.Infrastructure;
 using SilentMike.DietMenu.Core.WebApi.Extensions;
 using SilentMike.DietMenu.Core.WebApi.Filters;
+using SilentMike.DietMenu.Core.WebApi.Services;
+
+var hangFireServerName = $"Default:{Guid.NewGuid()}";
 
 var seqAddress = Environment.GetEnvironmentVariable("SEQ_ADDRESS") ?? "http://localhost:5341";
 
@@ -29,7 +33,7 @@ try
     builder.Host.UseSerilog((ctx, lc) => lc
         .ReadFrom.Configuration(builder.Configuration)
         .Enrich.WithProperty("AppName", "SilentMike DietMenu Core")
-        .Enrich.WithProperty("Version", "1.0.0")        
+        .Enrich.WithProperty("Version", "1.0.0")
         .WriteTo.Seq(seqAddress)
     );
 
@@ -40,7 +44,12 @@ try
         .AddApplication();
 
     builder.Services
-        .AddInfrastructure(builder.Configuration);
+        .AddInfrastructure(builder.Configuration, hangFireServerName);
+
+    builder.Services
+        .AddHttpContextAccessor();
+    builder.Services
+        .AddSingleton<ICurrentRequestService, CurrentRequestService>();
 
     builder.Services
         .AddControllers(options =>
@@ -62,7 +71,7 @@ try
 
     app.UseKestrelResponseHandlerMiddleware();
 
-    app.UseInfrastructure(builder.Configuration);
+    app.UseInfrastructure(hangFireServerName);
 
 
     app.UseSerilogRequestLogging(options =>

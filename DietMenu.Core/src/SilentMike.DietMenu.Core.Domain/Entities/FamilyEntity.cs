@@ -4,9 +4,9 @@ public sealed class FamilyEntity
 {
     public FamilyEntity() { }
 
-    public FamilyEntity(Guid id) => this.FamilyId = id;
+    public FamilyEntity(Guid id) => this.Id = id;
 
-    public Guid FamilyId { get; private set; }
-    public int Id { get; private set; }
+    public Guid Id { get; private set; }
+    public List<MealTypeEntity> MealTypes { get; set; } = new();
     public string Name { get; set; } = string.Empty;
 }

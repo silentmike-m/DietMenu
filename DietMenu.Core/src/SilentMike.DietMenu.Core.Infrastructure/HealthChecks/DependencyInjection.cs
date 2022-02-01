@@ -31,6 +31,7 @@ internal static class DependencyInjection
                 UserName = rabbitMqOptions.User,
             }, "RabbitMQ")
             .AddSqlServer(connectionString: defaultConnectionString, name: "SQL Default")
+            .AddSqlServer(connectionString: defaultConnectionString, name: "SQL Hangfire")
             ;
     }
 

@@ -9,6 +9,9 @@
   <ItemGroup>
    <PackageReference Include="AspNetCore.HealthChecks.Rabbitmq" Version="6.0.1" />
    <PackageReference Include="AspNetCore.HealthChecks.SqlServer" Version="6.0.1" />
+   <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+   <PackageReference Include="Hangfire.AspNetCore" Version="1.7.28" />
+   <PackageReference Include="Hangfire.SqlServer" Version="1.7.28" />
    <PackageReference Include="IdentityServer4.AccessTokenValidation" Version="3.0.1" />
    <PackageReference Include="MassTransit.AspNetCore" Version="7.3.0" />
    <PackageReference Include="MassTransit.RabbitMQ" Version="7.3.0" />
@@ -35,5 +38,5 @@
 	<InternalsVisibleTo Include="SilentMike.DietMenu.Core.UnitTests" />
 	<InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
   </ItemGroup>
-	
+
 </Project>

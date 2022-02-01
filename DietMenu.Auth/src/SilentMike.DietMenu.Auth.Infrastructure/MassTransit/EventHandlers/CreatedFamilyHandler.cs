@@ -24,6 +24,8 @@ internal sealed class CreatedFamilyHandler : INotificationHandler<CreatedFamily>
             Name = notification.Name,
         };
 
-        await this.publishEndpoint.Publish<ICreatedFamilyMessage>(message, cancellationToken);
+        await this.publishEndpoint.Publish<ICreatedFamilyMessage>(message, context => context.TimeToLive = TimeSpan.FromMinutes(5), cancellationToken);
+
+        await Task.CompletedTask;
     }
 }

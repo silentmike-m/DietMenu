@@ -9,17 +9,11 @@ internal sealed class FamilyRepository : IFamilyRepository
 {
     private readonly IDietMenuDbContext context;
 
-    public FamilyRepository(IDietMenuDbContext context)
-        => (this.context) = (context);
+    public FamilyRepository(IDietMenuDbContext context) => (this.context) = (context);
 
     public async Task<FamilyEntity?> Get(Guid id, CancellationToken cancellationToken = default)
     {
-        return await this.context.Families.SingleOrDefaultAsync(i => i.FamilyId == id, cancellationToken);
-    }
-
-    public async Task<FamilyEntity?> Get(string name, CancellationToken cancellationToken = default)
-    {
-        return await this.context.Families.SingleOrDefaultAsync(i => i.Name == name, cancellationToken);
+        return await this.context.Families.SingleOrDefaultAsync(i => i.Id == id, cancellationToken);
     }
 
     public async Task Save(FamilyEntity family, CancellationToken cancellationToken = default)

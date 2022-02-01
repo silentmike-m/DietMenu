@@ -35,7 +35,9 @@ services:
     project: DietMenu.Core/src/SilentMike.DietMenu.Core.WebApi/SilentMike.DietMenu.Core.WebApi.csproj
     env:
       - name: CONFIG_CONNECTIONSTRINGS__DEFAULTCONNECTION
-        value: Server=localhost,1433;Database=silentmike-dietmenu;User Id=sa;Password=P@ssw0rd;MultipleActiveResultSets=true
+        value: Server=localhost,1433;Database=silentmike_dietmenu;User Id=sa;Password=P@ssw0rd;MultipleActiveResultSets=true
+      - name: CONFIG_CONNECTIONSTRINGS__HANGFIRECONNECTION
+        value: Server=localhost,1433;Database=silentmike_hangfire;User Id=sa;Password=P@ssw0rd;MultipleActiveResultSets=true;  
       - name: CONFIG_IDENTITYSERVER4__AUDIENCE
         value: https://localhost:8080/api
       - name: CONFIG_IDENTITYSERVER4__AUTHORITY

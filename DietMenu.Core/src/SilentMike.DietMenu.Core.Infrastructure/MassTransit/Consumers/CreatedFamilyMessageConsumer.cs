@@ -29,6 +29,6 @@ internal sealed class CreatedFamilyMessageConsumer : IConsumer<ICreatedFamilyMes
             Name = context.Message.Name,
         };
 
-        await this.mediator.Send(command, CancellationToken.None);
+        _ = await this.mediator.Send(command, CancellationToken.None);
     }
 }

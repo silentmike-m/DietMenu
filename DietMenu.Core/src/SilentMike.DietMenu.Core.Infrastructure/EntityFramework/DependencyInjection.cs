@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SilentMike.DietMenu.Core.Domain.Repositories;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Data;
+using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Interfaces;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Services;
 
 [ExcludeFromCodeCoverage]
@@ -22,7 +23,10 @@ internal static class DependencyInjection
 
         services.AddDbContext<IDietMenuDbContext, DietMenuDbContext>(options => options.UseSqlServer(defaultConnectionString));
 
+        services.AddScoped<IMealTypeRepository, MealTypeRepository>();
         services.AddScoped<IFamilyRepository, FamilyRepository>();
+
+        services.AddScoped<IMealTypeReadService, MealTypeReadService>();
     }
 
     public static void UseEntityFramework(this IApplicationBuilder _, DietMenuDbContext context)
