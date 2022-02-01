@@ -39,7 +39,7 @@ try
     builder.Host.UseSerilog((ctx, lc) => lc
         .ReadFrom.Configuration(builder.Configuration)
         .Enrich.WithProperty("AppName", "SilentMike DietMenu Auth")
-        .Enrich.WithProperty("Version", "1.0.0")        
+        .Enrich.WithProperty("Version", "1.0.0")
         .WriteTo.Seq(seqAddress)
     );
 
@@ -73,6 +73,7 @@ builder.Host.UseSystemd();
 
     var app = builder.Build();
 
+    app.UseMiddleware<SwaggerAuthorizationMiddleware>();
     app.UseSwagger();
     app.UseSwaggerUI();
 
