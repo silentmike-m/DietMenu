@@ -79,10 +79,10 @@ public sealed class StartupTests
             .Be(HttpStatusCode.OK)
             ;
 
-        response.Content.Headers.ContentType?.ToString()
-            .Should()
-            .Be("application/json; charset=utf-8")
-            ;
+        //response.Content.Headers.ContentType?.ToString()
+        //    .Should()
+        //    .Be("application/json; charset=utf-8")
+        //    ;
     }
 }
 #endif
