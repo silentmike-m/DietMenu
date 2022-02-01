@@ -1,8 +1,8 @@
-﻿namespace SilentMike.DietMenu.Core.Application.MealTypes.Commands;
+﻿namespace SilentMike.DietMenu.Core.Application.IngredientTypes.Commands;
 
 using System.Text.Json.Serialization;
 
-public sealed record ImportMealTypes : IRequest
+public sealed class ImportIngredientTypes : IRequest
 {
     [JsonPropertyName("family_id")] public Guid FamilyId { get; init; } = Guid.Empty;
 }

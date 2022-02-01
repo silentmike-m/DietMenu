@@ -3,5 +3,4 @@
 public interface ICreatedFamilyMessage
 {
     Guid Id { get; }
-    string Name { get; }
 }

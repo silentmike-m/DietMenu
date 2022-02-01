@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SilentMike.DietMenu.Core.Domain.Entities;
 
 [ExcludeFromCodeCoverage]
-internal sealed class MealTypeConfiguration : IEntityTypeConfiguration<MealTypeEntity>
+internal sealed class IngredientTypeConfiguration : IEntityTypeConfiguration<IngredientTypeEntity>
 {
-    public void Configure(EntityTypeBuilder<MealTypeEntity> builder)
+    public void Configure(EntityTypeBuilder<IngredientTypeEntity> builder)
     {
         builder
             .HasIndex(i => new { i.FamilyId, i.InternalName })

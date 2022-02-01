@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Data;
@@ -35,6 +36,8 @@ public static class DependencyInjection
         services.AddMassTransit(configuration);
 
         services.AddHangfire(configuration, hangFireServerName);
+
+        services.AddSingleton<IFileProvider>(new ManifestEmbeddedFileProvider(Assembly.GetExecutingAssembly()));
     }
 
     public static void UseInfrastructure(this IApplicationBuilder app, string hangFireServerName)

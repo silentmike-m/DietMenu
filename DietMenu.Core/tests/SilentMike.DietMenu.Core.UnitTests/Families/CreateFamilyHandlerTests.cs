@@ -61,7 +61,6 @@ public sealed class CreateFamilyHandlerTests
         var command = new CreateFamily
         {
             Id = Guid.NewGuid(),
-            Name = "test_name",
         };
 
         var commandHandler = new CreateFamilyHandler(this.logger, this.mediator.Object, this.repository);
@@ -75,9 +74,6 @@ public sealed class CreateFamilyHandlerTests
         var family = await this.repository.Get(command.Id, CancellationToken.None);
         family.Should()
             .NotBeNull()
-            ;
-        family!.Name.Should()
-            .Be(command.Name)
             ;
     }
 }

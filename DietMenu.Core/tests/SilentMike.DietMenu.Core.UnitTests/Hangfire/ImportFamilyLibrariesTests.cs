@@ -7,6 +7,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using SilentMike.DietMenu.Core.Application.IngredientTypes.Commands;
 using SilentMike.DietMenu.Core.Application.MealTypes.Commands;
 using SilentMike.DietMenu.Core.Infrastructure.Hangfire.Jobs;
 
@@ -28,6 +29,7 @@ public sealed class ImportFamilyLibrariesTests
         await job.Run(familyId);
 
         //tHEN
+        mediator.Verify(i => i.Send(It.IsAny<ImportIngredientTypes>(), It.IsAny<CancellationToken>()), Times.Once);
         mediator.Verify(i => i.Send(It.IsAny<ImportMealTypes>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 }

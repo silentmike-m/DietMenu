@@ -4,6 +4,7 @@ using System.ComponentModel;
 using global::Hangfire;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using SilentMike.DietMenu.Core.Application.IngredientTypes.Commands;
 using SilentMike.DietMenu.Core.Application.MealTypes.Commands;
 
 internal sealed class ImportFamilyLibraries
@@ -23,9 +24,21 @@ internal sealed class ImportFamilyLibraries
     {
         this.logger.LogInformation("Import family libraries");
 
+        await this.ImportIngredientTypes(familyId);
+
         await this.ImportMealTypes(familyId);
 
         this.logger.LogInformation("Imported family libraries");
+    }
+
+    private async Task ImportIngredientTypes(Guid familyId)
+    {
+        var command = new ImportIngredientTypes
+        {
+            FamilyId = familyId,
+        };
+
+        _ = await this.mediator.Send(command, CancellationToken.None);
     }
 
     private async Task ImportMealTypes(Guid familyId)
