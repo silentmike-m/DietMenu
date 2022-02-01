@@ -7,7 +7,7 @@ public sealed class IngredientTypeEntity
     public Guid Id { get; private set; }
 
     public Guid FamilyId { get; set; } = Guid.Empty;
-    public FamilyEntity? FamilyEntity { get; set; } = default;
+    public FamilyEntity FamilyEntity { get; set; } = null!;
     public string InternalName { get; set; } = string.Empty;
     public bool IsSystem { get; set; } = default;
     public string Name { get; set; } = string.Empty;

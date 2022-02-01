@@ -29,11 +29,6 @@ namespace SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
                     b.HasKey("Id");
 
                     b.ToTable("Families", "SilentMike");
@@ -147,7 +142,7 @@ namespace SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Migrations
             modelBuilder.Entity("SilentMike.DietMenu.Core.Domain.Entities.IngredientEntity", b =>
                 {
                     b.HasOne("SilentMike.DietMenu.Core.Domain.Entities.FamilyEntity", "FamilyEntity")
-                        .WithMany("Ingredients")
+                        .WithMany()
                         .HasForeignKey("FamilyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -166,7 +161,7 @@ namespace SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Migrations
             modelBuilder.Entity("SilentMike.DietMenu.Core.Domain.Entities.IngredientTypeEntity", b =>
                 {
                     b.HasOne("SilentMike.DietMenu.Core.Domain.Entities.FamilyEntity", "FamilyEntity")
-                        .WithMany("IngredientTypes")
+                        .WithMany()
                         .HasForeignKey("FamilyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -177,21 +172,12 @@ namespace SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Migrations
             modelBuilder.Entity("SilentMike.DietMenu.Core.Domain.Entities.MealTypeEntity", b =>
                 {
                     b.HasOne("SilentMike.DietMenu.Core.Domain.Entities.FamilyEntity", "FamilyEntity")
-                        .WithMany("MealTypes")
+                        .WithMany()
                         .HasForeignKey("FamilyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("FamilyEntity");
-                });
-
-            modelBuilder.Entity("SilentMike.DietMenu.Core.Domain.Entities.FamilyEntity", b =>
-                {
-                    b.Navigation("IngredientTypes");
-
-                    b.Navigation("Ingredients");
-
-                    b.Navigation("MealTypes");
                 });
 #pragma warning restore 612, 618
         }

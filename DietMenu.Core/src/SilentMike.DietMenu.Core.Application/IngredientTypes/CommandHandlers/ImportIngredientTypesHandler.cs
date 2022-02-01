@@ -1,17 +1,26 @@
 ﻿namespace SilentMike.DietMenu.Core.Application.IngredientTypes.CommandHandlers;
 
 using SilentMike.DietMenu.Core.Application.Common;
+using SilentMike.DietMenu.Core.Application.Exceptions.Families;
 using SilentMike.DietMenu.Core.Application.IngredientTypes.Commands;
 using SilentMike.DietMenu.Core.Domain.Entities;
 using SilentMike.DietMenu.Core.Domain.Repositories;
 
 internal sealed class ImportIngredientTypesHandler : IRequestHandler<ImportIngredientTypes>
 {
+    private readonly IFamilyRepository familyRepository;
     private readonly ILogger<ImportIngredientTypesHandler> logger;
-    private readonly IIngredientTypeRepository repository;
+    private readonly IIngredientTypeRepository typeRepository;
 
-    public ImportIngredientTypesHandler(ILogger<ImportIngredientTypesHandler> logger, IIngredientTypeRepository repository)
-        => (this.logger, this.repository) = (logger, repository);
+    public ImportIngredientTypesHandler(
+        IFamilyRepository familyRepository,
+        ILogger<ImportIngredientTypesHandler> logger,
+        IIngredientTypeRepository typesRepository)
+    {
+        this.familyRepository = familyRepository;
+        this.logger = logger;
+        this.typeRepository = typesRepository;
+    }
 
     public async Task<Unit> Handle(ImportIngredientTypes request, CancellationToken cancellationToken)
     {
@@ -20,6 +29,13 @@ internal sealed class ImportIngredientTypesHandler : IRequestHandler<ImportIngre
         );
 
         this.logger.LogInformation("Try to import ingredient types");
+
+        var family = await this.familyRepository.Get(request.FamilyId, cancellationToken);
+
+        if (family is null)
+        {
+            throw new FamilyNotFoundException(request.FamilyId);
+        }
 
         var ingredientTypes = new List<IngredientTypeEntity>();
 
@@ -31,7 +47,7 @@ internal sealed class ImportIngredientTypesHandler : IRequestHandler<ImportIngre
         Add(ingredientTypes, request.FamilyId, "MediumFatProtein", "Białko średniotłuszczowe");
         Add(ingredientTypes, request.FamilyId, "Other", "Inne");
 
-        await this.repository.Save(ingredientTypes, cancellationToken);
+        await this.typeRepository.Save(ingredientTypes, cancellationToken);
 
         return await Task.FromResult(Unit.Value);
     }

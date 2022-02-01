@@ -8,7 +8,7 @@ public sealed class MealTypeEntity
 
     public Guid Id { get; private set; }
     public Guid FamilyId { get; set; } = Guid.Empty;
-    public FamilyEntity? FamilyEntity { get; set; } = default;
+    public FamilyEntity FamilyEntity { get; set; } = null!;
     public string InternalName { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public int Order { get; set; } = default;

@@ -17,8 +17,7 @@ namespace SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Migrations
                 schema: "SilentMike",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {

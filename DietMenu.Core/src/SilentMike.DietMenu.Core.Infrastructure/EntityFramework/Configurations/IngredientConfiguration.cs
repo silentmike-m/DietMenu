@@ -18,6 +18,11 @@ internal sealed class IngredientConfiguration : IEntityTypeConfiguration<Ingredi
             .HasIndex(i => new { i.FamilyId, i.Name })
             .IsUnique();
 
+        builder.HasOne(i => i.FamilyEntity)
+            .WithMany()
+            .IsRequired()
+            .HasForeignKey("FamilyId");
+
         builder.HasOne(i => i.Type)
             .WithMany()
             .HasForeignKey(i => i.TypeId)

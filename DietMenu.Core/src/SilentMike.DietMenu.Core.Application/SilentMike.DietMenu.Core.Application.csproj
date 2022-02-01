@@ -26,4 +26,8 @@
    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="IngredientTypes\Events\" />
+  </ItemGroup>
+
 </Project>

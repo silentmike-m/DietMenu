@@ -12,7 +12,7 @@ using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Data;
 namespace SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Migrations
 {
     [DbContext(typeof(DietMenuDbContext))]
-    [Migration("20220201095914_Init")]
+    [Migration("20220201163615_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -30,11 +30,6 @@ namespace SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
@@ -149,7 +144,7 @@ namespace SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Migrations
             modelBuilder.Entity("SilentMike.DietMenu.Core.Domain.Entities.IngredientEntity", b =>
                 {
                     b.HasOne("SilentMike.DietMenu.Core.Domain.Entities.FamilyEntity", "FamilyEntity")
-                        .WithMany("Ingredients")
+                        .WithMany()
                         .HasForeignKey("FamilyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -168,7 +163,7 @@ namespace SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Migrations
             modelBuilder.Entity("SilentMike.DietMenu.Core.Domain.Entities.IngredientTypeEntity", b =>
                 {
                     b.HasOne("SilentMike.DietMenu.Core.Domain.Entities.FamilyEntity", "FamilyEntity")
-                        .WithMany("IngredientTypes")
+                        .WithMany()
                         .HasForeignKey("FamilyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -179,21 +174,12 @@ namespace SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Migrations
             modelBuilder.Entity("SilentMike.DietMenu.Core.Domain.Entities.MealTypeEntity", b =>
                 {
                     b.HasOne("SilentMike.DietMenu.Core.Domain.Entities.FamilyEntity", "FamilyEntity")
-                        .WithMany("MealTypes")
+                        .WithMany()
                         .HasForeignKey("FamilyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("FamilyEntity");
-                });
-
-            modelBuilder.Entity("SilentMike.DietMenu.Core.Domain.Entities.FamilyEntity", b =>
-                {
-                    b.Navigation("IngredientTypes");
-
-                    b.Navigation("Ingredients");
-
-                    b.Navigation("MealTypes");
                 });
 #pragma warning restore 612, 618
         }
