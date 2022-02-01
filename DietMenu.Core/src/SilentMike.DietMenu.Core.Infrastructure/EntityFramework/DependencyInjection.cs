@@ -27,6 +27,7 @@ internal static class DependencyInjection
         services.AddScoped<IMealTypeRepository, MealTypeRepository>();
         services.AddScoped<IFamilyRepository, FamilyRepository>();
 
+        services.AddScoped<IIngredientTypeReadService, IngredientTypeReadService>();
         services.AddScoped<IMealTypeReadService, MealTypeReadService>();
     }
 

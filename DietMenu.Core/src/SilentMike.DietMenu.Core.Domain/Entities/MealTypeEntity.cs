@@ -2,8 +2,6 @@
 
 public sealed class MealTypeEntity
 {
-    public MealTypeEntity() { }
-
     public MealTypeEntity(Guid id) => this.Id = id;
 
     public Guid Id { get; private set; }

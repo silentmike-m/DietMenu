@@ -4,7 +4,7 @@ using global::AutoMapper;
 using SourceMealType = SilentMike.DietMenu.Core.Domain.Entities.MealTypeEntity;
 using TargetMealType = SilentMike.DietMenu.Core.Application.MealTypes.ViewModels.MealType;
 
-public sealed class MealTypeProfile : Profile
+internal sealed class MealTypeProfile : Profile
 {
     public MealTypeProfile()
     {

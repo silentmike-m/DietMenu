@@ -27,7 +27,6 @@ public sealed class UpsertIngredientTypesHandlerTests
     private readonly Guid familyId = Guid.NewGuid();
     private readonly Guid mealTypeId = Guid.NewGuid();
     private readonly string mealTypeName = "meat";
-    private readonly int mealTypeOrder = 2;
 
     private readonly FamilyRepository familyRepository;
     private readonly NullLogger<UpsertIngredientTypesHandler> logger;
