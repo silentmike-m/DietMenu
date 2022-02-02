@@ -58,7 +58,7 @@ internal sealed class MealTypeReadService : IMealTypeReadService
         {
             "name" => entity => entity.Name,
             "order" => entity => entity.Order,
-            _ => entity => entity.Id,
+            _ => entity => entity.Order,
         };
     }
 }

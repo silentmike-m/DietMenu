@@ -33,10 +33,7 @@ internal sealed class CreateFamilyHandler : IRequestHandler<CreateFamily>
             throw new FamilyAlreadyExistsException(request.Id);
         }
 
-        family = new FamilyEntity(request.Id)
-        {
-            Name = request.Name,
-        };
+        family = new FamilyEntity(request.Id);
 
         await this.repository.Save(family, cancellationToken);
 

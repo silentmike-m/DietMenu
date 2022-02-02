@@ -12,7 +12,7 @@ using SilentMike.DietMenu.Core.Application.MealTypes.ViewModels.ValueModels;
 public sealed class UpsertMealTypesValidatorTests
 {
     [TestMethod]
-    public void ShouldPassValidationWhenAllParametersAreEmpty()
+    public void ShouldPassValidationWhenAllParametersAreNull()
     {
         //GIVEN
         var command = new UpsertMealTypes

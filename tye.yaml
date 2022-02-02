@@ -31,28 +31,28 @@ services:
     bindings:
     - protocol: https 
       port: 30000   
-  - name: api
-    project: DietMenu.Core/src/SilentMike.DietMenu.Core.WebApi/SilentMike.DietMenu.Core.WebApi.csproj
-    env:
-      - name: CONFIG_CONNECTIONSTRINGS__DEFAULTCONNECTION
-        value: Server=localhost,1433;Database=silentmike_dietmenu;User Id=sa;Password=P@ssw0rd;MultipleActiveResultSets=true
-      - name: CONFIG_CONNECTIONSTRINGS__HANGFIRECONNECTION
-        value: Server=localhost,1433;Database=silentmike_hangfire;User Id=sa;Password=P@ssw0rd;MultipleActiveResultSets=true;  
-      - name: CONFIG_IDENTITYSERVER4__AUDIENCE
-        value: https://localhost:8080/api
-      - name: CONFIG_IDENTITYSERVER4__AUTHORITY
-        value: https://localhost:30000
-      - name: CONFIG_RABBITMQ__HOSTNAME
-        value: localhost   
-      - name: CONFIG_RABBITMQ__SERVER
-        value: rabbitmq://localhost
-      - name: CONFIG_RABBITMQ__USER
-        value: user
-      - name: CONFIG_RABBITMQ__PASSWORD
-        value: P@ssw0rd       
-    bindings:
-    - port: 30002
-      protocol: http
+  # - name: api
+    # project: DietMenu.Core/src/SilentMike.DietMenu.Core.WebApi/SilentMike.DietMenu.Core.WebApi.csproj
+    # env:
+      # - name: CONFIG_CONNECTIONSTRINGS__DEFAULTCONNECTION
+        # value: Server=localhost,1433;Database=silentmike_dietmenu;User Id=sa;Password=P@ssw0rd;MultipleActiveResultSets=true
+      # - name: CONFIG_CONNECTIONSTRINGS__HANGFIRECONNECTION
+        # value: Server=localhost,1433;Database=silentmike_hangfire;User Id=sa;Password=P@ssw0rd;MultipleActiveResultSets=true;  
+      # - name: CONFIG_IDENTITYSERVER4__AUDIENCE
+        # value: https://localhost:8080/api
+      # - name: CONFIG_IDENTITYSERVER4__AUTHORITY
+        # value: https://localhost:30000
+      # - name: CONFIG_RABBITMQ__HOSTNAME
+        # value: localhost   
+      # - name: CONFIG_RABBITMQ__SERVER
+        # value: rabbitmq://localhost
+      # - name: CONFIG_RABBITMQ__USER
+        # value: user
+      # - name: CONFIG_RABBITMQ__PASSWORD
+        # value: P@ssw0rd       
+    # bindings:
+    # - port: 30002
+      # protocol: http
   - name: mailing
     project: DietMenu.Mailing/src/SilentMike.DietMenu.Mailing.WebApi/SilentMike.DietMenu.Mailing.WebApi.csproj
     env:

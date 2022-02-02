@@ -12,6 +12,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using SilentMike.DietMenu.Core.Application.Common.Constants;
 using SilentMike.DietMenu.Core.Application.Exceptions;
+using SilentMike.DietMenu.Core.Application.Exceptions.Families;
 using SilentMike.DietMenu.Core.Application.MealTypes.CommandHandlers;
 using SilentMike.DietMenu.Core.Application.MealTypes.Commands;
 using SilentMike.DietMenu.Core.Application.MealTypes.Events;
@@ -27,15 +28,17 @@ public sealed class UpsertMealTypesHandlerTests
     private readonly string mealTypeName = "meat";
     private readonly int mealTypeOrder = 2;
 
+    private readonly FamilyRepository familyRepository;
     private readonly NullLogger<UpsertMealTypesHandler> logger;
     private readonly Mock<IMediator> mediator;
-    private readonly MealTypeRepository repository;
+    private readonly MealTypeRepository mealTypeRepository;
 
     public UpsertMealTypesHandlerTests()
     {
+        this.familyRepository = new FamilyRepository();
         this.logger = new NullLogger<UpsertMealTypesHandler>();
         this.mediator = new Mock<IMediator>();
-        this.repository = new MealTypeRepository();
+        this.mealTypeRepository = new MealTypeRepository();
 
         var mealType = new MealTypeEntity(this.mealTypeId)
         {
@@ -44,7 +47,34 @@ public sealed class UpsertMealTypesHandlerTests
             Order = this.mealTypeOrder,
         };
 
-        this.repository.Save(mealType);
+        this.mealTypeRepository.Save(mealType);
+
+        var family = new FamilyEntity(this.familyId);
+
+        this.familyRepository.Save(family);
+    }
+
+    [TestMethod]
+    public async Task ShouldThrowFamilyNotFoundWhenInvalidId()
+    {
+        //GIVEN
+        var command = new UpsertMealTypes
+        {
+            FamilyId = Guid.NewGuid(),
+        };
+
+        var commandHandler = new UpsertMealTypesHandler(this.familyRepository, this.logger, this.mediator.Object, this.mealTypeRepository);
+
+        //WHEN
+        Func<Task<Unit>> action = async () => await commandHandler.Handle(command, CancellationToken.None);
+
+        //THEN
+        await action.Should()
+                .ThrowAsync<FamilyNotFoundException>()
+                .Where(i =>
+                    i.Code == ErrorCodes.FAMILY_NOT_FOUND
+                    && i.Id == command.FamilyId)
+            ;
     }
 
     [TestMethod]
@@ -65,7 +95,7 @@ public sealed class UpsertMealTypesHandlerTests
             },
         };
 
-        var commandHandler = new UpsertMealTypesHandler(this.logger, this.mediator.Object, this.repository);
+        var commandHandler = new UpsertMealTypesHandler(this.familyRepository, this.logger, this.mediator.Object, this.mealTypeRepository);
 
         //WHEN
         Func<Task<Unit>> action = async () => await commandHandler.Handle(command, CancellationToken.None);
@@ -75,9 +105,9 @@ public sealed class UpsertMealTypesHandlerTests
                 .ThrowAsync<ValidationException>()
                 .Where(i =>
                     i.Errors.Count == 1
-                    && i.Errors.ContainsKey(ValidationErrorCodes.UPSERT_MEAL_TYPES_EMPTY_NAME_MESSAGE)
-                    && i.Errors[ValidationErrorCodes.UPSERT_MEAL_TYPES_EMPTY_NAME_MESSAGE]
-                        .Contains(ValidationErrorCodes.UPSERT_MEAL_TYPES_EMPTY_NAME))
+                    && i.Errors.ContainsKey(ValidationErrorCodes.UPSERT_MEAL_TYPES_EMPTY_NAME)
+                    && i.Errors[ValidationErrorCodes.UPSERT_MEAL_TYPES_EMPTY_NAME]
+                        .Contains(ValidationErrorCodes.UPSERT_MEAL_TYPES_EMPTY_NAME_MESSAGE))
             ;
     }
 
@@ -99,7 +129,7 @@ public sealed class UpsertMealTypesHandlerTests
             },
         };
 
-        var commandHandler = new UpsertMealTypesHandler(this.logger, this.mediator.Object, this.repository);
+        var commandHandler = new UpsertMealTypesHandler(this.familyRepository, this.logger, this.mediator.Object, this.mealTypeRepository);
 
         //WHEN
         Func<Task<Unit>> action = async () => await commandHandler.Handle(command, CancellationToken.None);
@@ -109,9 +139,9 @@ public sealed class UpsertMealTypesHandlerTests
                 .ThrowAsync<ValidationException>()
                 .Where(i =>
                     i.Errors.Count == 1
-                    && i.Errors.ContainsKey(ValidationErrorCodes.UPSERT_MEAL_TYPES_EMPTY_NAME_MESSAGE)
-                    && i.Errors[ValidationErrorCodes.UPSERT_MEAL_TYPES_EMPTY_NAME_MESSAGE]
-                        .Contains(ValidationErrorCodes.UPSERT_MEAL_TYPES_EMPTY_NAME))
+                    && i.Errors.ContainsKey(ValidationErrorCodes.UPSERT_MEAL_TYPES_EMPTY_NAME)
+                    && i.Errors[ValidationErrorCodes.UPSERT_MEAL_TYPES_EMPTY_NAME]
+                        .Contains(ValidationErrorCodes.UPSERT_MEAL_TYPES_EMPTY_NAME_MESSAGE))
             ;
     }
 
@@ -133,7 +163,7 @@ public sealed class UpsertMealTypesHandlerTests
             },
         };
 
-        var commandHandler = new UpsertMealTypesHandler(this.logger, this.mediator.Object, this.repository);
+        var commandHandler = new UpsertMealTypesHandler(this.familyRepository, this.logger, this.mediator.Object, this.mealTypeRepository);
 
         //WHEN
         Func<Task<Unit>> action = async () => await commandHandler.Handle(command, CancellationToken.None);
@@ -143,9 +173,9 @@ public sealed class UpsertMealTypesHandlerTests
                 .ThrowAsync<ValidationException>()
                 .Where(i =>
                     i.Errors.Count == 1
-                    && i.Errors.ContainsKey(ValidationErrorCodes.UPSERT_MEAL_TYPES_INVALID_ORDER_MESSAGE)
-                    && i.Errors[ValidationErrorCodes.UPSERT_MEAL_TYPES_INVALID_ORDER_MESSAGE]
-                        .Contains(ValidationErrorCodes.UPSERT_MEAL_TYPES_INVALID_ORDER))
+                    && i.Errors.ContainsKey(ValidationErrorCodes.UPSERT_MEAL_TYPES_INVALID_ORDER)
+                    && i.Errors[ValidationErrorCodes.UPSERT_MEAL_TYPES_INVALID_ORDER]
+                        .Contains(ValidationErrorCodes.UPSERT_MEAL_TYPES_INVALID_ORDER_MESSAGE))
             ;
     }
 
@@ -167,7 +197,7 @@ public sealed class UpsertMealTypesHandlerTests
             },
         };
 
-        var commandHandler = new UpsertMealTypesHandler(this.logger, this.mediator.Object, this.repository);
+        var commandHandler = new UpsertMealTypesHandler(this.familyRepository, this.logger, this.mediator.Object, this.mealTypeRepository);
 
         //WHEN
         Func<Task<Unit>> action = async () => await commandHandler.Handle(command, CancellationToken.None);
@@ -177,9 +207,9 @@ public sealed class UpsertMealTypesHandlerTests
                 .ThrowAsync<ValidationException>()
                 .Where(i =>
                     i.Errors.Count == 1
-                    && i.Errors.ContainsKey(ValidationErrorCodes.UPSERT_MEAL_TYPES_INVALID_ORDER_MESSAGE)
-                    && i.Errors[ValidationErrorCodes.UPSERT_MEAL_TYPES_INVALID_ORDER_MESSAGE]
-                        .Contains(ValidationErrorCodes.UPSERT_MEAL_TYPES_INVALID_ORDER))
+                    && i.Errors.ContainsKey(ValidationErrorCodes.UPSERT_MEAL_TYPES_INVALID_ORDER)
+                    && i.Errors[ValidationErrorCodes.UPSERT_MEAL_TYPES_INVALID_ORDER]
+                        .Contains(ValidationErrorCodes.UPSERT_MEAL_TYPES_INVALID_ORDER_MESSAGE))
             ;
     }
 
@@ -203,7 +233,7 @@ public sealed class UpsertMealTypesHandlerTests
             },
         };
 
-        var commandHandler = new UpsertMealTypesHandler(this.logger, this.mediator.Object, this.repository);
+        var commandHandler = new UpsertMealTypesHandler(this.familyRepository, this.logger, this.mediator.Object, this.mealTypeRepository);
 
         //WHEN
         await commandHandler.Handle(command, CancellationToken.None);
@@ -211,7 +241,7 @@ public sealed class UpsertMealTypesHandlerTests
         //THEN
         this.mediator.Verify(i => i.Publish(It.IsAny<UpsertedMealTypes>(), It.IsAny<CancellationToken>()), Times.Once);
 
-        var mealType = await this.repository.Get(command.FamilyId, mealTypeToUpsert.Id);
+        var mealType = await this.mealTypeRepository.Get(mealTypeToUpsert.Id);
         mealType.Should()
             .NotBeNull()
             .And
@@ -224,7 +254,7 @@ public sealed class UpsertMealTypesHandlerTests
             .Be(command.FamilyId)
             ;
         mealType.InternalName.Should()
-            .NotBeEmpty()
+            .Be(mealTypeToUpsert.Id.ToString())
             ;
         mealType.Id.Should()
             .Be(mealTypeToUpsert.Id)
@@ -251,7 +281,7 @@ public sealed class UpsertMealTypesHandlerTests
             },
         };
 
-        var commandHandler = new UpsertMealTypesHandler(this.logger, this.mediator.Object, this.repository);
+        var commandHandler = new UpsertMealTypesHandler(this.familyRepository, this.logger, this.mediator.Object, this.mealTypeRepository);
 
         //WHEN
         await commandHandler.Handle(command, CancellationToken.None);
@@ -259,7 +289,7 @@ public sealed class UpsertMealTypesHandlerTests
         //THEN
         this.mediator.Verify(i => i.Publish(It.IsAny<UpsertedMealTypes>(), It.IsAny<CancellationToken>()), Times.Once);
 
-        var mealType = await this.repository.Get(command.FamilyId, mealTypeToUpsert.Id);
+        var mealType = await this.mealTypeRepository.Get(mealTypeToUpsert.Id);
         mealType.Should()
             .NotBeNull()
             .And

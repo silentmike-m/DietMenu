@@ -18,20 +18,16 @@ internal sealed class MealTypeRepository : IMealTypeRepository
         this.entities = entities;
     }
 
-    public Task<MealTypeEntity?> Get(Guid familyId, Guid mealTypeId, CancellationToken cancellationToken = default)
+    public Task<MealTypeEntity?> Get(Guid mealTypeId, CancellationToken cancellationToken = default)
     {
-        var mealType = this.entities.ContainsKey(mealTypeId)
+        var result = this.entities.ContainsKey(mealTypeId)
             ? this.entities[mealTypeId]
-            : null;
-
-        var result = mealType?.FamilyId == familyId
-            ? mealType
             : null;
 
         return Task.FromResult(result);
     }
 
-    public Task<IEnumerable<MealTypeEntity>> Get(Guid familyId, CancellationToken cancellationToken = default)
+    public Task<IEnumerable<MealTypeEntity>> GetByFamilyId(Guid familyId, CancellationToken cancellationToken = default)
     {
         var result = this.entities.Values.Where(i => i.FamilyId == familyId);
 

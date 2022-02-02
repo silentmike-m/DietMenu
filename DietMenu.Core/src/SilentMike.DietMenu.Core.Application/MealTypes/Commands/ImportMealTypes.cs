@@ -4,5 +4,5 @@ using System.Text.Json.Serialization;
 
 public sealed record ImportMealTypes : IRequest
 {
-    [JsonPropertyName("family_id")] public Guid FamilyId { get; set; } = Guid.Empty;
+    [JsonPropertyName("family_id")] public Guid FamilyId { get; init; } = Guid.Empty;
 }

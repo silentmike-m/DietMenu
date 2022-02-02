@@ -64,7 +64,6 @@ internal sealed class CreateUserHandler : IRequestHandler<CreateUser>
             var createdFamilyNotification = new CreatedFamily
             {
                 Id = family.Id,
-                Name = family.Name,
             };
 
             await this.mediator.Publish(createdFamilyNotification, cancellationToken);

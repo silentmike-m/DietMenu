@@ -10,17 +10,6 @@ internal sealed class FamilyConfiguration : IEntityTypeConfiguration<FamilyEntit
 {
     public void Configure(EntityTypeBuilder<FamilyEntity> builder)
     {
-        builder
-            .Property(i => i.Name)
-            .IsRequired()
-            .HasMaxLength(100);
 
-        builder
-            .HasMany(i => i.MealTypes)
-            .WithOne(i => i.FamilyEntity)
-            .IsRequired()
-            .HasForeignKey(i => i.FamilyId)
-            .OnDelete(DeleteBehavior.Cascade)
-            ;
     }
 }
