@@ -11,13 +11,13 @@ internal sealed class IngredientTypeRepository : IIngredientTypeRepository
 
     public IngredientTypeRepository(IDietMenuDbContext context) => (this.context) = (context);
 
-    public async Task<IngredientTypeEntity?> Get(Guid familyId, Guid ingredientTypeId, CancellationToken cancellationToken = default)
+    public async Task<IngredientTypeEntity?> Get(Guid ingredientTypeId, CancellationToken cancellationToken = default)
     {
         return await this.context.IngredientTypes
-            .SingleOrDefaultAsync(i => i.FamilyId == familyId && i.Id == ingredientTypeId, cancellationToken);
+            .SingleOrDefaultAsync(i => i.Id == ingredientTypeId, cancellationToken);
     }
 
-    public async Task<IEnumerable<IngredientTypeEntity>> Get(Guid familyId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<IngredientTypeEntity>> GetByFamilyId(Guid familyId, CancellationToken cancellationToken = default)
     {
         var result = this.context.IngredientTypes.Where(i => i.FamilyId == familyId);
 

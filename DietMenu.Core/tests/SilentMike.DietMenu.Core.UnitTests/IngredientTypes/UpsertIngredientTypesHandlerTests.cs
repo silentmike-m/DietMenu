@@ -17,7 +17,6 @@ using SilentMike.DietMenu.Core.Application.IngredientTypes.CommandHandlers;
 using SilentMike.DietMenu.Core.Application.IngredientTypes.Commands;
 using SilentMike.DietMenu.Core.Application.IngredientTypes.Events;
 using SilentMike.DietMenu.Core.Application.IngredientTypes.ViewModels.ValueModels;
-using SilentMike.DietMenu.Core.Application.MealTypes.ViewModels.ValueModels;
 using SilentMike.DietMenu.Core.Domain.Entities;
 using SilentMike.DietMenu.Core.UnitTests.Services;
 
@@ -25,8 +24,8 @@ using SilentMike.DietMenu.Core.UnitTests.Services;
 public sealed class UpsertIngredientTypesHandlerTests
 {
     private readonly Guid familyId = Guid.NewGuid();
-    private readonly Guid mealTypeId = Guid.NewGuid();
-    private readonly string mealTypeName = "meat";
+    private readonly Guid ingredientTypeId = Guid.NewGuid();
+    private readonly string ingredientTypeName = "meat";
 
     private readonly FamilyRepository familyRepository;
     private readonly NullLogger<UpsertIngredientTypesHandler> logger;
@@ -40,10 +39,10 @@ public sealed class UpsertIngredientTypesHandlerTests
         this.mediator = new Mock<IMediator>();
         this.typeRepository = new IngredientTypeRepository();
 
-        var type = new IngredientTypeEntity(this.mealTypeId)
+        var type = new IngredientTypeEntity(this.ingredientTypeId)
         {
             FamilyId = familyId,
-            Name = this.mealTypeName,
+            Name = this.ingredientTypeName,
         };
 
         this.typeRepository.Save(type);
@@ -143,10 +142,10 @@ public sealed class UpsertIngredientTypesHandlerTests
     }
 
     [TestMethod]
-    public async Task ShouldCreateMealType()
+    public async Task ShouldCreateIngredientType()
     {
         //GIVEN
-        var mealTypeToUpsert = new IngredientTypeToUpsert
+        var ingredientTypeToUpsert = new IngredientTypeToUpsert
         {
             Id = Guid.NewGuid(),
             Name = "milk",
@@ -157,7 +156,7 @@ public sealed class UpsertIngredientTypesHandlerTests
             FamilyId = this.familyId,
             IngredientTypes = new List<IngredientTypeToUpsert>
             {
-                mealTypeToUpsert,
+                ingredientTypeToUpsert,
             },
         };
 
@@ -169,12 +168,12 @@ public sealed class UpsertIngredientTypesHandlerTests
         //THEN
         this.mediator.Verify(i => i.Publish(It.IsAny<UpsertedIngredientTypes>(), It.IsAny<CancellationToken>()), Times.Once);
 
-        var type = await this.typeRepository.Get(command.FamilyId, mealTypeToUpsert.Id);
+        var type = await this.typeRepository.Get(ingredientTypeToUpsert.Id);
         type.Should()
             .NotBeNull()
             .And
-            .BeEquivalentTo(mealTypeToUpsert, opt => opt
-                .ComparingByMembers<MealTypeToUpsert>()
+            .BeEquivalentTo(ingredientTypeToUpsert, opt => opt
+                .ComparingByMembers<IngredientTypeToUpsert>()
                 .Excluding(i => i.Id))
             ;
 
@@ -182,20 +181,23 @@ public sealed class UpsertIngredientTypesHandlerTests
             .Be(command.FamilyId)
             ;
         type.InternalName.Should()
-            .NotBeEmpty()
+            .Be(ingredientTypeToUpsert.Id.ToString())
+            ;
+        type.IsSystem.Should()
+            .BeFalse()
             ;
         type.Id.Should()
-            .Be(mealTypeToUpsert.Id)
+            .Be(ingredientTypeToUpsert.Id)
             ;
     }
 
     [TestMethod]
-    public async Task ShouldUpdateMealType()
+    public async Task ShouldUpdateIngredientType()
     {
         //GIVEN
-        var mealTypeToUpsert = new IngredientTypeToUpsert
+        var ingredientTypeToUpsert = new IngredientTypeToUpsert
         {
-            Id = this.mealTypeId,
+            Id = this.ingredientTypeId,
             Name = "milk",
         };
 
@@ -204,7 +206,7 @@ public sealed class UpsertIngredientTypesHandlerTests
             FamilyId = this.familyId,
             IngredientTypes = new List<IngredientTypeToUpsert>
             {
-                mealTypeToUpsert,
+                ingredientTypeToUpsert,
             },
         };
 
@@ -216,12 +218,12 @@ public sealed class UpsertIngredientTypesHandlerTests
         //THEN
         this.mediator.Verify(i => i.Publish(It.IsAny<UpsertedIngredientTypes>(), It.IsAny<CancellationToken>()), Times.Once);
 
-        var type = await this.typeRepository.Get(command.FamilyId, mealTypeToUpsert.Id);
+        var type = await this.typeRepository.Get(ingredientTypeToUpsert.Id);
         type.Should()
             .NotBeNull()
             .And
-            .BeEquivalentTo(mealTypeToUpsert, opt => opt
-                .ComparingByMembers<MealTypeToUpsert>()
+            .BeEquivalentTo(ingredientTypeToUpsert, opt => opt
+                .ComparingByMembers<IngredientTypeToUpsert>()
                 .Excluding(i => i.Id))
             ;
 

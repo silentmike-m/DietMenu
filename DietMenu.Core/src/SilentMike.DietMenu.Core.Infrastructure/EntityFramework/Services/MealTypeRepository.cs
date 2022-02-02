@@ -11,13 +11,13 @@ internal sealed class MealTypeRepository : IMealTypeRepository
 
     public MealTypeRepository(IDietMenuDbContext context) => (this.context) = (context);
 
-    public async Task<MealTypeEntity?> Get(Guid familyId, Guid mealTypeId, CancellationToken cancellationToken = default)
+    public async Task<MealTypeEntity?> Get(Guid mealTypeId, CancellationToken cancellationToken = default)
     {
         return await this.context.MealTypes
-            .SingleOrDefaultAsync(i => i.FamilyId == familyId && i.Id == mealTypeId, cancellationToken);
+            .SingleOrDefaultAsync(i => i.Id == mealTypeId, cancellationToken);
     }
 
-    public async Task<IEnumerable<MealTypeEntity>> Get(Guid familyId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<MealTypeEntity>> GetByFamilyId(Guid familyId, CancellationToken cancellationToken = default)
     {
         var result = this.context.MealTypes.Where(i => i.FamilyId == familyId);
 

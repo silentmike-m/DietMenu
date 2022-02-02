@@ -48,7 +48,7 @@ internal sealed class UpsertMealTypesHandler : IRequestHandler<UpsertMealTypes>
 
         foreach (var mealTypeToUpsert in request.MealTypes)
         {
-            var mealType = await this.mealTypeRepository.Get(request.FamilyId, mealTypeToUpsert.Id, cancellationToken);
+            var mealType = await this.mealTypeRepository.Get(mealTypeToUpsert.Id, cancellationToken);
 
             if (mealType is null)
             {
@@ -86,8 +86,8 @@ internal sealed class UpsertMealTypesHandler : IRequestHandler<UpsertMealTypes>
         {
             FamilyId = familyId,
             InternalName = mealTypeToUpsert.Id.ToString(),
-            Name = mealTypeToUpsert.Name ?? string.Empty,
-            Order = mealTypeToUpsert.Order ?? 1,
+            Name = mealTypeToUpsert.Name!,
+            Order = mealTypeToUpsert.Order!.Value,
         };
 
         await this.mealTypeRepository.Save(mealType, cancellationToken);

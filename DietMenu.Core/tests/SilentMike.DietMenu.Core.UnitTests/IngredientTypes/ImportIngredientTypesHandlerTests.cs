@@ -54,7 +54,7 @@ public sealed class ImportIngredientTypesHandlerTests
     }
 
     [TestMethod]
-    public async Task ShouldImportMealTypes()
+    public async Task ShouldImportIngredientTypes()
     {
         //GIVEN
         var command = new ImportIngredientTypes
@@ -68,7 +68,7 @@ public sealed class ImportIngredientTypesHandlerTests
         await commandHandler.Handle(command, CancellationToken.None);
 
         //THEN
-        var types = await this.typeRepository.Get(command.FamilyId, CancellationToken.None);
+        var types = await this.typeRepository.GetByFamilyId(command.FamilyId, CancellationToken.None);
         types.Should()
             .HaveCount(7)
             .And

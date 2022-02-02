@@ -68,7 +68,7 @@ public sealed class ImportMealTypesHandlerTests
         await commandHandler.Handle(command, CancellationToken.None);
 
         //THEN
-        var mealTypes = await this.mealTypeRepository.Get(command.FamilyId, CancellationToken.None);
+        var mealTypes = await this.mealTypeRepository.GetByFamilyId(command.FamilyId, CancellationToken.None);
         mealTypes.Should()
             .HaveCount(6)
             .And

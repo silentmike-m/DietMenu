@@ -6,8 +6,8 @@ using SilentMike.DietMenu.Core.Application.IngredientTypes.ViewModels.ValueModel
 
 public sealed record UpsertIngredientTypes : IRequest, IAuthRequest
 {
-    [JsonPropertyName("meal_types")]
-    public IReadOnlyList<IngredientTypeToUpsert> IngredientTypes { get; set; } =
+    [JsonPropertyName("ingredient_types")]
+    public IReadOnlyList<IngredientTypeToUpsert> IngredientTypes { get; init; } =
         new List<IngredientTypeToUpsert>().AsReadOnly();
     [JsonIgnore] public Guid FamilyId { get; set; } = Guid.Empty;
     [JsonIgnore] public Guid UserId { get; set; } = Guid.Empty;

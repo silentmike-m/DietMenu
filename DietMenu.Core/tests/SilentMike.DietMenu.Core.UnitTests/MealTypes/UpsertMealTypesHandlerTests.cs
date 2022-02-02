@@ -241,7 +241,7 @@ public sealed class UpsertMealTypesHandlerTests
         //THEN
         this.mediator.Verify(i => i.Publish(It.IsAny<UpsertedMealTypes>(), It.IsAny<CancellationToken>()), Times.Once);
 
-        var mealType = await this.mealTypeRepository.Get(command.FamilyId, mealTypeToUpsert.Id);
+        var mealType = await this.mealTypeRepository.Get(mealTypeToUpsert.Id);
         mealType.Should()
             .NotBeNull()
             .And
@@ -254,7 +254,7 @@ public sealed class UpsertMealTypesHandlerTests
             .Be(command.FamilyId)
             ;
         mealType.InternalName.Should()
-            .NotBeEmpty()
+            .Be(mealTypeToUpsert.Id.ToString())
             ;
         mealType.Id.Should()
             .Be(mealTypeToUpsert.Id)
@@ -289,7 +289,7 @@ public sealed class UpsertMealTypesHandlerTests
         //THEN
         this.mediator.Verify(i => i.Publish(It.IsAny<UpsertedMealTypes>(), It.IsAny<CancellationToken>()), Times.Once);
 
-        var mealType = await this.mealTypeRepository.Get(command.FamilyId, mealTypeToUpsert.Id);
+        var mealType = await this.mealTypeRepository.Get(mealTypeToUpsert.Id);
         mealType.Should()
             .NotBeNull()
             .And

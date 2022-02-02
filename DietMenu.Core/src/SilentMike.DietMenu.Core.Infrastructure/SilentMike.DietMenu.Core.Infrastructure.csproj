@@ -52,9 +52,4 @@
 	<InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="IngredientTypes\EventHandlers\" />
-    <Folder Include="IngredientTypes\QueryHandlers\" />
-  </ItemGroup>
-
 </Project>

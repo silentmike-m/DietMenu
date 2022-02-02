@@ -3,7 +3,7 @@
 using FluentValidation;
 using SilentMike.DietMenu.Core.Application.IngredientTypes.Commands;
 
-public sealed class UpsertIngredientTypesValidator : AbstractValidator<UpsertIngredientTypes>
+internal sealed class UpsertIngredientTypesValidator : AbstractValidator<UpsertIngredientTypes>
 {
     public UpsertIngredientTypesValidator()
     {

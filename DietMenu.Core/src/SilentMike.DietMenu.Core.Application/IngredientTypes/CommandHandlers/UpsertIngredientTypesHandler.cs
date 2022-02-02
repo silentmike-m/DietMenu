@@ -49,7 +49,7 @@ internal sealed class UpsertIngredientTypesHandler : IRequestHandler<UpsertIngre
 
         foreach (var ingredientTypeToUpsert in request.IngredientTypes)
         {
-            var ingredientType = await this.typeRepository.Get(request.FamilyId, ingredientTypeToUpsert.Id, cancellationToken);
+            var ingredientType = await this.typeRepository.Get(ingredientTypeToUpsert.Id, cancellationToken);
 
             if (ingredientType is null)
             {
@@ -79,6 +79,8 @@ internal sealed class UpsertIngredientTypesHandler : IRequestHandler<UpsertIngre
 
     private async Task Create(Guid requestFamilyId, IngredientTypeToUpsert ingredientTypeToUpsert, CancellationToken cancellationToken)
     {
+        this.logger.LogInformation("Try to create ingredient type with id {IngredientTypeId}", ingredientTypeToUpsert.Id);
+
         ValidateNewType(ingredientTypeToUpsert);
 
         var ingredientType = new IngredientTypeEntity(ingredientTypeToUpsert.Id)
@@ -86,7 +88,7 @@ internal sealed class UpsertIngredientTypesHandler : IRequestHandler<UpsertIngre
             FamilyId = requestFamilyId,
             InternalName = ingredientTypeToUpsert.Id.ToString(),
             IsSystem = false,
-            Name = ingredientTypeToUpsert.Name ?? string.Empty,
+            Name = ingredientTypeToUpsert.Name!,
         };
 
         await this.typeRepository.Save(ingredientType, cancellationToken);
@@ -97,6 +99,8 @@ internal sealed class UpsertIngredientTypesHandler : IRequestHandler<UpsertIngre
         IngredientTypeToUpsert ingredientTypeToUpsert,
         CancellationToken cancellationToken)
     {
+        this.logger.LogInformation("Try to update ingredient type with id {IngredientTypeId}", ingredientTypeToUpsert.Id);
+
         ingredientType.Name = ingredientTypeToUpsert.Name ?? ingredientType.Name;
 
         await this.typeRepository.Save(ingredientType, cancellationToken);

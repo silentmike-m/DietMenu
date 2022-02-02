@@ -18,20 +18,16 @@ internal sealed class IngredientTypeRepository : IIngredientTypeRepository
         this.entities = entities;
     }
 
-    public Task<IngredientTypeEntity?> Get(Guid familyId, Guid ingredientTypeId, CancellationToken cancellationToken = default)
+    public Task<IngredientTypeEntity?> Get(Guid ingredientTypeId, CancellationToken cancellationToken = default)
     {
-        var ingredientType = this.entities.ContainsKey(ingredientTypeId)
+        var result = this.entities.ContainsKey(ingredientTypeId)
             ? this.entities[ingredientTypeId]
-            : null;
-
-        var result = ingredientType?.FamilyId == familyId
-            ? ingredientType
             : null;
 
         return Task.FromResult(result);
     }
 
-    public Task<IEnumerable<IngredientTypeEntity>> Get(Guid familyId, CancellationToken cancellationToken = default)
+    public Task<IEnumerable<IngredientTypeEntity>> GetByFamilyId(Guid familyId, CancellationToken cancellationToken = default)
     {
         var result = this.entities.Values.Where(i => i.FamilyId == familyId);
 
@@ -54,9 +50,9 @@ internal sealed class IngredientTypeRepository : IIngredientTypeRepository
 
     public Task Save(IEnumerable<IngredientTypeEntity> ingredientTypes, CancellationToken cancellationToken = default)
     {
-        foreach (var mealType in ingredientTypes)
+        foreach (var type in ingredientTypes)
         {
-            this.Save(mealType, cancellationToken);
+            this.Save(type, cancellationToken);
         }
 
         return Task.CompletedTask;

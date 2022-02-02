@@ -32,8 +32,10 @@
   </ItemGroup>
 
 
-  <ItemGroup>
-    <Folder Include="IngredientTypes\" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Update="Ingredients.xlsx">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 
 </Project>
