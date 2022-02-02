@@ -9,8 +9,10 @@ internal sealed class IngredientTypeProfile : Profile
     public IngredientTypeProfile()
     {
         this.CreateMap<SourceIngredientType, TargetIngredientType>()
-            .ForMember(target => target.Id, options => options.MapFrom(source => source.Id))
-            .ForMember(target => target.Name, options => options.MapFrom(source => source.Name))
+            .ForMember(target => target.Id,
+                opt => opt.MapFrom(source => source.Id))
+            .ForMember(target => target.Name,
+                opt => opt.MapFrom(source => source.Name))
             ;
     }
 }

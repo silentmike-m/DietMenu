@@ -1,33 +1,33 @@
 ﻿namespace SilentMike.DietMenu.Core.UnitTests.EntityFramework;
 
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using SilentMike.DietMenu.Core.Application.Common;
 using SilentMike.DietMenu.Core.Application.IngredientTypes.ViewModels;
 using SilentMike.DietMenu.Core.Domain.Entities;
 using SilentMike.DietMenu.Core.Infrastructure.AutoMapper;
-using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Data;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Services;
-using SilentMike.DietMenu.Core.UnitTests.Services.DbSetMoq;
+using SilentMike.DietMenu.Core.UnitTests.Services;
 
 [TestClass]
-public sealed class IngredientTypeReadServiceTests
+public sealed class IngredientTypeReadServiceTests : IDisposable
 {
     private readonly Guid familyId = Guid.NewGuid();
     private readonly IngredientTypeEntity firstType;
     private readonly IngredientTypeEntity secondType;
 
+    private readonly DietMenuDbContextFactory factory;
     private readonly IngredientTypeReadService service;
 
     public IngredientTypeReadServiceTests()
     {
         var config = new MapperConfiguration(cfg => cfg.AddProfile<IngredientTypeProfile>());
         var mapper = config.CreateMapper();
+
+        var family = new FamilyEntity(this.familyId);
 
         this.firstType = new(Guid.NewGuid())
         {
@@ -42,16 +42,9 @@ public sealed class IngredientTypeReadServiceTests
             Name = "test_name_2",
         };
 
-        var types = new List<IngredientTypeEntity>
-        {
-            this.firstType,
-            this.secondType,
-        };
+        this.factory = new DietMenuDbContextFactory(family, this.firstType, this.secondType);
 
-        var context = new Mock<IDietMenuDbContext>();
-        context.Setup(i => i.IngredientTypes).ReturnsDbSet(types);
-
-        this.service = new IngredientTypeReadService(context.Object, mapper);
+        this.service = new IngredientTypeReadService(this.factory.Context, mapper);
     }
 
     [TestMethod]
@@ -226,5 +219,10 @@ public sealed class IngredientTypeReadServiceTests
                 Id = this.secondType.Id,
                 Name = this.secondType.Name,
             });
+    }
+
+    public void Dispose()
+    {
+        this.factory.Dispose();
     }
 }

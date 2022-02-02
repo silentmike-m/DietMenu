@@ -1,33 +1,33 @@
 ﻿namespace SilentMike.DietMenu.Core.UnitTests.EntityFramework;
 
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using SilentMike.DietMenu.Core.Application.Common;
 using SilentMike.DietMenu.Core.Application.MealTypes.ViewModels;
 using SilentMike.DietMenu.Core.Domain.Entities;
 using SilentMike.DietMenu.Core.Infrastructure.AutoMapper;
-using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Data;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Services;
-using SilentMike.DietMenu.Core.UnitTests.Services.DbSetMoq;
+using SilentMike.DietMenu.Core.UnitTests.Services;
 
 [TestClass]
-public sealed class MealTypeReadServiceTests
+public sealed class MealTypeReadServiceTests : IDisposable
 {
     private readonly Guid familyId = Guid.NewGuid();
     private readonly MealTypeEntity firstMealType;
     private readonly MealTypeEntity secondMealType;
 
+    private readonly DietMenuDbContextFactory factory;
     private readonly MealTypeReadService service;
 
     public MealTypeReadServiceTests()
     {
         var config = new MapperConfiguration(cfg => cfg.AddProfile<MealTypeProfile>());
         var mapper = config.CreateMapper();
+
+        var family = new FamilyEntity(this.familyId);
 
         this.firstMealType = new(Guid.NewGuid())
         {
@@ -44,16 +44,9 @@ public sealed class MealTypeReadServiceTests
             Order = 2,
         };
 
-        var mealTypes = new List<MealTypeEntity>
-        {
-            this.firstMealType,
-            this.secondMealType,
-        };
+        this.factory = new DietMenuDbContextFactory(family, this.firstMealType, this.secondMealType);
 
-        var context = new Mock<IDietMenuDbContext>();
-        context.Setup(i => i.MealTypes).ReturnsDbSet(mealTypes);
-
-        this.service = new MealTypeReadService(context.Object, mapper);
+        this.service = new MealTypeReadService(this.factory.Context, mapper);
     }
 
     [TestMethod]
@@ -237,5 +230,10 @@ public sealed class MealTypeReadServiceTests
                 Name = this.secondMealType.Name,
                 Order = this.secondMealType.Order,
             });
+    }
+
+    public void Dispose()
+    {
+        this.factory.Dispose();
     }
 }

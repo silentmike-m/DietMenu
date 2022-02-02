@@ -21,7 +21,7 @@ internal sealed class GetIngredientTypesGridHandler : IRequestHandler<GetIngredi
             ("FamilyId", request.FamilyId)
         );
 
-        this.logger.LogInformation("Try to get meal types grid");
+        this.logger.LogInformation("Try to get ingredient types grid");
 
         var result = await this.service.GetIngredientTypesGrid(request.FamilyId, request.GridRequest);
 
