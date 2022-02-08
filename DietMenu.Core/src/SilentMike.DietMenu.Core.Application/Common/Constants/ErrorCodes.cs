@@ -2,6 +2,8 @@
 
 public static class ErrorCodes
 {
+    public static readonly string DELETE_SYSTEM_VALUE = "DELETE_SYSTEM_VALUE";
+
     public static readonly string FAMILY_ALREADY_EXISTS = "FAMILY_ALREADY_EXISTS";
     public static readonly string FAMILY_NOT_FOUND = "FAMILY_NOT_FOUND";
 

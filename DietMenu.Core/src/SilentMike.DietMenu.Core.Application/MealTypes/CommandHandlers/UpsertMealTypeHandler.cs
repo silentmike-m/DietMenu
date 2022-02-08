@@ -34,10 +34,11 @@ internal sealed class UpsertMealTypeHandler : IRequestHandler<UpsertMealType>
     {
         using var loggerScope = this.logger.BeginPropertyScope(
             ("FamilyId", request.FamilyId),
-            ("UserId", request.UserId)
+            ("UserId", request.UserId),
+            ("MealTypeId", request.MealType.Id)
         );
 
-        this.logger.LogInformation("Try to upsert meal types");
+        this.logger.LogInformation("Try to upsert meal type");
 
         var family = await this.familyRepository.Get(request.FamilyId, cancellationToken);
 
@@ -73,7 +74,7 @@ internal sealed class UpsertMealTypeHandler : IRequestHandler<UpsertMealType>
 
     private MealTypeEntity CreateMealType(Guid familyId, MealTypeToUpsert mealTypeToUpsert)
     {
-        this.logger.LogInformation("Try to create meal type with id {MealTypeId}", mealTypeToUpsert.Id);
+        this.logger.LogInformation("Try to create meal type");
 
         ValidateNewMealType(mealTypeToUpsert);
 
@@ -90,7 +91,7 @@ internal sealed class UpsertMealTypeHandler : IRequestHandler<UpsertMealType>
 
     private void UpdateMealType(MealTypeEntity mealType, MealTypeToUpsert mealTypeToUpsert)
     {
-        this.logger.LogInformation("Try to update meal type with id {MealTypeId}", mealTypeToUpsert.Id);
+        this.logger.LogInformation("Try to update meal type");
 
         mealType.Name = mealTypeToUpsert.Name ?? mealType.Name;
         mealType.Order = mealTypeToUpsert.Order ?? mealType.Order;

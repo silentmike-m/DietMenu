@@ -35,10 +35,11 @@ internal sealed class UpsertIngredientTypeHandler : IRequestHandler<UpsertIngred
     {
         using var loggerScope = this.logger.BeginPropertyScope(
             ("FamilyId", request.FamilyId),
-            ("UserId", request.UserId)
+            ("UserId", request.UserId),
+            ("IngredientTypeId", request.IngredientType.Id)
         );
 
-        this.logger.LogInformation("Try to upsert ingredient types");
+        this.logger.LogInformation("Try to upsert ingredient type");
 
         var family = await this.familyRepository.Get(request.FamilyId, cancellationToken);
 
@@ -74,7 +75,7 @@ internal sealed class UpsertIngredientTypeHandler : IRequestHandler<UpsertIngred
 
     private IngredientTypeEntity Create(Guid requestFamilyId, IngredientTypeToUpsert ingredientTypeToUpsert)
     {
-        this.logger.LogInformation("Try to create ingredient type with id {IngredientTypeId}", ingredientTypeToUpsert.Id);
+        this.logger.LogInformation("Try to create ingredient type");
 
         ValidateNewType(ingredientTypeToUpsert);
 
@@ -91,7 +92,7 @@ internal sealed class UpsertIngredientTypeHandler : IRequestHandler<UpsertIngred
 
     private void Update(IngredientTypeEntity ingredientType, IngredientTypeToUpsert ingredientTypeToUpsert)
     {
-        this.logger.LogInformation("Try to update ingredient type with id {IngredientTypeId}", ingredientTypeToUpsert.Id);
+        this.logger.LogInformation("Try to update ingredient type");
 
         ingredientType.Name = ingredientTypeToUpsert.Name ?? ingredientType.Name;
     }

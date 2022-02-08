@@ -39,10 +39,11 @@ internal sealed class UpsertIngredientHandler : IRequestHandler<UpsertIngredient
     {
         using var loggerScope = this.logger.BeginPropertyScope(
             ("FamilyId", request.FamilyId),
-            ("UserId", request.UserId)
+            ("UserId", request.UserId),
+            ("IngredientId", request.Ingredient.Id)
         );
 
-        this.logger.LogInformation("Try to upsert ingredients");
+        this.logger.LogInformation("Try to upsert ingredient");
 
         var family = await this.familyRepository.Get(request.FamilyId, cancellationToken);
 
@@ -78,7 +79,7 @@ internal sealed class UpsertIngredientHandler : IRequestHandler<UpsertIngredient
 
     private async Task<IngredientEntity> Create(Guid familyId, IngredientToUpsert ingredientToUpsert, CancellationToken cancellationToken)
     {
-        this.logger.LogInformation("Try to create ingredient with id {IngredientId}", ingredientToUpsert.Id);
+        this.logger.LogInformation("Try to create ingredient");
 
         await this.ValidateIngredientType(ingredientToUpsert.TypeId, cancellationToken);
 
@@ -100,7 +101,7 @@ internal sealed class UpsertIngredientHandler : IRequestHandler<UpsertIngredient
 
     private async Task Update(IngredientEntity ingredient, IngredientToUpsert ingredientToUpsert, CancellationToken cancellationToken)
     {
-        this.logger.LogInformation("Try to update ingredient with id {IngredientId}", ingredientToUpsert.Id);
+        this.logger.LogInformation("Try to update ingredient");
 
         await this.ValidateIngredientType(ingredientToUpsert.TypeId, cancellationToken);
 
