@@ -27,4 +27,9 @@ internal sealed class MealTypeRepository : IMealTypeRepository
     {
         await this.context.Save(mealTypes, cancellationToken);
     }
+
+    public async Task Save(MealTypeEntity mealType, CancellationToken cancellationToken = default)
+    {
+        await this.context.Save(mealType, cancellationToken);
+    }
 }
