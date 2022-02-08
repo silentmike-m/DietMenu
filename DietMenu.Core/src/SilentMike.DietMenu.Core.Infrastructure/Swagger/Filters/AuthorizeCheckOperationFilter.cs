@@ -1,9 +1,11 @@
 ﻿namespace SilentMike.DietMenu.Core.Infrastructure.Swagger.Filters;
 
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
+[ExcludeFromCodeCoverage]
 internal sealed class AuthorizeCheckOperationFilter : IOperationFilter
 {
     public void Apply(OpenApiOperation operation, OperationFilterContext context)

@@ -18,16 +18,19 @@ using SilentMike.DietMenu.Core.Application.MealTypes.Commands;
 using SilentMike.DietMenu.Core.Application.MealTypes.Events;
 using SilentMike.DietMenu.Core.Application.MealTypes.ViewModels.ValueModels;
 using SilentMike.DietMenu.Core.Domain.Entities;
+using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Services;
 using SilentMike.DietMenu.Core.UnitTests.Services;
+using FamilyRepository = SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Services.FamilyRepository;
 
 [TestClass]
-public sealed class UpsertMealTypesHandlerTests
+public sealed class UpsertMealTypesHandlerTests : IDisposable
 {
     private readonly Guid familyId = Guid.NewGuid();
     private readonly Guid mealTypeId = Guid.NewGuid();
     private readonly string mealTypeName = "meat";
     private readonly int mealTypeOrder = 2;
 
+    private readonly DietMenuDbContextFactory factory;
     private readonly FamilyRepository familyRepository;
     private readonly NullLogger<UpsertMealTypesHandler> logger;
     private readonly Mock<IMediator> mediator;
@@ -35,10 +38,7 @@ public sealed class UpsertMealTypesHandlerTests
 
     public UpsertMealTypesHandlerTests()
     {
-        this.familyRepository = new FamilyRepository();
-        this.logger = new NullLogger<UpsertMealTypesHandler>();
-        this.mediator = new Mock<IMediator>();
-        this.mealTypeRepository = new MealTypeRepository();
+        var family = new FamilyEntity(this.familyId);
 
         var mealType = new MealTypeEntity(this.mealTypeId)
         {
@@ -47,11 +47,11 @@ public sealed class UpsertMealTypesHandlerTests
             Order = this.mealTypeOrder,
         };
 
-        this.mealTypeRepository.Save(mealType);
-
-        var family = new FamilyEntity(this.familyId);
-
-        this.familyRepository.Save(family);
+        this.factory = new DietMenuDbContextFactory(family, mealType);
+        this.familyRepository = new FamilyRepository(this.factory.Context);
+        this.logger = new NullLogger<UpsertMealTypesHandler>();
+        this.mealTypeRepository = new MealTypeRepository(this.factory.Context);
+        this.mediator = new Mock<IMediator>();
     }
 
     [TestMethod]
@@ -301,5 +301,10 @@ public sealed class UpsertMealTypesHandlerTests
         mealType!.FamilyId.Should()
             .Be(command.FamilyId)
             ;
+    }
+
+    public void Dispose()
+    {
+        this.factory.Dispose();
     }
 }

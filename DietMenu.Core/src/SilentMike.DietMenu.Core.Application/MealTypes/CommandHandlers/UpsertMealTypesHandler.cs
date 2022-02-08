@@ -46,19 +46,20 @@ internal sealed class UpsertMealTypesHandler : IRequestHandler<UpsertMealTypes>
             throw new FamilyNotFoundException(request.FamilyId);
         }
 
+        var mealTypes = new List<MealTypeEntity>();
+
         foreach (var mealTypeToUpsert in request.MealTypes)
         {
             var mealType = await this.mealTypeRepository.Get(mealTypeToUpsert.Id, cancellationToken);
 
-            if (mealType is null)
-            {
-                await this.CreateMealType(request.FamilyId, mealTypeToUpsert, cancellationToken);
-            }
-            else
-            {
-                await this.UpdateMealType(mealType, mealTypeToUpsert, cancellationToken);
-            }
+            mealType = mealType is null
+                ? this.CreateMealType(request.FamilyId, mealTypeToUpsert)
+                : this.UpdateMealType(mealType, mealTypeToUpsert);
+
+            mealTypes.Add(mealType);
         }
+
+        await this.mealTypeRepository.Save(mealTypes, cancellationToken);
 
         var ids = request.MealTypes
             .Select(i => i.Id)
@@ -76,7 +77,7 @@ internal sealed class UpsertMealTypesHandler : IRequestHandler<UpsertMealTypes>
         return await Task.FromResult(Unit.Value);
     }
 
-    private async Task CreateMealType(Guid familyId, MealTypeToUpsert mealTypeToUpsert, CancellationToken cancellationToken)
+    private MealTypeEntity CreateMealType(Guid familyId, MealTypeToUpsert mealTypeToUpsert)
     {
         this.logger.LogInformation("Try to create meal type with id {MealTypeId}", mealTypeToUpsert.Id);
 
@@ -90,17 +91,17 @@ internal sealed class UpsertMealTypesHandler : IRequestHandler<UpsertMealTypes>
             Order = mealTypeToUpsert.Order!.Value,
         };
 
-        await this.mealTypeRepository.Save(mealType, cancellationToken);
+        return mealType;
     }
 
-    private async Task UpdateMealType(MealTypeEntity mealType, MealTypeToUpsert mealTypeToUpsert, CancellationToken cancellationToken)
+    private MealTypeEntity UpdateMealType(MealTypeEntity mealType, MealTypeToUpsert mealTypeToUpsert)
     {
         this.logger.LogInformation("Try to update meal type with id {MealTypeId}", mealTypeToUpsert.Id);
 
         mealType.Name = mealTypeToUpsert.Name ?? mealType.Name;
         mealType.Order = mealTypeToUpsert.Order ?? mealType.Order;
 
-        await this.mealTypeRepository.Save(mealType, cancellationToken);
+        return mealType;
     }
 
     private static void ValidateNewMealType(MealTypeToUpsert mealTypeToUpsert)

@@ -3,13 +3,12 @@
 using Microsoft.EntityFrameworkCore;
 using SilentMike.DietMenu.Core.Domain.Entities;
 using SilentMike.DietMenu.Core.Domain.Repositories;
-using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Data;
 
 internal sealed class FamilyRepository : IFamilyRepository
 {
-    private readonly IDietMenuDbContext context;
+    private readonly DietMenuDbContext context;
 
-    public FamilyRepository(IDietMenuDbContext context) => (this.context) = (context);
+    public FamilyRepository(DietMenuDbContext context) => (this.context) = (context);
 
     public async Task<FamilyEntity?> Get(Guid id, CancellationToken cancellationToken = default)
     {

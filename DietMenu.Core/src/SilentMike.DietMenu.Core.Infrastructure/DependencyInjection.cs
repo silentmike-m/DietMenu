@@ -9,7 +9,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework;
-using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Data;
 using SilentMike.DietMenu.Core.Infrastructure.Hangfire;
 using SilentMike.DietMenu.Core.Infrastructure.HealthChecks;
 using SilentMike.DietMenu.Core.Infrastructure.IdentityServer4;

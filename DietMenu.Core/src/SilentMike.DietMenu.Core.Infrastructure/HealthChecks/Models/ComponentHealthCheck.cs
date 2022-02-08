@@ -1,5 +1,8 @@
 ﻿namespace SilentMike.DietMenu.Core.Infrastructure.HealthChecks.Models;
 
+using System.Diagnostics.CodeAnalysis;
+
+[ExcludeFromCodeCoverage]
 internal sealed record ComponentHealthCheck
 {
     public string Component { get; init; } = string.Empty;

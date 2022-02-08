@@ -6,16 +6,15 @@ using Microsoft.EntityFrameworkCore;
 using SilentMike.DietMenu.Core.Application.Common;
 using SilentMike.DietMenu.Core.Application.Ingredients.ViewModels;
 using SilentMike.DietMenu.Core.Domain.Entities;
-using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Data;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Extensions;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Interfaces;
 
 internal sealed class IngredientReadService : IIngredientReadService
 {
-    private readonly IDietMenuDbContext context;
+    private readonly DietMenuDbContext context;
     private readonly IMapper mapper;
 
-    public IngredientReadService(IDietMenuDbContext context, IMapper mapper)
+    public IngredientReadService(DietMenuDbContext context, IMapper mapper)
         => (this.context, this.mapper) = (context, mapper);
 
     public async Task<IngredientsGrid> GetIngredientsGrid(Guid familyId, GridRequest gridRequest)

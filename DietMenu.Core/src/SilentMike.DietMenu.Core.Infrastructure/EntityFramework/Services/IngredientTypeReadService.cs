@@ -5,16 +5,15 @@ using global::AutoMapper;
 using SilentMike.DietMenu.Core.Application.Common;
 using SilentMike.DietMenu.Core.Application.IngredientTypes.ViewModels;
 using SilentMike.DietMenu.Core.Domain.Entities;
-using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Data;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Extensions;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Interfaces;
 
 internal sealed class IngredientTypeReadService : IIngredientTypeReadService
 {
-    private readonly IDietMenuDbContext context;
+    private readonly DietMenuDbContext context;
     private readonly IMapper mapper;
 
-    public IngredientTypeReadService(IDietMenuDbContext context, IMapper mapper)
+    public IngredientTypeReadService(DietMenuDbContext context, IMapper mapper)
         => (this.context, this.mapper) = (context, mapper);
 
     public async Task<IngredientTypesGrid> GetIngredientTypesGrid(Guid familyId, GridRequest gridRequest)

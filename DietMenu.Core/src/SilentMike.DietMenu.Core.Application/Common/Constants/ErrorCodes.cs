@@ -5,7 +5,13 @@ public static class ErrorCodes
     public static readonly string FAMILY_ALREADY_EXISTS = "FAMILY_ALREADY_EXISTS";
     public static readonly string FAMILY_NOT_FOUND = "FAMILY_NOT_FOUND";
 
+    public static readonly string INGREDIENT_NOT_FOUND = "INGREDIENT_NOT_FOUND";
+
     public static readonly string INGREDIENT_TYPE_NOT_FOUND = "INGREDIENT_TYPE_NOT_FOUND";
+
+    public static readonly string MEAL_TYPE_NOT_FOUND = "MEAL_TYPE_NOT_FOUND";
+
+    public static readonly string RECIPE_NOT_FOUND = "RECIPE_NOT_FOUND";
 
     public static readonly string UNHANDLED_ERROR = "unhandled_error";
     public static readonly string UNKNOWN_ERROR = "UNKNOWN_ERROR";

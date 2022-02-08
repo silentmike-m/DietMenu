@@ -14,22 +14,27 @@ using SilentMike.DietMenu.Core.Application.Families.CommandHandlers;
 using SilentMike.DietMenu.Core.Application.Families.Commands;
 using SilentMike.DietMenu.Core.Application.Families.Events;
 using SilentMike.DietMenu.Core.Domain.Entities;
+using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Services;
 using SilentMike.DietMenu.Core.UnitTests.Services;
 
 [TestClass]
-public sealed class CreateFamilyHandlerTests
+public sealed class CreateFamilyHandlerTests : IDisposable
 {
     private readonly Guid existingFamilyId = Guid.NewGuid();
 
-    private readonly NullLogger<CreateFamilyHandler> logger = new();
-    private readonly Mock<IMediator> mediator = new();
-    private readonly FamilyRepository repository = new();
+    private readonly DietMenuDbContextFactory factory;
+    private readonly NullLogger<CreateFamilyHandler> logger;
+    private readonly Mock<IMediator> mediator;
+    private readonly FamilyRepository repository;
 
     public CreateFamilyHandlerTests()
     {
         var family = new FamilyEntity(this.existingFamilyId);
 
-        this.repository.Save(family);
+        this.factory = new DietMenuDbContextFactory(family);
+        this.logger = new NullLogger<CreateFamilyHandler>();
+        this.mediator = new Mock<IMediator>();
+        this.repository = new FamilyRepository(this.factory.Context);
     }
 
     [TestMethod]
@@ -75,5 +80,10 @@ public sealed class CreateFamilyHandlerTests
         family.Should()
             .NotBeNull()
             ;
+    }
+
+    public void Dispose()
+    {
+        this.factory.Dispose();
     }
 }

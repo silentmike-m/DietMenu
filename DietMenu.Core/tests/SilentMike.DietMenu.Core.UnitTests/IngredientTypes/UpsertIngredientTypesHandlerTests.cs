@@ -18,15 +18,17 @@ using SilentMike.DietMenu.Core.Application.IngredientTypes.Commands;
 using SilentMike.DietMenu.Core.Application.IngredientTypes.Events;
 using SilentMike.DietMenu.Core.Application.IngredientTypes.ViewModels.ValueModels;
 using SilentMike.DietMenu.Core.Domain.Entities;
+using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Services;
 using SilentMike.DietMenu.Core.UnitTests.Services;
 
 [TestClass]
-public sealed class UpsertIngredientTypesHandlerTests
+public sealed class UpsertIngredientTypesHandlerTests : IDisposable
 {
     private readonly Guid familyId = Guid.NewGuid();
     private readonly Guid ingredientTypeId = Guid.NewGuid();
     private readonly string ingredientTypeName = "meat";
 
+    private readonly DietMenuDbContextFactory factory;
     private readonly FamilyRepository familyRepository;
     private readonly NullLogger<UpsertIngredientTypesHandler> logger;
     private readonly Mock<IMediator> mediator;
@@ -34,10 +36,7 @@ public sealed class UpsertIngredientTypesHandlerTests
 
     public UpsertIngredientTypesHandlerTests()
     {
-        this.familyRepository = new FamilyRepository();
-        this.logger = new NullLogger<UpsertIngredientTypesHandler>();
-        this.mediator = new Mock<IMediator>();
-        this.typeRepository = new IngredientTypeRepository();
+        var family = new FamilyEntity(this.familyId);
 
         var type = new IngredientTypeEntity(this.ingredientTypeId)
         {
@@ -45,11 +44,11 @@ public sealed class UpsertIngredientTypesHandlerTests
             Name = this.ingredientTypeName,
         };
 
-        this.typeRepository.Save(type);
-
-        var family = new FamilyEntity(this.familyId);
-
-        this.familyRepository.Save(family);
+        this.factory = new DietMenuDbContextFactory(type, family);
+        this.familyRepository = new FamilyRepository(this.factory.Context);
+        this.logger = new NullLogger<UpsertIngredientTypesHandler>();
+        this.mediator = new Mock<IMediator>();
+        this.typeRepository = new IngredientTypeRepository(this.factory.Context);
     }
 
     [TestMethod]
@@ -230,5 +229,10 @@ public sealed class UpsertIngredientTypesHandlerTests
         type!.FamilyId.Should()
             .Be(command.FamilyId)
             ;
+    }
+
+    public void Dispose()
+    {
+        this.factory.Dispose();
     }
 }
