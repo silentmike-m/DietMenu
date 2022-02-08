@@ -18,7 +18,8 @@ internal sealed class GetIngredientTypesGridHandler : IRequestHandler<GetIngredi
     public async Task<IngredientTypesGrid> Handle(GetIngredientTypesGrid request, CancellationToken cancellationToken)
     {
         using var loggerScope = this.logger.BeginPropertyScope(
-            ("FamilyId", request.FamilyId)
+            ("FamilyId", request.FamilyId),
+            ("UserId", request.UserId)
         );
 
         this.logger.LogInformation("Try to get ingredient types grid");
