@@ -132,6 +132,7 @@ public sealed class IngredientTypeReadServiceTests : IDisposable
                 && i.Name == this.secondType.Name)
             ;
     }
+
     [TestMethod]
     public async Task ShouldReturnNotPagedResult()
     {
