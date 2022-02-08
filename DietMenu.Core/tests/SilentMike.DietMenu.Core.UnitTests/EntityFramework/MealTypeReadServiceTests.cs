@@ -50,7 +50,7 @@ public sealed class MealTypeReadServiceTests : IDisposable
     }
 
     [TestMethod]
-    public async Task ShouldReturnPagedResult()
+    public async Task ShouldReturnPagedMealTypesGrid()
     {
         //GIVEN
         var request = new GridRequest
@@ -78,7 +78,7 @@ public sealed class MealTypeReadServiceTests : IDisposable
     }
 
     [TestMethod]
-    public async Task ShouldReturnSortedAndPagedResult()
+    public async Task ShouldReturnSortedAndPagedMealTypesGrid()
     {
         //GIVEN
         var request = new GridRequest
@@ -108,7 +108,7 @@ public sealed class MealTypeReadServiceTests : IDisposable
     }
 
     [TestMethod]
-    public async Task ShouldReturnFilteredAndSortedAndPagedResult()
+    public async Task ShouldReturnFilteredAndSortedAndPagedMealTypesGrid()
     {
         //GIVEN
         var request = new GridRequest
@@ -138,7 +138,7 @@ public sealed class MealTypeReadServiceTests : IDisposable
             ;
     }
     [TestMethod]
-    public async Task ShouldReturnNotPagedResult()
+    public async Task ShouldReturnNotPagedMealTypesGrid()
     {
         //GIVEN
         var request = new GridRequest();
@@ -199,7 +199,7 @@ public sealed class MealTypeReadServiceTests : IDisposable
     }
 
     [TestMethod]
-    public async Task ShouldReturnFilteredAndSortedAndNotPagedResult()
+    public async Task ShouldReturnFilteredAndSortedAndNotPagedMealTypesGrid()
     {
         //GIVEN
         var request = new GridRequest

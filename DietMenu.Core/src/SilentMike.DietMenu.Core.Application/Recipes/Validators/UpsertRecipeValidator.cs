@@ -40,8 +40,8 @@ internal sealed class UpsertRecipeValidator : AbstractValidator<UpsertRecipe>
 
         this.RuleForEach(i => i.Recipe.Ingredients)
             .Must(i => i.Quantity > 0)
-            .WithErrorCode(ValidationErrorCodes.ASSIGN_RECIPE_INGREDIENTS_INVALID_QUANTITY)
-            .WithMessage(ValidationErrorCodes.ASSIGN_RECIPE_INGREDIENTS_INVALID_QUANTITY_MESSAGE)
+            .WithErrorCode(ValidationErrorCodes.UPSERT_RECIPE_INGREDIENT_INVALID_QUANTITY)
+            .WithMessage(ValidationErrorCodes.UPSERT_RECIPE_INGREDIENT_INVALID_QUANTITY_MESSAGE)
             ;
     }
 }

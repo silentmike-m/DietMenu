@@ -3,9 +3,9 @@
 using System.Text.Json.Serialization;
 using SilentMike.DietMenu.Core.Application.Common;
 
-public sealed record UpsertedMealTypes : INotification, IAuthRequest
+public sealed record UpsertedMealType : INotification, IAuthRequest
 {
-    [JsonPropertyName("ids")] public IReadOnlyList<Guid> Ids { get; init; } = new List<Guid>().AsReadOnly();
+    [JsonPropertyName("id")] public Guid Id { get; init; } = Guid.Empty;
     [JsonIgnore] public Guid FamilyId { get; set; } = Guid.Empty;
     [JsonIgnore] public Guid UserId { get; set; } = Guid.Empty;
 }

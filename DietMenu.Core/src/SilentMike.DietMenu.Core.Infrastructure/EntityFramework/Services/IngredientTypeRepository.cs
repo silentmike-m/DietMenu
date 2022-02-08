@@ -27,4 +27,9 @@ internal sealed class IngredientTypeRepository : IIngredientTypeRepository
     {
         await this.context.Save(ingredientTypes, cancellationToken);
     }
+
+    public async Task Save(IngredientTypeEntity ingredientType, CancellationToken cancellationToken = default)
+    {
+        await this.context.Save(ingredientType, cancellationToken);
+    }
 }

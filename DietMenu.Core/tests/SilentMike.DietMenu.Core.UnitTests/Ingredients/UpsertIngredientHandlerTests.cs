@@ -1,7 +1,6 @@
 ﻿namespace SilentMike.DietMenu.Core.UnitTests.Ingredients;
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,7 +22,7 @@ using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Services;
 using SilentMike.DietMenu.Core.UnitTests.Services;
 
 [TestClass]
-public sealed class UpsertIngredientsHandlerTests : IDisposable
+public sealed class UpsertIngredientHandlerTests : IDisposable
 {
     private readonly Guid familyId = Guid.NewGuid();
     private readonly Guid ingredientId = Guid.NewGuid();
@@ -32,11 +31,11 @@ public sealed class UpsertIngredientsHandlerTests : IDisposable
     private readonly DietMenuDbContextFactory factory;
     private readonly FamilyRepository familyRepository;
     private readonly IngredientRepository ingredientRepository;
-    private readonly NullLogger<UpsertIngredientsHandler> logger;
+    private readonly NullLogger<UpsertIngredientHandler> logger;
     private readonly Mock<IMediator> mediator;
     private readonly IngredientTypeRepository typeRepository;
 
-    public UpsertIngredientsHandlerTests()
+    public UpsertIngredientHandlerTests()
     {
         var family = new FamilyEntity(this.familyId);
 
@@ -54,7 +53,7 @@ public sealed class UpsertIngredientsHandlerTests : IDisposable
         this.factory = new DietMenuDbContextFactory(family, ingredient, ingredientType);
         this.familyRepository = new FamilyRepository(this.factory.Context);
         this.ingredientRepository = new IngredientRepository(this.factory.Context);
-        this.logger = new NullLogger<UpsertIngredientsHandler>();
+        this.logger = new NullLogger<UpsertIngredientHandler>();
         this.mediator = new Mock<IMediator>();
         this.typeRepository = new IngredientTypeRepository(this.factory.Context);
     }
@@ -63,12 +62,12 @@ public sealed class UpsertIngredientsHandlerTests : IDisposable
     public async Task ShouldThrowFamilyNotFoundWhenInvalidFamilyId()
     {
         //
-        var command = new UpsertIngredients
+        var command = new UpsertIngredient
         {
             FamilyId = Guid.NewGuid(),
         };
 
-        var commandHandler = new UpsertIngredientsHandler(
+        var commandHandler = new UpsertIngredientHandler(
             this.familyRepository,
             this.ingredientRepository,
             this.logger,
@@ -96,16 +95,13 @@ public sealed class UpsertIngredientsHandlerTests : IDisposable
             TypeId = Guid.NewGuid(),
         };
 
-        var command = new UpsertIngredients
+        var command = new UpsertIngredient
         {
             FamilyId = this.familyId,
-            Ingredients = new List<IngredientToUpsert>
-            {
-                ingredientToUpsert,
-            },
+            Ingredient = ingredientToUpsert,
         };
 
-        var commandHandler = new UpsertIngredientsHandler(
+        var commandHandler = new UpsertIngredientHandler(
             this.familyRepository,
             this.ingredientRepository,
             this.logger,
@@ -117,11 +113,11 @@ public sealed class UpsertIngredientsHandlerTests : IDisposable
 
         //THEN
         await action.Should()
-                .ThrowAsync<IngredientTypeNotFoundException>()
-                .Where(i =>
-                    i.Code == ErrorCodes.INGREDIENT_TYPE_NOT_FOUND
-                    && i.Id == ingredientToUpsert.TypeId)
-            ;
+                    .ThrowAsync<IngredientTypeNotFoundException>()
+                    .Where(i =>
+                        i.Code == ErrorCodes.INGREDIENT_TYPE_NOT_FOUND
+                        && i.Id == ingredientToUpsert.TypeId)
+                ;
     }
 
     [TestMethod]
@@ -136,16 +132,13 @@ public sealed class UpsertIngredientsHandlerTests : IDisposable
             UnitSymbol = null,
         };
 
-        var command = new UpsertIngredients
+        var command = new UpsertIngredient
         {
             FamilyId = this.familyId,
-            Ingredients = new List<IngredientToUpsert>
-            {
-                ingredientToUpsert,
-            },
+            Ingredient = ingredientToUpsert,
         };
 
-        var commandHandler = new UpsertIngredientsHandler(
+        var commandHandler = new UpsertIngredientHandler(
             this.familyRepository,
             this.ingredientRepository,
             this.logger,
@@ -158,15 +151,15 @@ public sealed class UpsertIngredientsHandlerTests : IDisposable
         //THEN
         await action.Should()
                 .ThrowAsync<ValidationException>()
-                .Where(i => i.Errors.ContainsKey(ValidationErrorCodes.UPSERT_INGREDIENTS_EMPTY_NAME)
-                            && i.Errors[ValidationErrorCodes.UPSERT_INGREDIENTS_EMPTY_NAME]
-                                .Contains(ValidationErrorCodes.UPSERT_INGREDIENTS_EMPTY_NAME_MESSAGE))
-                .Where(i => i.Errors.ContainsKey(ValidationErrorCodes.UPSERT_INGREDIENTS_EMPTY_UNIT)
-                            && i.Errors[ValidationErrorCodes.UPSERT_INGREDIENTS_EMPTY_UNIT]
-                                .Contains(ValidationErrorCodes.UPSERT_INGREDIENTS_EMPTY_UNIT_MESSAGE))
-                .Where(i => i.Errors.ContainsKey(ValidationErrorCodes.UPSERT_INGREDIENTS_INVALID_EXCHANGER)
-                            && i.Errors[ValidationErrorCodes.UPSERT_INGREDIENTS_INVALID_EXCHANGER]
-                                .Contains(ValidationErrorCodes.UPSERT_INGREDIENTS_INVALID_EXCHANGER_MESSAGE))
+                .Where(i => i.Errors.ContainsKey(ValidationErrorCodes.UPSERT_INGREDIENT_EMPTY_NAME)
+                            && i.Errors[ValidationErrorCodes.UPSERT_INGREDIENT_EMPTY_NAME]
+                                .Contains(ValidationErrorCodes.UPSERT_INGREDIENT_EMPTY_NAME_MESSAGE))
+                .Where(i => i.Errors.ContainsKey(ValidationErrorCodes.UPSERT_INGREDIENT_EMPTY_UNIT)
+                            && i.Errors[ValidationErrorCodes.UPSERT_INGREDIENT_EMPTY_UNIT]
+                                .Contains(ValidationErrorCodes.UPSERT_INGREDIENT_EMPTY_UNIT_MESSAGE))
+                .Where(i => i.Errors.ContainsKey(ValidationErrorCodes.UPSERT_INGREDIENT_INVALID_EXCHANGER)
+                            && i.Errors[ValidationErrorCodes.UPSERT_INGREDIENT_INVALID_EXCHANGER]
+                                .Contains(ValidationErrorCodes.UPSERT_INGREDIENT_INVALID_EXCHANGER_MESSAGE))
             ;
     }
 
@@ -183,16 +176,13 @@ public sealed class UpsertIngredientsHandlerTests : IDisposable
             UnitSymbol = "kg",
         };
 
-        var command = new UpsertIngredients
+        var command = new UpsertIngredient
         {
             FamilyId = this.familyId,
-            Ingredients = new List<IngredientToUpsert>
-            {
-                ingredientToUpsert,
-            },
+            Ingredient = ingredientToUpsert,
         };
 
-        var commandHandler = new UpsertIngredientsHandler(
+        var commandHandler = new UpsertIngredientHandler(
             this.familyRepository,
             this.ingredientRepository,
             this.logger,
@@ -203,7 +193,7 @@ public sealed class UpsertIngredientsHandlerTests : IDisposable
         await commandHandler.Handle(command, CancellationToken.None);
 
         //THEN
-        this.mediator.Verify(i => i.Publish(It.IsAny<UpsertedIngredients>(), It.IsAny<CancellationToken>()), Times.Once);
+        this.mediator.Verify(i => i.Publish(It.IsAny<UpsertedIngredient>(), It.IsAny<CancellationToken>()), Times.Once);
 
         var ingredient = await this.ingredientRepository.Get(ingredientToUpsert.Id);
         ingredient.Should()
@@ -242,16 +232,13 @@ public sealed class UpsertIngredientsHandlerTests : IDisposable
             UnitSymbol = "kg",
         };
 
-        var command = new UpsertIngredients
+        var command = new UpsertIngredient
         {
             FamilyId = this.familyId,
-            Ingredients = new List<IngredientToUpsert>
-            {
-                ingredientToUpsert,
-            },
+            Ingredient = ingredientToUpsert,
         };
 
-        var commandHandler = new UpsertIngredientsHandler(
+        var commandHandler = new UpsertIngredientHandler(
             this.familyRepository,
             this.ingredientRepository,
             this.logger,
@@ -262,24 +249,24 @@ public sealed class UpsertIngredientsHandlerTests : IDisposable
         await commandHandler.Handle(command, CancellationToken.None);
 
         //THEN
-        this.mediator.Verify(i => i.Publish(It.IsAny<UpsertedIngredients>(), It.IsAny<CancellationToken>()), Times.Once);
+        this.mediator.Verify(i => i.Publish(It.IsAny<UpsertedIngredient>(), It.IsAny<CancellationToken>()), Times.Once);
 
         var ingredient = await this.ingredientRepository.Get(ingredientToUpsert.Id);
         ingredient.Should()
-            .NotBeNull()
-            ;
+                .NotBeNull()
+                ;
         ingredient!.Exchanger.Should()
-            .Be(ingredientToUpsert.Exchanger)
-            ;
+                .Be(ingredientToUpsert.Exchanger)
+                ;
         ingredient.Name.Should()
-            .Be(ingredientToUpsert.Name)
-            ;
+                .Be(ingredientToUpsert.Name)
+                ;
         ingredient.TypeId.Should()
-            .Be(ingredientToUpsert.TypeId.Value)
-            ;
+                .Be(ingredientToUpsert.TypeId.Value)
+                ;
         ingredient.UnitSymbol.Should()
-            .Be(ingredientToUpsert.UnitSymbol)
-            ;
+                .Be(ingredientToUpsert.UnitSymbol)
+                ;
     }
 
     public void Dispose()

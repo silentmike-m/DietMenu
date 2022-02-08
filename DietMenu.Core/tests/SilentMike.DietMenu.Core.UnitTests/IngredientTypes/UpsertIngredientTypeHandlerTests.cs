@@ -1,7 +1,6 @@
 ﻿namespace SilentMike.DietMenu.Core.UnitTests.IngredientTypes;
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,7 +21,7 @@ using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Services;
 using SilentMike.DietMenu.Core.UnitTests.Services;
 
 [TestClass]
-public sealed class UpsertIngredientTypesHandlerTests : IDisposable
+public sealed class UpsertIngredientTypeHandlerTests : IDisposable
 {
     private readonly Guid familyId = Guid.NewGuid();
     private readonly Guid ingredientTypeId = Guid.NewGuid();
@@ -30,11 +29,11 @@ public sealed class UpsertIngredientTypesHandlerTests : IDisposable
 
     private readonly DietMenuDbContextFactory factory;
     private readonly FamilyRepository familyRepository;
-    private readonly NullLogger<UpsertIngredientTypesHandler> logger;
+    private readonly NullLogger<UpsertIngredientTypeHandler> logger;
     private readonly Mock<IMediator> mediator;
     private readonly IngredientTypeRepository typeRepository;
 
-    public UpsertIngredientTypesHandlerTests()
+    public UpsertIngredientTypeHandlerTests()
     {
         var family = new FamilyEntity(this.familyId);
 
@@ -46,7 +45,7 @@ public sealed class UpsertIngredientTypesHandlerTests : IDisposable
 
         this.factory = new DietMenuDbContextFactory(type, family);
         this.familyRepository = new FamilyRepository(this.factory.Context);
-        this.logger = new NullLogger<UpsertIngredientTypesHandler>();
+        this.logger = new NullLogger<UpsertIngredientTypeHandler>();
         this.mediator = new Mock<IMediator>();
         this.typeRepository = new IngredientTypeRepository(this.factory.Context);
     }
@@ -55,12 +54,12 @@ public sealed class UpsertIngredientTypesHandlerTests : IDisposable
     public async Task ShouldThrowFamilyNotFoundWhenInvalidId()
     {
         //GIVEN
-        var command = new UpsertIngredientTypes
+        var command = new UpsertIngredientType
         {
             FamilyId = Guid.NewGuid(),
         };
 
-        var commandHandler = new UpsertIngredientTypesHandler(this.familyRepository, this.logger, this.mediator.Object, this.typeRepository);
+        var commandHandler = new UpsertIngredientTypeHandler(this.familyRepository, this.logger, this.mediator.Object, this.typeRepository);
 
         //WHEN
         Func<Task<Unit>> action = async () => await commandHandler.Handle(command, CancellationToken.None);
@@ -78,20 +77,17 @@ public sealed class UpsertIngredientTypesHandlerTests : IDisposable
     public async Task ShouldThrowValidationExceptionIfNameIsSpacesOnCreate()
     {
         //GIVEN
-        var command = new UpsertIngredientTypes
+        var command = new UpsertIngredientType
         {
             FamilyId = this.familyId,
-            IngredientTypes = new List<IngredientTypeToUpsert>
+            IngredientType = new IngredientTypeToUpsert
             {
-                new()
-                {
-                    Id = Guid.NewGuid(),
-                    Name = "  ",
-                },
+                Id = Guid.NewGuid(),
+                Name = "  ",
             },
         };
 
-        var commandHandler = new UpsertIngredientTypesHandler(this.familyRepository, this.logger, this.mediator.Object, this.typeRepository);
+        var commandHandler = new UpsertIngredientTypeHandler(this.familyRepository, this.logger, this.mediator.Object, this.typeRepository);
 
         //WHEN
         Func<Task<Unit>> action = async () => await commandHandler.Handle(command, CancellationToken.None);
@@ -101,9 +97,9 @@ public sealed class UpsertIngredientTypesHandlerTests : IDisposable
                 .ThrowAsync<ValidationException>()
                 .Where(i =>
                     i.Errors.Count == 1
-                    && i.Errors.ContainsKey(ValidationErrorCodes.UPSERT_INGREDIENT_TYPES_EMPTY_NAME)
-                    && i.Errors[ValidationErrorCodes.UPSERT_INGREDIENT_TYPES_EMPTY_NAME]
-                        .Contains(ValidationErrorCodes.UPSERT_INGREDIENT_TYPES_EMPTY_NAME_MESSAGE))
+                    && i.Errors.ContainsKey(ValidationErrorCodes.UPSERT_INGREDIENT_TYPE_EMPTY_NAME)
+                    && i.Errors[ValidationErrorCodes.UPSERT_INGREDIENT_TYPE_EMPTY_NAME]
+                        .Contains(ValidationErrorCodes.UPSERT_INGREDIENT_TYPE_EMPTY_NAME_MESSAGE))
             ;
     }
 
@@ -111,20 +107,17 @@ public sealed class UpsertIngredientTypesHandlerTests : IDisposable
     public async Task ShouldThrowValidationExceptionIfNameIsNullOnCreate()
     {
         //GIVEN
-        var command = new UpsertIngredientTypes
+        var command = new UpsertIngredientType
         {
             FamilyId = this.familyId,
-            IngredientTypes = new List<IngredientTypeToUpsert>
+            IngredientType = new IngredientTypeToUpsert
             {
-                new()
-                {
-                    Id = Guid.NewGuid(),
-                    Name = null,
-                },
+                Id = Guid.NewGuid(),
+                Name = null,
             },
         };
 
-        var commandHandler = new UpsertIngredientTypesHandler(this.familyRepository, this.logger, this.mediator.Object, this.typeRepository);
+        var commandHandler = new UpsertIngredientTypeHandler(this.familyRepository, this.logger, this.mediator.Object, this.typeRepository);
 
         //WHEN
         Func<Task<Unit>> action = async () => await commandHandler.Handle(command, CancellationToken.None);
@@ -134,9 +127,9 @@ public sealed class UpsertIngredientTypesHandlerTests : IDisposable
                 .ThrowAsync<ValidationException>()
                 .Where(i =>
                     i.Errors.Count == 1
-                    && i.Errors.ContainsKey(ValidationErrorCodes.UPSERT_INGREDIENT_TYPES_EMPTY_NAME)
-                    && i.Errors[ValidationErrorCodes.UPSERT_INGREDIENT_TYPES_EMPTY_NAME]
-                        .Contains(ValidationErrorCodes.UPSERT_INGREDIENT_TYPES_EMPTY_NAME_MESSAGE))
+                    && i.Errors.ContainsKey(ValidationErrorCodes.UPSERT_INGREDIENT_TYPE_EMPTY_NAME)
+                    && i.Errors[ValidationErrorCodes.UPSERT_INGREDIENT_TYPE_EMPTY_NAME]
+                        .Contains(ValidationErrorCodes.UPSERT_INGREDIENT_TYPE_EMPTY_NAME_MESSAGE))
             ;
     }
 
@@ -150,44 +143,41 @@ public sealed class UpsertIngredientTypesHandlerTests : IDisposable
             Name = "milk",
         };
 
-        var command = new UpsertIngredientTypes
+        var command = new UpsertIngredientType
         {
             FamilyId = this.familyId,
-            IngredientTypes = new List<IngredientTypeToUpsert>
-            {
-                ingredientTypeToUpsert,
-            },
+            IngredientType = ingredientTypeToUpsert,
         };
 
-        var commandHandler = new UpsertIngredientTypesHandler(this.familyRepository, this.logger, this.mediator.Object, this.typeRepository);
+        var commandHandler = new UpsertIngredientTypeHandler(this.familyRepository, this.logger, this.mediator.Object, this.typeRepository);
 
         //WHEN
         await commandHandler.Handle(command, CancellationToken.None);
 
         //THEN
-        this.mediator.Verify(i => i.Publish(It.IsAny<UpsertedIngredientTypes>(), It.IsAny<CancellationToken>()), Times.Once);
+        this.mediator.Verify(i => i.Publish(It.IsAny<UpsertedIngredientType>(), It.IsAny<CancellationToken>()), Times.Once);
 
         var type = await this.typeRepository.Get(ingredientTypeToUpsert.Id);
         type.Should()
-            .NotBeNull()
-            .And
-            .BeEquivalentTo(ingredientTypeToUpsert, opt => opt
-                .ComparingByMembers<IngredientTypeToUpsert>()
-                .Excluding(i => i.Id))
-            ;
+                .NotBeNull()
+                .And
+                .BeEquivalentTo(ingredientTypeToUpsert, opt => opt
+                    .ComparingByMembers<IngredientTypeToUpsert>()
+                    .Excluding(i => i.Id))
+                ;
 
         type!.FamilyId.Should()
             .Be(command.FamilyId)
             ;
         type.InternalName.Should()
-            .Be(ingredientTypeToUpsert.Id.ToString())
-            ;
+                .Be(ingredientTypeToUpsert.Id.ToString())
+                ;
         type.IsSystem.Should()
-            .BeFalse()
-            ;
+                .BeFalse()
+                ;
         type.Id.Should()
-            .Be(ingredientTypeToUpsert.Id)
-            ;
+                .Be(ingredientTypeToUpsert.Id)
+                ;
     }
 
     [TestMethod]
@@ -200,31 +190,28 @@ public sealed class UpsertIngredientTypesHandlerTests : IDisposable
             Name = "milk",
         };
 
-        var command = new UpsertIngredientTypes
+        var command = new UpsertIngredientType
         {
             FamilyId = this.familyId,
-            IngredientTypes = new List<IngredientTypeToUpsert>
-            {
-                ingredientTypeToUpsert,
-            },
+            IngredientType = ingredientTypeToUpsert,
         };
 
-        var commandHandler = new UpsertIngredientTypesHandler(this.familyRepository, this.logger, this.mediator.Object, this.typeRepository);
+        var commandHandler = new UpsertIngredientTypeHandler(this.familyRepository, this.logger, this.mediator.Object, this.typeRepository);
 
         //WHEN
         await commandHandler.Handle(command, CancellationToken.None);
 
         //THEN
-        this.mediator.Verify(i => i.Publish(It.IsAny<UpsertedIngredientTypes>(), It.IsAny<CancellationToken>()), Times.Once);
+        this.mediator.Verify(i => i.Publish(It.IsAny<UpsertedIngredientType>(), It.IsAny<CancellationToken>()), Times.Once);
 
         var type = await this.typeRepository.Get(ingredientTypeToUpsert.Id);
         type.Should()
-            .NotBeNull()
-            .And
-            .BeEquivalentTo(ingredientTypeToUpsert, opt => opt
-                .ComparingByMembers<IngredientTypeToUpsert>()
-                .Excluding(i => i.Id))
-            ;
+                .NotBeNull()
+                .And
+                .BeEquivalentTo(ingredientTypeToUpsert, opt => opt
+                    .ComparingByMembers<IngredientTypeToUpsert>()
+                    .Excluding(i => i.Id))
+                ;
 
         type!.FamilyId.Should()
             .Be(command.FamilyId)

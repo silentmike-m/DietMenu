@@ -12,16 +12,16 @@ using SilentMike.DietMenu.Core.Application.IngredientTypes.ViewModels.ValueModel
 using SilentMike.DietMenu.Core.Domain.Entities;
 using SilentMike.DietMenu.Core.Domain.Repositories;
 
-internal sealed class UpsertIngredientTypesHandler : IRequestHandler<UpsertIngredientTypes>
+internal sealed class UpsertIngredientTypeHandler : IRequestHandler<UpsertIngredientType>
 {
     private readonly IFamilyRepository familyRepository;
-    private readonly ILogger<UpsertIngredientTypesHandler> logger;
+    private readonly ILogger<UpsertIngredientTypeHandler> logger;
     private readonly IMediator mediator;
     private readonly IIngredientTypeRepository typeRepository;
 
-    public UpsertIngredientTypesHandler(
+    public UpsertIngredientTypeHandler(
         IFamilyRepository familyRepository,
-        ILogger<UpsertIngredientTypesHandler> logger,
+        ILogger<UpsertIngredientTypeHandler> logger,
         IMediator mediator,
         IIngredientTypeRepository typeRepository)
     {
@@ -31,7 +31,7 @@ internal sealed class UpsertIngredientTypesHandler : IRequestHandler<UpsertIngre
         this.typeRepository = typeRepository;
     }
 
-    public async Task<Unit> Handle(UpsertIngredientTypes request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(UpsertIngredientType request, CancellationToken cancellationToken)
     {
         using var loggerScope = this.logger.BeginPropertyScope(
             ("FamilyId", request.FamilyId),
@@ -47,29 +47,23 @@ internal sealed class UpsertIngredientTypesHandler : IRequestHandler<UpsertIngre
             throw new FamilyNotFoundException(request.FamilyId);
         }
 
-        var ingredientTypes = new List<IngredientTypeEntity>();
+        var ingredientType = await this.typeRepository.Get(request.IngredientType.Id, cancellationToken);
 
-        foreach (var ingredientTypeToUpsert in request.IngredientTypes)
+        if (ingredientType is null)
         {
-            var ingredientType = await this.typeRepository.Get(ingredientTypeToUpsert.Id, cancellationToken);
-
-            ingredientType = ingredientType is null
-                ? this.Create(request.FamilyId, ingredientTypeToUpsert)
-                : this.Update(ingredientType, ingredientTypeToUpsert);
-
-            ingredientTypes.Add(ingredientType);
+            ingredientType = this.Create(request.FamilyId, request.IngredientType);
+        }
+        else
+        {
+            this.Update(ingredientType, request.IngredientType);
         }
 
-        await this.typeRepository.Save(ingredientTypes, cancellationToken);
+        await this.typeRepository.Save(ingredientType, cancellationToken);
 
-        var ids = request.IngredientTypes
-            .Select(i => i.Id)
-            .ToList();
-
-        var notification = new UpsertedIngredientTypes
+        var notification = new UpsertedIngredientType
         {
             FamilyId = request.FamilyId,
-            Ids = ids.AsReadOnly(),
+            Id = ingredientType.Id,
             UserId = request.UserId,
         };
 
@@ -95,13 +89,11 @@ internal sealed class UpsertIngredientTypesHandler : IRequestHandler<UpsertIngre
         return ingredientType;
     }
 
-    private IngredientTypeEntity Update(IngredientTypeEntity ingredientType, IngredientTypeToUpsert ingredientTypeToUpsert)
+    private void Update(IngredientTypeEntity ingredientType, IngredientTypeToUpsert ingredientTypeToUpsert)
     {
         this.logger.LogInformation("Try to update ingredient type with id {IngredientTypeId}", ingredientTypeToUpsert.Id);
 
         ingredientType.Name = ingredientTypeToUpsert.Name ?? ingredientType.Name;
-
-        return ingredientType;
     }
 
     private static void ValidateNewType(IngredientTypeToUpsert ingredientTypeToUpsert)
@@ -110,9 +102,9 @@ internal sealed class UpsertIngredientTypesHandler : IRequestHandler<UpsertIngre
 
         if (string.IsNullOrWhiteSpace(ingredientTypeToUpsert.Name))
         {
-            errors.Add(new ValidationFailure(nameof(ingredientTypeToUpsert.Name), ValidationErrorCodes.UPSERT_INGREDIENT_TYPES_EMPTY_NAME_MESSAGE)
+            errors.Add(new ValidationFailure(nameof(ingredientTypeToUpsert.Name), ValidationErrorCodes.UPSERT_INGREDIENT_TYPE_EMPTY_NAME_MESSAGE)
             {
-                ErrorCode = ValidationErrorCodes.UPSERT_INGREDIENT_TYPES_EMPTY_NAME,
+                ErrorCode = ValidationErrorCodes.UPSERT_INGREDIENT_TYPE_EMPTY_NAME,
             });
         }
 

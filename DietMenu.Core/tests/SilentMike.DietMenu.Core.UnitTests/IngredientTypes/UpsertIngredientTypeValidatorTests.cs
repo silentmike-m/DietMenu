@@ -1,6 +1,4 @@
 ﻿namespace SilentMike.DietMenu.Core.UnitTests.IngredientTypes;
-
-using System.Collections.Generic;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SilentMike.DietMenu.Core.Application.Common.Constants;
@@ -9,20 +7,17 @@ using SilentMike.DietMenu.Core.Application.IngredientTypes.Validators;
 using SilentMike.DietMenu.Core.Application.IngredientTypes.ViewModels.ValueModels;
 
 [TestClass]
-public sealed class UpsertIngredientTypesValidatorTests
+public sealed class UpsertIngredientTypeValidatorTests
 {
     [TestMethod]
     public void ShouldPassValidationWhenAllParametersAreEmpty()
     {
         //GIVEN
-        var command = new UpsertIngredientTypes
+        var command = new UpsertIngredientType
         {
-            IngredientTypes = new List<IngredientTypeToUpsert>
+            IngredientType = new IngredientTypeToUpsert
             {
-                new()
-                {
-                    Name = null,
-                },
+                Name = null,
             },
         };
 
@@ -44,14 +39,11 @@ public sealed class UpsertIngredientTypesValidatorTests
     public void ShouldFailValidationWhenNameIsSpaces()
     {
         //GIVEN
-        var command = new UpsertIngredientTypes
+        var command = new UpsertIngredientType
         {
-            IngredientTypes = new List<IngredientTypeToUpsert>
+            IngredientType = new IngredientTypeToUpsert
             {
-                new()
-                {
-                    Name = "   ",
-                },
+                Name = "   ",
             },
         };
 
@@ -64,8 +56,8 @@ public sealed class UpsertIngredientTypesValidatorTests
         result.Errors.Should()
             .HaveCount(1)
             .And
-            .Contain(i => i.ErrorCode == ValidationErrorCodes.UPSERT_INGREDIENT_TYPES_EMPTY_NAME
-                          && i.ErrorMessage == ValidationErrorCodes.UPSERT_INGREDIENT_TYPES_EMPTY_NAME_MESSAGE)
+            .Contain(i => i.ErrorCode == ValidationErrorCodes.UPSERT_INGREDIENT_TYPE_EMPTY_NAME
+                          && i.ErrorMessage == ValidationErrorCodes.UPSERT_INGREDIENT_TYPE_EMPTY_NAME_MESSAGE)
             ;
     }
 }

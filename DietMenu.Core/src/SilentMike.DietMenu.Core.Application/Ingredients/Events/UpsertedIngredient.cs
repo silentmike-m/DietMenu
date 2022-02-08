@@ -2,9 +2,9 @@
 
 using System.Text.Json.Serialization;
 
-public sealed record UpsertedIngredients : INotification
+public sealed record UpsertedIngredient : INotification
 {
-    [JsonPropertyName("ids")] public IReadOnlyList<Guid> Ids { get; init; } = new List<Guid>().AsReadOnly();
+    [JsonPropertyName("id")] public Guid Id { get; init; } = Guid.Empty;
     [JsonIgnore] public Guid FamilyId { get; set; } = Guid.Empty;
     [JsonIgnore] public Guid UserId { get; set; } = Guid.Empty;
 }

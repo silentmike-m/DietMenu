@@ -11,16 +11,16 @@ using SilentMike.DietMenu.Core.Application.MealTypes.ViewModels.ValueModels;
 using SilentMike.DietMenu.Core.Domain.Entities;
 using SilentMike.DietMenu.Core.Domain.Repositories;
 
-internal sealed class UpsertMealTypesHandler : IRequestHandler<UpsertMealTypes>
+internal sealed class UpsertMealTypeHandler : IRequestHandler<UpsertMealType>
 {
     private readonly IFamilyRepository familyRepository;
-    private readonly ILogger<UpsertMealTypesHandler> logger;
+    private readonly ILogger<UpsertMealTypeHandler> logger;
     private readonly IMediator mediator;
     private readonly IMealTypeRepository mealTypeRepository;
 
-    public UpsertMealTypesHandler(
+    public UpsertMealTypeHandler(
         IFamilyRepository familyRepository,
-        ILogger<UpsertMealTypesHandler> logger,
+        ILogger<UpsertMealTypeHandler> logger,
         IMediator mediator,
         IMealTypeRepository mealTypeRepository)
     {
@@ -30,7 +30,7 @@ internal sealed class UpsertMealTypesHandler : IRequestHandler<UpsertMealTypes>
         this.mealTypeRepository = mealTypeRepository;
     }
 
-    public async Task<Unit> Handle(UpsertMealTypes request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(UpsertMealType request, CancellationToken cancellationToken)
     {
         using var loggerScope = this.logger.BeginPropertyScope(
             ("FamilyId", request.FamilyId),
@@ -46,29 +46,23 @@ internal sealed class UpsertMealTypesHandler : IRequestHandler<UpsertMealTypes>
             throw new FamilyNotFoundException(request.FamilyId);
         }
 
-        var mealTypes = new List<MealTypeEntity>();
+        var mealType = await this.mealTypeRepository.Get(request.MealType.Id, cancellationToken);
 
-        foreach (var mealTypeToUpsert in request.MealTypes)
+        if (mealType is null)
         {
-            var mealType = await this.mealTypeRepository.Get(mealTypeToUpsert.Id, cancellationToken);
-
-            mealType = mealType is null
-                ? this.CreateMealType(request.FamilyId, mealTypeToUpsert)
-                : this.UpdateMealType(mealType, mealTypeToUpsert);
-
-            mealTypes.Add(mealType);
+            mealType = this.CreateMealType(request.FamilyId, request.MealType);
+        }
+        else
+        {
+            this.UpdateMealType(mealType, request.MealType);
         }
 
-        await this.mealTypeRepository.Save(mealTypes, cancellationToken);
+        await this.mealTypeRepository.Save(mealType, cancellationToken);
 
-        var ids = request.MealTypes
-            .Select(i => i.Id)
-            .ToList();
-
-        var notification = new UpsertedMealTypes
+        var notification = new UpsertedMealType
         {
             FamilyId = request.FamilyId,
-            Ids = ids.AsReadOnly(),
+            Id = mealType.Id,
             UserId = request.UserId,
         };
 
@@ -94,14 +88,12 @@ internal sealed class UpsertMealTypesHandler : IRequestHandler<UpsertMealTypes>
         return mealType;
     }
 
-    private MealTypeEntity UpdateMealType(MealTypeEntity mealType, MealTypeToUpsert mealTypeToUpsert)
+    private void UpdateMealType(MealTypeEntity mealType, MealTypeToUpsert mealTypeToUpsert)
     {
         this.logger.LogInformation("Try to update meal type with id {MealTypeId}", mealTypeToUpsert.Id);
 
         mealType.Name = mealTypeToUpsert.Name ?? mealType.Name;
         mealType.Order = mealTypeToUpsert.Order ?? mealType.Order;
-
-        return mealType;
     }
 
     private static void ValidateNewMealType(MealTypeToUpsert mealTypeToUpsert)
@@ -110,17 +102,17 @@ internal sealed class UpsertMealTypesHandler : IRequestHandler<UpsertMealTypes>
 
         if (string.IsNullOrWhiteSpace(mealTypeToUpsert.Name))
         {
-            errors.Add(new ValidationFailure(nameof(mealTypeToUpsert.Name), ValidationErrorCodes.UPSERT_MEAL_TYPES_EMPTY_NAME_MESSAGE)
+            errors.Add(new ValidationFailure(nameof(mealTypeToUpsert.Name), ValidationErrorCodes.UPSERT_MEAL_TYPE_EMPTY_NAME_MESSAGE)
             {
-                ErrorCode = ValidationErrorCodes.UPSERT_MEAL_TYPES_EMPTY_NAME,
+                ErrorCode = ValidationErrorCodes.UPSERT_MEAL_TYPE_EMPTY_NAME,
             });
         }
 
         if (mealTypeToUpsert.Order is null or < 1)
         {
-            errors.Add(new ValidationFailure(nameof(mealTypeToUpsert.Order), ValidationErrorCodes.UPSERT_MEAL_TYPES_INVALID_ORDER_MESSAGE)
+            errors.Add(new ValidationFailure(nameof(mealTypeToUpsert.Order), ValidationErrorCodes.UPSERT_MEAL_TYPE_INVALID_ORDER_MESSAGE)
             {
-                ErrorCode = ValidationErrorCodes.UPSERT_MEAL_TYPES_INVALID_ORDER,
+                ErrorCode = ValidationErrorCodes.UPSERT_MEAL_TYPE_INVALID_ORDER,
             });
         }
 
