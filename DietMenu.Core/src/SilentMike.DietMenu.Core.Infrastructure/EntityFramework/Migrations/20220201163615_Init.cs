@@ -1,10 +1,10 @@
-﻿using System;
+﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
-
 namespace SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Migrations
 {
+    [ExcludeFromCodeCoverage]
     public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)

@@ -47,19 +47,20 @@ internal sealed class UpsertIngredientTypesHandler : IRequestHandler<UpsertIngre
             throw new FamilyNotFoundException(request.FamilyId);
         }
 
+        var ingredientTypes = new List<IngredientTypeEntity>();
+
         foreach (var ingredientTypeToUpsert in request.IngredientTypes)
         {
             var ingredientType = await this.typeRepository.Get(ingredientTypeToUpsert.Id, cancellationToken);
 
-            if (ingredientType is null)
-            {
-                await this.Create(request.FamilyId, ingredientTypeToUpsert, cancellationToken);
-            }
-            else
-            {
-                await this.Update(ingredientType, ingredientTypeToUpsert, cancellationToken);
-            }
+            ingredientType = ingredientType is null
+                ? this.Create(request.FamilyId, ingredientTypeToUpsert)
+                : this.Update(ingredientType, ingredientTypeToUpsert);
+
+            ingredientTypes.Add(ingredientType);
         }
+
+        await this.typeRepository.Save(ingredientTypes, cancellationToken);
 
         var ids = request.IngredientTypes
             .Select(i => i.Id)
@@ -77,7 +78,7 @@ internal sealed class UpsertIngredientTypesHandler : IRequestHandler<UpsertIngre
         return await Task.FromResult(Unit.Value);
     }
 
-    private async Task Create(Guid requestFamilyId, IngredientTypeToUpsert ingredientTypeToUpsert, CancellationToken cancellationToken)
+    private IngredientTypeEntity Create(Guid requestFamilyId, IngredientTypeToUpsert ingredientTypeToUpsert)
     {
         this.logger.LogInformation("Try to create ingredient type with id {IngredientTypeId}", ingredientTypeToUpsert.Id);
 
@@ -91,19 +92,16 @@ internal sealed class UpsertIngredientTypesHandler : IRequestHandler<UpsertIngre
             Name = ingredientTypeToUpsert.Name!,
         };
 
-        await this.typeRepository.Save(ingredientType, cancellationToken);
+        return ingredientType;
     }
 
-    private async Task Update(
-        IngredientTypeEntity ingredientType,
-        IngredientTypeToUpsert ingredientTypeToUpsert,
-        CancellationToken cancellationToken)
+    private IngredientTypeEntity Update(IngredientTypeEntity ingredientType, IngredientTypeToUpsert ingredientTypeToUpsert)
     {
         this.logger.LogInformation("Try to update ingredient type with id {IngredientTypeId}", ingredientTypeToUpsert.Id);
 
         ingredientType.Name = ingredientTypeToUpsert.Name ?? ingredientType.Name;
 
-        await this.typeRepository.Save(ingredientType, cancellationToken);
+        return ingredientType;
     }
 
     private static void ValidateNewType(IngredientTypeToUpsert ingredientTypeToUpsert)

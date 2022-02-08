@@ -19,31 +19,44 @@ using SilentMike.DietMenu.Core.Application.Ingredients.Commands;
 using SilentMike.DietMenu.Core.Application.Ingredients.Events;
 using SilentMike.DietMenu.Core.Application.Ingredients.ViewModels.ValueModels;
 using SilentMike.DietMenu.Core.Domain.Entities;
+using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Services;
 using SilentMike.DietMenu.Core.UnitTests.Services;
 
 [TestClass]
-public sealed class UpsertIngredientsHandlerTests
+public sealed class UpsertIngredientsHandlerTests : IDisposable
 {
     private readonly Guid familyId = Guid.NewGuid();
     private readonly Guid ingredientId = Guid.NewGuid();
     private readonly Guid ingredientTypeId = Guid.NewGuid();
 
-    private readonly FamilyRepository familyRepository = new();
-    private readonly IngredientRepository ingredientRepository = new();
-    private readonly NullLogger<UpsertIngredientsHandler> logger = new();
-    private readonly Mock<IMediator> mediator = new();
-    private readonly IngredientTypeRepository typeRepository = new();
+    private readonly DietMenuDbContextFactory factory;
+    private readonly FamilyRepository familyRepository;
+    private readonly IngredientRepository ingredientRepository;
+    private readonly NullLogger<UpsertIngredientsHandler> logger;
+    private readonly Mock<IMediator> mediator;
+    private readonly IngredientTypeRepository typeRepository;
 
     public UpsertIngredientsHandlerTests()
     {
         var family = new FamilyEntity(this.familyId);
-        this.familyRepository.Save(family);
 
-        var ingredient = new IngredientEntity(this.ingredientId);
-        this.ingredientRepository.Save(ingredient);
+        var ingredientType = new IngredientTypeEntity(this.ingredientTypeId)
+        {
+            FamilyId = this.familyId,
+        };
 
-        var ingredientType = new IngredientTypeEntity(this.ingredientTypeId);
-        this.typeRepository.Save(ingredientType);
+        var ingredient = new IngredientEntity(this.ingredientId)
+        {
+            FamilyId = this.familyId,
+            TypeId = this.ingredientTypeId,
+        };
+
+        this.factory = new DietMenuDbContextFactory(family, ingredient, ingredientType);
+        this.familyRepository = new FamilyRepository(this.factory.Context);
+        this.ingredientRepository = new IngredientRepository(this.factory.Context);
+        this.logger = new NullLogger<UpsertIngredientsHandler>();
+        this.mediator = new Mock<IMediator>();
+        this.typeRepository = new IngredientTypeRepository(this.factory.Context);
     }
 
     [TestMethod]
@@ -267,5 +280,10 @@ public sealed class UpsertIngredientsHandlerTests
         ingredient.UnitSymbol.Should()
             .Be(ingredientToUpsert.UnitSymbol)
             ;
+    }
+
+    public void Dispose()
+    {
+        this.factory.Dispose();
     }
 }

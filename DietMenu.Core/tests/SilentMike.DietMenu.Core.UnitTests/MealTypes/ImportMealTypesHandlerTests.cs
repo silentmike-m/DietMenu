@@ -12,22 +12,27 @@ using SilentMike.DietMenu.Core.Application.Exceptions.Families;
 using SilentMike.DietMenu.Core.Application.MealTypes.CommandHandlers;
 using SilentMike.DietMenu.Core.Application.MealTypes.Commands;
 using SilentMike.DietMenu.Core.Domain.Entities;
+using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Services;
 using SilentMike.DietMenu.Core.UnitTests.Services;
 
 [TestClass]
-public sealed class ImportMealTypesHandlerTests
+public sealed class ImportMealTypesHandlerTests : IDisposable
 {
     private readonly Guid familyId = Guid.NewGuid();
 
-    private readonly FamilyRepository familyRepository = new();
-    private readonly NullLogger<ImportMealTypesHandler> logger = new();
-    private readonly MealTypeRepository mealTypeRepository = new();
+    private readonly DietMenuDbContextFactory factory;
+    private readonly FamilyRepository familyRepository;
+    private readonly NullLogger<ImportMealTypesHandler> logger;
+    private readonly MealTypeRepository mealTypeRepository;
 
     public ImportMealTypesHandlerTests()
     {
         var family = new FamilyEntity(this.familyId);
 
-        this.familyRepository.Save(family);
+        this.factory = new DietMenuDbContextFactory(family);
+        this.familyRepository = new FamilyRepository(this.factory.Context);
+        this.logger = new NullLogger<ImportMealTypesHandler>();
+        this.mealTypeRepository = new MealTypeRepository(this.factory.Context);
     }
 
     [TestMethod]
@@ -102,5 +107,10 @@ public sealed class ImportMealTypesHandlerTests
                 && i.Name == "Kolacja"
                 && i.Order == 6)
             ;
+    }
+
+    public void Dispose()
+    {
+        this.factory.Dispose();
     }
 }

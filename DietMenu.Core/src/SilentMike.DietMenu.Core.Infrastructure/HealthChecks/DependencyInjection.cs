@@ -10,7 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using RabbitMQ.Client;
-using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Data;
+using SilentMike.DietMenu.Core.Infrastructure.EntityFramework;
 using SilentMike.DietMenu.Core.Infrastructure.HealthChecks.Models;
 using SilentMike.DietMenu.Core.Infrastructure.MassTransit;
 

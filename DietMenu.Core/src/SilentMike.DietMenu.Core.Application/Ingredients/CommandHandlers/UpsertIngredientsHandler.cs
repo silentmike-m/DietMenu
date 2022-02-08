@@ -51,19 +51,20 @@ internal sealed class UpsertIngredientsHandler : IRequestHandler<UpsertIngredien
             throw new FamilyNotFoundException(request.FamilyId);
         }
 
+        var ingredients = new List<IngredientEntity>();
+
         foreach (var ingredientToUpsert in request.Ingredients)
         {
             var ingredient = await this.ingredientRepository.Get(ingredientToUpsert.Id, cancellationToken);
 
-            if (ingredient is null)
-            {
-                await this.Create(request.FamilyId, ingredientToUpsert, cancellationToken);
-            }
-            else
-            {
-                await this.Update(ingredient, ingredientToUpsert, cancellationToken);
-            }
+            ingredient = ingredient is null
+                ? await this.Create(request.FamilyId, ingredientToUpsert, cancellationToken)
+                : await this.Update(ingredient, ingredientToUpsert, cancellationToken);
+
+            ingredients.Add(ingredient);
         }
+
+        await this.ingredientRepository.Save(ingredients, cancellationToken);
 
         var ids = request.Ingredients
             .Select(i => i.Id)
@@ -81,7 +82,7 @@ internal sealed class UpsertIngredientsHandler : IRequestHandler<UpsertIngredien
         return await Task.FromResult(Unit.Value);
     }
 
-    private async Task Create(Guid familyId, IngredientToUpsert ingredientToUpsert, CancellationToken cancellationToken)
+    private async Task<IngredientEntity> Create(Guid familyId, IngredientToUpsert ingredientToUpsert, CancellationToken cancellationToken)
     {
         this.logger.LogInformation("Try to create ingredient with id {IngredientId}", ingredientToUpsert.Id);
 
@@ -100,10 +101,10 @@ internal sealed class UpsertIngredientsHandler : IRequestHandler<UpsertIngredien
             UnitSymbol = ingredientToUpsert.UnitSymbol!,
         };
 
-        await this.ingredientRepository.Save(ingredient, cancellationToken);
+        return ingredient;
     }
 
-    private async Task Update(IngredientEntity ingredient, IngredientToUpsert ingredientToUpsert, CancellationToken cancellationToken)
+    private async Task<IngredientEntity> Update(IngredientEntity ingredient, IngredientToUpsert ingredientToUpsert, CancellationToken cancellationToken)
     {
         this.logger.LogInformation("Try to update ingredient with id {IngredientId}", ingredientToUpsert.Id);
 
@@ -114,7 +115,7 @@ internal sealed class UpsertIngredientsHandler : IRequestHandler<UpsertIngredien
         ingredient.TypeId = ingredientToUpsert.TypeId ?? ingredient.TypeId;
         ingredient.UnitSymbol = ingredientToUpsert.UnitSymbol ?? ingredient.UnitSymbol;
 
-        await this.ingredientRepository.Save(ingredient, cancellationToken);
+        return ingredient;
     }
 
     private static void ValidateNewIngredient(IngredientToUpsert ingredientToUpsert)

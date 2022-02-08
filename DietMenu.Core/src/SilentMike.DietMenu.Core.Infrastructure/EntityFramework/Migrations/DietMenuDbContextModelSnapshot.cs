@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Data;
 
 #nullable disable
 
@@ -139,6 +138,74 @@ namespace SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Migrations
                     b.ToTable("MealTypes", "SilentMike");
                 });
 
+            modelBuilder.Entity("SilentMike.DietMenu.Core.Domain.Entities.RecipeEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Carbohydrates")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Energy")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("FamilyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Fat")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("MealTypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Protein")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FamilyId");
+
+                    b.HasIndex("MealTypeId");
+
+                    b.ToTable("Recipes", "SilentMike");
+                });
+
+            modelBuilder.Entity("SilentMike.DietMenu.Core.Domain.Entities.RecipeIngredientEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("IngredientId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("RecipeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IngredientId");
+
+                    b.HasIndex("RecipeId");
+
+                    b.ToTable("RecipeIngredients", "SilentMike");
+                });
+
             modelBuilder.Entity("SilentMike.DietMenu.Core.Domain.Entities.IngredientEntity", b =>
                 {
                     b.HasOne("SilentMike.DietMenu.Core.Domain.Entities.FamilyEntity", "FamilyEntity")
@@ -178,6 +245,44 @@ namespace SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Migrations
                         .IsRequired();
 
                     b.Navigation("FamilyEntity");
+                });
+
+            modelBuilder.Entity("SilentMike.DietMenu.Core.Domain.Entities.RecipeEntity", b =>
+                {
+                    b.HasOne("SilentMike.DietMenu.Core.Domain.Entities.FamilyEntity", "FamilyEntity")
+                        .WithMany()
+                        .HasForeignKey("FamilyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SilentMike.DietMenu.Core.Domain.Entities.MealTypeEntity", "MealType")
+                        .WithMany()
+                        .HasForeignKey("MealTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("FamilyEntity");
+
+                    b.Navigation("MealType");
+                });
+
+            modelBuilder.Entity("SilentMike.DietMenu.Core.Domain.Entities.RecipeIngredientEntity", b =>
+                {
+                    b.HasOne("SilentMike.DietMenu.Core.Domain.Entities.IngredientEntity", "Ingredient")
+                        .WithMany()
+                        .HasForeignKey("IngredientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SilentMike.DietMenu.Core.Domain.Entities.RecipeEntity", "Recipe")
+                        .WithMany()
+                        .HasForeignKey("RecipeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ingredient");
+
+                    b.Navigation("Recipe");
                 });
 #pragma warning restore 612, 618
         }

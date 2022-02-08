@@ -6,6 +6,5 @@ public interface IIngredientRepository
 {
     Task<IngredientEntity?> Get(Guid ingredientId, CancellationToken cancellationToken = default);
     Task<IEnumerable<IngredientEntity>> GetByFamilyId(Guid familyId, CancellationToken cancellationToken = default);
-    Task Save(IngredientEntity ingredient, CancellationToken cancellationToken = default);
     Task Save(IEnumerable<IngredientEntity> ingredients, CancellationToken cancellationToken = default);
 }

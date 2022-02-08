@@ -15,26 +15,26 @@ using SilentMike.DietMenu.Core.Application.Ingredients.CommandHandlers;
 using SilentMike.DietMenu.Core.Application.Ingredients.Commands;
 using SilentMike.DietMenu.Core.Application.Ingredients.Queries;
 using SilentMike.DietMenu.Core.Domain.Entities;
+using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Services;
 using SilentMike.DietMenu.Core.UnitTests.Services;
 
 [TestClass]
-public sealed class ImportIngredientsHandlerTests
+public sealed class ImportIngredientsHandlerTests : IDisposable
 {
     private readonly Guid familyId = Guid.NewGuid();
     private readonly Guid ingredientTypeId = Guid.NewGuid();
     private readonly string ingredientTypeInternalName = "test";
 
-    private readonly FamilyRepository familyRepository = new();
-    private readonly NullLogger<ImportIngredientsHandler> logger = new();
-    private readonly Mock<IMediator> mediator = new();
-    private readonly IngredientRepository ingredientRepository = new();
-    private readonly IngredientTypeRepository ingredientTypeRepository = new();
+    private readonly DietMenuDbContextFactory factory;
+    private readonly FamilyRepository familyRepository;
+    private readonly NullLogger<ImportIngredientsHandler> logger;
+    private readonly Mock<IMediator> mediator;
+    private readonly IngredientRepository ingredientRepository;
+    private readonly IngredientTypeRepository ingredientTypeRepository;
 
     public ImportIngredientsHandlerTests()
     {
         var family = new FamilyEntity(this.familyId);
-
-        this.familyRepository.Save(family);
 
         var ingredientType = new IngredientTypeEntity(this.ingredientTypeId)
         {
@@ -42,7 +42,12 @@ public sealed class ImportIngredientsHandlerTests
             InternalName = this.ingredientTypeInternalName,
         };
 
-        this.ingredientTypeRepository.Save(ingredientType);
+        this.factory = new DietMenuDbContextFactory(family, ingredientType);
+        this.familyRepository = new FamilyRepository(this.factory.Context);
+        this.logger = new NullLogger<ImportIngredientsHandler>();
+        this.mediator = new Mock<IMediator>();
+        this.ingredientRepository = new IngredientRepository(this.factory.Context);
+        this.ingredientTypeRepository = new IngredientTypeRepository(this.factory.Context);
     }
 
     [TestMethod]
@@ -132,5 +137,10 @@ public sealed class ImportIngredientsHandlerTests
             .And
             .Contain(ingredientTwo)
             ;
+    }
+
+    public void Dispose()
+    {
+        this.factory.Dispose();
     }
 }

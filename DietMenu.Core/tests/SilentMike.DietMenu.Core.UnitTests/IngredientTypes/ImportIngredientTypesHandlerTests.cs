@@ -12,22 +12,27 @@ using SilentMike.DietMenu.Core.Application.Exceptions.Families;
 using SilentMike.DietMenu.Core.Application.IngredientTypes.CommandHandlers;
 using SilentMike.DietMenu.Core.Application.IngredientTypes.Commands;
 using SilentMike.DietMenu.Core.Domain.Entities;
+using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Services;
 using SilentMike.DietMenu.Core.UnitTests.Services;
 
 [TestClass]
-public sealed class ImportIngredientTypesHandlerTests
+public sealed class ImportIngredientTypesHandlerTests : IDisposable
 {
     private readonly Guid familyId = Guid.NewGuid();
 
-    private readonly FamilyRepository familyRepository = new();
-    private readonly NullLogger<ImportIngredientTypesHandler> logger = new();
-    private readonly IngredientTypeRepository typeRepository = new();
+    private readonly DietMenuDbContextFactory factory;
+    private readonly FamilyRepository familyRepository;
+    private readonly NullLogger<ImportIngredientTypesHandler> logger;
+    private readonly IngredientTypeRepository typeRepository;
 
     public ImportIngredientTypesHandlerTests()
     {
         var family = new FamilyEntity(this.familyId);
 
-        this.familyRepository.Save(family);
+        this.factory = new DietMenuDbContextFactory(family);
+        this.familyRepository = new FamilyRepository(this.factory.Context);
+        this.logger = new NullLogger<ImportIngredientTypesHandler>();
+        this.typeRepository = new IngredientTypeRepository(this.factory.Context);
     }
 
     [TestMethod]
@@ -100,5 +105,10 @@ public sealed class ImportIngredientTypesHandlerTests
                 i.InternalName == "Other"
                 && i.Name == "Inne")
             ;
+    }
+
+    public void Dispose()
+    {
+        this.factory.Dispose();
     }
 }

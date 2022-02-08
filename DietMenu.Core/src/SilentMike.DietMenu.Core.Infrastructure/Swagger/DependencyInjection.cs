@@ -1,4 +1,6 @@
 ﻿namespace SilentMike.DietMenu.Core.Infrastructure.Swagger;
+
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,6 +9,7 @@ using SilentMike.DietMenu.Core.Infrastructure.Extensions;
 using SilentMike.DietMenu.Core.Infrastructure.IdentityServer4;
 using SilentMike.DietMenu.Core.Infrastructure.Swagger.Filters;
 
+[ExcludeFromCodeCoverage]
 internal static class DependencyInjection
 {
     public static void AddSwagger(this IServiceCollection services, IConfiguration configuration)

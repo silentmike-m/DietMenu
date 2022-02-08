@@ -3,13 +3,12 @@
 using Microsoft.EntityFrameworkCore;
 using SilentMike.DietMenu.Core.Domain.Entities;
 using SilentMike.DietMenu.Core.Domain.Repositories;
-using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Data;
 
 internal sealed class IngredientRepository : IIngredientRepository
 {
-    private readonly IDietMenuDbContext context;
+    private readonly DietMenuDbContext context;
 
-    public IngredientRepository(IDietMenuDbContext context) => (this.context) = (context);
+    public IngredientRepository(DietMenuDbContext context) => (this.context) = (context);
 
     public async Task<IngredientEntity?> Get(Guid ingredientId, CancellationToken cancellationToken = default)
     {
@@ -22,11 +21,6 @@ internal sealed class IngredientRepository : IIngredientRepository
         var result = this.context.Ingredients.Where(i => i.FamilyId == familyId);
 
         return await Task.FromResult(result);
-    }
-
-    public async Task Save(IngredientEntity ingredient, CancellationToken cancellationToken = default)
-    {
-        await this.context.Save(ingredient, cancellationToken);
     }
 
     public async Task Save(IEnumerable<IngredientEntity> ingredients, CancellationToken cancellationToken = default)

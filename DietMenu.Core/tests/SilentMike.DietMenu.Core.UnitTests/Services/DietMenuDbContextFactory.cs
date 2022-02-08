@@ -4,7 +4,7 @@ using System;
 using System.Data.Common;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Data;
+using SilentMike.DietMenu.Core.Infrastructure.EntityFramework;
 
 internal sealed class DietMenuDbContextFactory : IDisposable
 {
