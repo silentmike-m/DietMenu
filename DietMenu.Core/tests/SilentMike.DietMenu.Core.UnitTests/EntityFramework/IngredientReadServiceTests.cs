@@ -73,7 +73,7 @@ public sealed class IngredientReadServiceTests : IDisposable
     }
 
     [TestMethod]
-    public async Task ShouldReturnPagedResult()
+    public async Task ShouldReturnPagedIngredientsGrid()
     {
         //GIVEN
         var request = new GridRequest
@@ -105,7 +105,7 @@ public sealed class IngredientReadServiceTests : IDisposable
     }
 
     [TestMethod]
-    public async Task ShouldReturnSortedAndPagedResult()
+    public async Task ShouldReturnSortedAndPagedIngredientsGrid()
     {
         //GIVEN
         var request = new GridRequest
@@ -139,7 +139,7 @@ public sealed class IngredientReadServiceTests : IDisposable
     }
 
     [TestMethod]
-    public async Task ShouldReturnFilteredAndSortedAndPagedResult()
+    public async Task ShouldReturnFilteredAndSortedAndPagedIngredientsGrid()
     {
         //GIVEN
         var request = new GridRequest
@@ -173,7 +173,7 @@ public sealed class IngredientReadServiceTests : IDisposable
             ;
     }
     [TestMethod]
-    public async Task ShouldReturnNotPagedResult()
+    public async Task ShouldReturnNotPagedIngredientsGrid()
     {
         //GIVEN
         var request = new GridRequest();
@@ -209,7 +209,7 @@ public sealed class IngredientReadServiceTests : IDisposable
     }
 
     [TestMethod]
-    public async Task ShouldReturnSortedNotPagedResult()
+    public async Task ShouldReturnSortedNotPagedIngredientsGrid()
     {
         //GIVEN
         var request = new GridRequest
@@ -250,7 +250,7 @@ public sealed class IngredientReadServiceTests : IDisposable
     }
 
     [TestMethod]
-    public async Task ShouldReturnFilteredAndSortedAndNotPagedResult()
+    public async Task ShouldReturnFilteredAndSortedAndNotPagedIngredientsGrid()
     {
         //GIVEN
         var request = new GridRequest

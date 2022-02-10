@@ -5,5 +5,5 @@ using SilentMike.DietMenu.Core.Application.Recipes.ViewModels;
 
 internal interface IRecipeReadService
 {
-    Task<RecipesGrid> GetRecipesGrid(GridRequest gridRequest, string? ingredientFilter, Guid? mealTypeId, Guid userId);
+    Task<RecipesGrid> GetRecipesGrid(GridRequest gridRequest, string? ingredientsFilter, Guid? mealTypeId, Guid userId);
 }

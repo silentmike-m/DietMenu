@@ -20,12 +20,9 @@ public sealed class IngredientsController : ControllerBase
     }
 
     [HttpPost(Name = "UpsertIngredients")]
-    public async Task<ActionResult> UpsertIngredients([FromBody] UpsertIngredients request)
+    public async Task<ActionResult> UpsertIngredients([FromBody] UpsertIngredient request)
     {
-        if (request.Ingredients.Any())
-        {
-            _ = await this.mediator.Send(request, CancellationToken.None);
-        }
+        _ = await this.mediator.Send(request, CancellationToken.None);
 
         return await Task.FromResult(Ok());
     }

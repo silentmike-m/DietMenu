@@ -201,8 +201,8 @@ public sealed class UpsertRecipeValidatorTests
         result.Errors.Should()
             .HaveCount(2)
             .And
-            .Contain(i => i.ErrorCode == ValidationErrorCodes.ASSIGN_RECIPE_INGREDIENTS_INVALID_QUANTITY
-                          && i.ErrorMessage == ValidationErrorCodes.ASSIGN_RECIPE_INGREDIENTS_INVALID_QUANTITY_MESSAGE)
+            .Contain(i => i.ErrorCode == ValidationErrorCodes.UPSERT_RECIPE_INGREDIENT_INVALID_QUANTITY
+                          && i.ErrorMessage == ValidationErrorCodes.UPSERT_RECIPE_INGREDIENT_INVALID_QUANTITY_MESSAGE)
             ;
 
         result.IsValid.Should()

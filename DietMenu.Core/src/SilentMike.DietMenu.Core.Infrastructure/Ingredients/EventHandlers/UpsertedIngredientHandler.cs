@@ -5,22 +5,22 @@ using Microsoft.Extensions.Logging;
 using SilentMike.DietMenu.Core.Application.Common;
 using SilentMike.DietMenu.Core.Application.Ingredients.Events;
 
-internal sealed class UpsertedIngredientsHandler : INotificationHandler<UpsertedIngredients>
+internal sealed class UpsertedIngredientHandler : INotificationHandler<UpsertedIngredient>
 {
-    private readonly ILogger<UpsertedIngredientsHandler> logger;
+    private readonly ILogger<UpsertedIngredientHandler> logger;
 
-    public UpsertedIngredientsHandler(ILogger<UpsertedIngredientsHandler> logger)
+    public UpsertedIngredientHandler(ILogger<UpsertedIngredientHandler> logger)
         => this.logger = logger;
 
-    public async Task Handle(UpsertedIngredients notification, CancellationToken cancellationToken)
+    public async Task Handle(UpsertedIngredient notification, CancellationToken cancellationToken)
     {
         using var loggerScope = this.logger.BeginPropertyScope(
             ("FamilyId", notification.FamilyId),
             ("UserId", notification.UserId),
-            ("Ids", notification.Ids)
+            ("IngredientId", notification.Id)
         );
 
-        this.logger.LogInformation("Upserted ingredients");
+        this.logger.LogInformation("Upserted ingredient");
 
         await Task.CompletedTask;
     }

@@ -20,7 +20,8 @@ internal sealed class GetMealTypesGridHandler : IRequestHandler<GetMealTypesGrid
     public async Task<MealTypesGrid> Handle(GetMealTypesGrid request, CancellationToken cancellationToken)
     {
         using var loggerScope = this.logger.BeginPropertyScope(
-            ("FamilyId", request.FamilyId)
+            ("FamilyId", request.FamilyId),
+            ("UserId", request.UserId)
         );
 
         this.logger.LogInformation("Try to get meal types grid");

@@ -85,7 +85,7 @@ internal sealed class RecipeReadService : IRecipeReadService
             case "name": return entity => entity.Name;
             case "meal_type_name": return entity => entity.MealType.Name;
             case "protein": return entity => entity.Protein;
-            default: return entity => entity.Id;
+            default: return entity => entity.Name;
         }
     }
 }

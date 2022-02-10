@@ -10,6 +10,12 @@ internal sealed class RecipeRepository : IRecipeRepository
 
     public RecipeRepository(DietMenuDbContext context) => (this.context) = (context);
 
+    public async Task Delete(RecipeEntity recipe, CancellationToken cancellationToken = default)
+    {
+        this.context.Remove(recipe);
+        await this.context.SaveChangesAsync(cancellationToken);
+    }
+
     public async Task<RecipeEntity?> Get(Guid recipeId, CancellationToken cancellationToken = default)
     {
         return await this.context.Recipes
