@@ -1,0 +1,18 @@
+html,body { 
+  height: 100%;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+body {
+  background-color: #a5e887;
+}
+
+.card-header-menu{
+  display: flex;  
+  padding: 1rem 0rem 1rem 0.75rem;
+}
+
+.right-input input {
+  text-align: right;
+}
