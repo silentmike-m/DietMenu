@@ -11,7 +11,7 @@ using SilentMike.DietMenu.Core.Application.Common;
 using SilentMike.DietMenu.Core.Application.Common.Behaviours;
 using SilentMike.DietMenu.Core.Application.Common.Constants;
 using SilentMike.DietMenu.Core.Application.Exceptions;
-using SilentMike.DietMenu.Core.Application.MealTypes.Commands;
+using SilentMike.DietMenu.Core.Application.Ingredients.Commands;
 
 [TestClass]
 public sealed class AuthorizationBehaviourTests
@@ -20,13 +20,13 @@ public sealed class AuthorizationBehaviourTests
     public async Task ShouldThrowUnauthorizedExceptionWhenMissingFamilyId()
     {
         //GIVEN
-        var request = new UpsertMealType();
+        var request = new UpsertIngredient();
 
         var service = new Mock<ICurrentRequestService>();
         service.Setup(i => i.CurrentUser)
             .Returns(() => (Guid.Empty, Guid.NewGuid()));
 
-        var behaviour = new AuthorizationBehaviour<UpsertMealType, Unit>(service.Object);
+        var behaviour = new AuthorizationBehaviour<UpsertIngredient, Unit>(service.Object);
 
         //WHEN
         Func<Task<Unit>> action = async () => await behaviour.Handle(request, CancellationToken.None, () => Task.FromResult(Unit.Value));
@@ -42,13 +42,13 @@ public sealed class AuthorizationBehaviourTests
     public async Task ShouldThrowUnauthorizedExceptionWhenMissingUserId()
     {
         //GIVEN
-        var request = new UpsertMealType();
+        var request = new UpsertIngredient();
 
         var service = new Mock<ICurrentRequestService>();
         service.Setup(i => i.CurrentUser)
             .Returns(() => (Guid.NewGuid(), Guid.Empty));
 
-        var behaviour = new AuthorizationBehaviour<UpsertMealType, Unit>(service.Object);
+        var behaviour = new AuthorizationBehaviour<UpsertIngredient, Unit>(service.Object);
 
         //WHEN
         Func<Task<Unit>> action = async () => await behaviour.Handle(request, CancellationToken.None, () => Task.FromResult(Unit.Value));
@@ -64,13 +64,13 @@ public sealed class AuthorizationBehaviourTests
     public async Task ShouldFillFamilyIdAndUserId()
     {
         //GIVEN
-        var request = new UpsertMealType();
+        var request = new UpsertIngredient();
 
         var service = new Mock<ICurrentRequestService>();
         service.Setup(i => i.CurrentUser)
             .Returns(() => (Guid.NewGuid(), Guid.NewGuid()));
 
-        var behaviour = new AuthorizationBehaviour<UpsertMealType, Unit>(service.Object);
+        var behaviour = new AuthorizationBehaviour<UpsertIngredient, Unit>(service.Object);
 
         //WHEN
         Func<Task<Unit>> action = async () => await behaviour.Handle(request, CancellationToken.None, () => Task.FromResult(Unit.Value));

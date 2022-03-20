@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 using SilentMike.DietMenu.Auth.Application.Common;
 using SilentMike.DietMenu.Auth.Application.Users.Events;
 using SilentMike.DietMenu.Auth.Infrastructure.MassTransit.Models;
-using SilentMike.DietMenu.Shared.MassTransit;
+using SilentMike.DietMenu.Shared.MassTransit.Identity;
 
 internal sealed class GeneratedEmailConfirmationTokenHandler : INotificationHandler<GeneratedEmailConfirmationToken>
 {
@@ -52,14 +52,14 @@ internal sealed class GeneratedEmailConfirmationTokenHandler : INotificationHand
                               protocol: schema)
                           ?? string.Empty;
 
-        var userEmail = new SendVerifyUserMessage
+        var request = new SendVerifyUserMessageRequest
         {
             Email = notification.Email,
             Url = callbackUrl,
         };
 
-        await this.publishEndpoint.Publish<ISendVerifyUserMessage>(
-            userEmail,
+        await this.publishEndpoint.Publish<ISendVerifyUserMessageRequest>(
+            request,
             context => context.TimeToLive = TimeSpan.FromMinutes(DEFAULT_MESSAGE_EXPIRATION_IN_MINUTES),
             cancellationToken);
 

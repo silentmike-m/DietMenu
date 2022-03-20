@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using SilentMike.DietMenu.Auth.Infrastructure.Identity.Models;
 
 [ExcludeFromCodeCoverage]
-internal sealed class DietMenuDbContext : IdentityDbContext<DietMenuUser>, IDietMenuDbContext
+internal sealed class DietMenuDbContext : IdentityDbContext<DietMenuUser>
 {
     public DbSet<DietMenuFamily> Families => Set<DietMenuFamily>();
 

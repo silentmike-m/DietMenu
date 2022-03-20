@@ -6,4 +6,3 @@ public sealed record GeneratedEmailConfirmationToken : INotification
     [JsonPropertyName("token")] public string Token { get; init; } = string.Empty;
     [JsonPropertyName("user_id")] public Guid UserId { get; init; } = Guid.Empty;
 }
-

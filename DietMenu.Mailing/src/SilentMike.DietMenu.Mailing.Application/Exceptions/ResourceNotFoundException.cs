@@ -9,7 +9,7 @@ public sealed class ResourceNotFoundException : ApplicationException
     public override string Code => "RESOURCE_NOT_FOUND";
 
     public ResourceNotFoundException(string resourceName)
-        : base($"Resource with name {resourceName} has not been found")
+        : base($"Resource with name '{resourceName}' has not been found")
     {
     }
 

@@ -2,7 +2,6 @@
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SilentMike.DietMenu.Core.Application.MealTypes.Commands;
 using SilentMike.DietMenu.Core.Application.MealTypes.Queries;
 using SilentMike.DietMenu.Core.Application.MealTypes.ViewModels;
 
@@ -17,13 +16,5 @@ public sealed class MealTypesController : ControllerBase
     public async Task<MealTypesGrid> GetMealTypesGrid([FromBody] GetMealTypesGrid request)
     {
         return await this.mediator.Send(request, CancellationToken.None);
-    }
-
-    [HttpPost(Name = "UpsertMealTypes")]
-    public async Task<ActionResult> UpsertMealTypes([FromBody] UpsertMealType request)
-    {
-        _ = await this.mediator.Send(request, CancellationToken.None);
-
-        return await Task.FromResult(Ok());
     }
 }

@@ -18,7 +18,7 @@ using SilentMike.DietMenu.Core.Application.Exceptions.MealTypes;
 using SilentMike.DietMenu.Core.Application.Recipes.CommandHandlers;
 using SilentMike.DietMenu.Core.Application.Recipes.Commands;
 using SilentMike.DietMenu.Core.Application.Recipes.Events;
-using SilentMike.DietMenu.Core.Application.Recipes.ViewModels.ValueModels;
+using SilentMike.DietMenu.Core.Application.Recipes.ValueModels;
 using SilentMike.DietMenu.Core.Domain.Entities;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Services;
 using SilentMike.DietMenu.Core.UnitTests.Services;
@@ -86,7 +86,7 @@ public sealed class UpsertRecipesHandlerTests : IDisposable
     }
 
     [TestMethod]
-    public async Task ShouldThrowFamilyNotFoundWhenInvalidId()
+    public async Task ShouldThrowFamilyNotFoundWhenInvalidIdOnUpsertRecipes()
     {
         //GIVEN
         var command = new UpsertRecipe
@@ -109,7 +109,7 @@ public sealed class UpsertRecipesHandlerTests : IDisposable
     }
 
     [TestMethod]
-    public async Task ShouldThrowValidationExceptionIfNameIsSpacesOnCreate()
+    public async Task ShouldThrowValidationExceptionIfNameIsSpacesOnCreateOnUpsertRecipes()
     {
         //GIVEN
         var command = new UpsertRecipe
@@ -141,7 +141,7 @@ public sealed class UpsertRecipesHandlerTests : IDisposable
     }
 
     [TestMethod]
-    public async Task ShouldThrowValidationExceptionIfNameIsNullAndParametersAreNullOnCreate()
+    public async Task ShouldThrowValidationExceptionIfNameIsNullAndParametersAreNullOnCreateOnUpsertRecipes()
     {
         //GIVEN
         var command = new UpsertRecipe
@@ -189,7 +189,7 @@ public sealed class UpsertRecipesHandlerTests : IDisposable
     }
 
     [TestMethod]
-    public async Task ShouldThrowMealTypeNotFoundWhenInvalidIdOnCreate()
+    public async Task ShouldThrowMealTypeNotFoundWhenInvalidIdOnCreateOnUpsertRecipes()
     {
         //GIVEN
         var recipeToUpsert = new RecipeToUpsert
@@ -224,7 +224,7 @@ public sealed class UpsertRecipesHandlerTests : IDisposable
     }
 
     [TestMethod]
-    public async Task ShouldThrowMealTypeNotFoundWhenInvalidIdOnUpdate()
+    public async Task ShouldThrowMealTypeNotFoundWhenInvalidIdOnUpdateOnUpsertRecipes()
     {
         //GIVEN
         var recipeToUpsert = new RecipeToUpsert
@@ -259,7 +259,7 @@ public sealed class UpsertRecipesHandlerTests : IDisposable
     }
 
     [TestMethod]
-    public async Task ShouldThrowIngredientNotFoundWhenInvalidIdOnCreate()
+    public async Task ShouldThrowIngredientNotFoundWhenInvalidIdOnCreateOnUpsertRecipes()
     {
         //GIVEN
         var ingredientToUpsert = new RecipeIngredientToUpsert
@@ -305,7 +305,7 @@ public sealed class UpsertRecipesHandlerTests : IDisposable
     }
 
     [TestMethod]
-    public async Task ShouldThrowIngredientNotFoundWhenInvalidIdOnUpdate()
+    public async Task ShouldThrowIngredientNotFoundWhenInvalidIdOnUpdateOnUpsertRecipes()
     {
         //GIVEN
         var ingredientToUpsert = new RecipeIngredientToUpsert
@@ -351,7 +351,7 @@ public sealed class UpsertRecipesHandlerTests : IDisposable
     }
 
     [TestMethod]
-    public async Task ShouldCreateRecipe()
+    public async Task ShouldCreateRecipeOnUpsertRecipes()
     {
         //GIVEN
         var ingredientToUpsert = new RecipeIngredientToUpsert
@@ -391,7 +391,7 @@ public sealed class UpsertRecipesHandlerTests : IDisposable
         //THEN
         this.mediator.Verify(i => i.Publish(It.IsAny<UpsertedRecipe>(), It.IsAny<CancellationToken>()), Times.Once);
 
-        var recipe = await this.recipeRepository.Get(recipeToUpsert.Id, CancellationToken.None);
+        var recipe = await this.recipeRepository.Get(command.FamilyId, recipeToUpsert.Id, CancellationToken.None);
 
         recipe.Should()
             .NotBeNull()
@@ -474,7 +474,7 @@ public sealed class UpsertRecipesHandlerTests : IDisposable
         //THEN
         this.mediator.Verify(i => i.Publish(It.IsAny<UpsertedRecipe>(), It.IsAny<CancellationToken>()), Times.Once);
 
-        var recipe = await this.recipeRepository.Get(recipeToUpsert.Id, CancellationToken.None);
+        var recipe = await this.recipeRepository.Get(command.FamilyId, recipeToUpsert.Id, CancellationToken.None);
 
         recipe.Should()
             .NotBeNull()

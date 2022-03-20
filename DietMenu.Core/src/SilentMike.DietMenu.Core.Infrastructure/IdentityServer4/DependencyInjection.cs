@@ -12,6 +12,8 @@ internal static class DependencyInjection
     {
         var identityServerOptions = configuration.GetSection(IdentityServer4Options.SectionName).Get<IdentityServer4Options>();
 
+        services.Configure<IdentityServer4Options>(configuration.GetSection(IdentityServer4Options.SectionName));
+
         services.AddAuthentication("Bearer")
             .AddJwtBearer("Bearer", options =>
             {

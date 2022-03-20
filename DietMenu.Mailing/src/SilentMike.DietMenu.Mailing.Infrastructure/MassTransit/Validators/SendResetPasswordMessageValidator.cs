@@ -2,9 +2,9 @@
 
 using FluentValidation;
 using SilentMike.DietMenu.Mailing.Application.Common.Constants;
-using SilentMike.DietMenu.Shared.MassTransit;
+using SilentMike.DietMenu.Shared.MassTransit.Identity;
 
-internal sealed class SendResetPasswordMessageValidator : AbstractValidator<ISendResetPasswordMessage>
+internal sealed class SendResetPasswordMessageValidator : AbstractValidator<ISendResetPasswordMessageRequest>
 {
     public SendResetPasswordMessageValidator()
     {

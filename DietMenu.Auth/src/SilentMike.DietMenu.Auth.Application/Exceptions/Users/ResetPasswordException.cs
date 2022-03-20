@@ -10,7 +10,7 @@ public sealed class ResetPasswordException : ApplicationException
     public override string Code => ErrorCodes.RESET_PASSWORD;
 
     public ResetPasswordException(string email, string message)
-        : base($"Unable to reset password user with email {email}: {message}")
+        : base($"Unable to reset password user with email '{email}': {message}")
     {
     }
 

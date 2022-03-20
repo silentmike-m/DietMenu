@@ -2,14 +2,14 @@
 
 using FluentValidation.Results;
 using Microsoft.Extensions.Logging;
-using SilentMike.DietMenu.Core.Application.Common;
 using SilentMike.DietMenu.Core.Application.Common.Constants;
 using SilentMike.DietMenu.Core.Application.Exceptions;
 using SilentMike.DietMenu.Core.Application.Exceptions.Families;
 using SilentMike.DietMenu.Core.Application.Exceptions.IngredientTypes;
+using SilentMike.DietMenu.Core.Application.Extensions;
 using SilentMike.DietMenu.Core.Application.Ingredients.Commands;
 using SilentMike.DietMenu.Core.Application.Ingredients.Events;
-using SilentMike.DietMenu.Core.Application.Ingredients.ViewModels.ValueModels;
+using SilentMike.DietMenu.Core.Application.Ingredients.ValueModels;
 using SilentMike.DietMenu.Core.Domain.Entities;
 using SilentMike.DietMenu.Core.Domain.Repositories;
 
@@ -52,7 +52,7 @@ internal sealed class UpsertIngredientHandler : IRequestHandler<UpsertIngredient
             throw new FamilyNotFoundException(request.FamilyId);
         }
 
-        var ingredient = await this.ingredientRepository.Get(request.Ingredient.Id, cancellationToken);
+        var ingredient = await this.ingredientRepository.Get(request.FamilyId, request.Ingredient.Id, cancellationToken);
 
         if (ingredient is null)
         {
@@ -60,7 +60,7 @@ internal sealed class UpsertIngredientHandler : IRequestHandler<UpsertIngredient
         }
         else
         {
-            await this.Update(ingredient, request.Ingredient, cancellationToken);
+            await this.Update(request.FamilyId, ingredient, request.Ingredient, cancellationToken);
         }
 
         await this.ingredientRepository.Save(ingredient, cancellationToken);
@@ -81,16 +81,15 @@ internal sealed class UpsertIngredientHandler : IRequestHandler<UpsertIngredient
     {
         this.logger.LogInformation("Try to create ingredient");
 
-        await this.ValidateIngredientType(ingredientToUpsert.TypeId, cancellationToken);
-
         ValidateNewIngredient(ingredientToUpsert);
+
+        await this.ValidateIngredientType(familyId, ingredientToUpsert.TypeId, cancellationToken);
 
         var ingredient = new IngredientEntity(ingredientToUpsert.Id)
         {
             Exchanger = ingredientToUpsert.Exchanger!.Value,
             FamilyId = familyId,
             InternalName = ingredientToUpsert.Id.ToString(),
-            IsSystem = false,
             Name = ingredientToUpsert.Name!,
             TypeId = ingredientToUpsert.TypeId!.Value,
             UnitSymbol = ingredientToUpsert.UnitSymbol!,
@@ -99,11 +98,11 @@ internal sealed class UpsertIngredientHandler : IRequestHandler<UpsertIngredient
         return ingredient;
     }
 
-    private async Task Update(IngredientEntity ingredient, IngredientToUpsert ingredientToUpsert, CancellationToken cancellationToken)
+    private async Task Update(Guid familyId, IngredientEntity ingredient, IngredientToUpsert ingredientToUpsert, CancellationToken cancellationToken)
     {
         this.logger.LogInformation("Try to update ingredient");
 
-        await this.ValidateIngredientType(ingredientToUpsert.TypeId, cancellationToken);
+        await this.ValidateIngredientType(familyId, ingredientToUpsert.TypeId, cancellationToken);
 
         ingredient.Exchanger = ingredientToUpsert.Exchanger ?? ingredient.Exchanger;
         ingredient.Name = ingredientToUpsert.Name ?? ingredient.Name;
@@ -139,20 +138,28 @@ internal sealed class UpsertIngredientHandler : IRequestHandler<UpsertIngredient
             });
         }
 
+        if (ingredientToUpsert.TypeId is null)
+        {
+            errors.Add(new ValidationFailure(nameof(ingredientToUpsert.TypeId), ValidationErrorCodes.UPSERT_INGREDIENT_EMPTY_TYPE_MESSAGE)
+            {
+                ErrorCode = ValidationErrorCodes.UPSERT_INGREDIENT_EMPTY_TYPE,
+            });
+        }
+
         if (errors.Any())
         {
             throw new ValidationException(errors);
         }
     }
 
-    private async Task ValidateIngredientType(Guid? typeId, CancellationToken cancellationToken)
+    private async Task ValidateIngredientType(Guid familyId, Guid? typeId, CancellationToken cancellationToken)
     {
         if (typeId is null)
         {
             return;
         }
 
-        var type = await this.typeRepository.Get(typeId.Value, cancellationToken);
+        var type = await this.typeRepository.Get(familyId, typeId.Value, cancellationToken);
 
         if (type is null)
         {

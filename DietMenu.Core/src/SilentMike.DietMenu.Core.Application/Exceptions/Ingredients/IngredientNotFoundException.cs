@@ -11,7 +11,7 @@ public sealed class IngredientNotFoundException : ApplicationException
     public override string Code => ErrorCodes.INGREDIENT_NOT_FOUND;
 
     public IngredientNotFoundException(Guid id)
-        : base($"Ingredient with id {id} has not been found")
+        : base($"Ingredient with id '{id}' has not been found")
     {
         this.Id = id;
     }

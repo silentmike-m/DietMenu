@@ -42,9 +42,11 @@ internal sealed class CreateUserHandler : IRequestHandler<CreateUser>
             throw new ArgumentException("Invalid register code");
         }
 
+        var userId = Guid.NewGuid();
+
         var family = new DietMenuFamily
         {
-            Id = Guid.NewGuid(),
+            Id = userId,
             Name = request.Family,
         };
 
@@ -53,6 +55,7 @@ internal sealed class CreateUserHandler : IRequestHandler<CreateUser>
             Email = request.Email,
             Family = family,
             FirstName = request.FirstName,
+            Id = userId.ToString(),
             LastName = request.LastName,
             UserName = request.Email,
         };

@@ -3,6 +3,7 @@
 using global::MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SilentMike.DietMenu.Auth.Infrastructure.MassTransit.Consumers;
 
 internal static class DependencyInjection
 {
@@ -12,6 +13,9 @@ internal static class DependencyInjection
 
         services.AddMassTransit(configure =>
         {
+            configure.AddConsumer<GetSystemUserEmailRequestConsumer>();
+            configure.AddConsumer<GetFamilyUserEmailRequestConsumer>();
+
             configure.UsingRabbitMq((context, cfg) =>
             {
                 cfg.Host(rabbitMqOptions.Server, host =>

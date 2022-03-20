@@ -5,8 +5,8 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MimeKit;
-using SilentMike.DietMenu.Mailing.Application.Common;
 using SilentMike.DietMenu.Mailing.Application.Emails.Commands;
+using SilentMike.DietMenu.Mailing.Application.Extensions;
 
 internal sealed class SendEmailHandler : IRequestHandler<SendEmail>
 {

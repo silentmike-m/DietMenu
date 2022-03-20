@@ -4,7 +4,7 @@ using global::MassTransit;
 using Microsoft.Extensions.Logging;
 using SilentMike.DietMenu.Auth.Application.Users.Events;
 using SilentMike.DietMenu.Auth.Infrastructure.MassTransit.Models;
-using SilentMike.DietMenu.Shared.MassTransit;
+using SilentMike.DietMenu.Shared.MassTransit.Core;
 
 internal sealed class CreatedFamilyHandler : INotificationHandler<CreatedFamily>
 {

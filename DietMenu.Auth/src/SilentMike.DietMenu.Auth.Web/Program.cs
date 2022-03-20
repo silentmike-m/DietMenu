@@ -87,7 +87,7 @@ builder.Host.UseSystemd();
         app.UseHsts();
     }
 
-    app.UseInfrastructure();
+    app.UseInfrastructure(builder.Configuration);
 
     app.UseHttpsRedirection();
     app.UseHttpLogging();

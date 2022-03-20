@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using SilentMike.DietMenu.Core.Application.Common.Constants;
-using SilentMike.DietMenu.Core.Application.Exceptions;
+using SilentMike.DietMenu.Core.Application.Exceptions.Families;
 using SilentMike.DietMenu.Core.Application.Exceptions.Ingredients;
 using SilentMike.DietMenu.Core.Application.Ingredients.CommandHandlers;
 using SilentMike.DietMenu.Core.Application.Ingredients.Commands;
@@ -22,17 +22,20 @@ using SilentMike.DietMenu.Core.UnitTests.Services;
 [TestClass]
 public sealed class DeleteIngredientHandlerTests : IDisposable
 {
+    private readonly Guid familyId = Guid.NewGuid();
     private readonly Guid ingredientId = Guid.NewGuid();
     private readonly Guid systemIngredientId = Guid.NewGuid();
 
     private readonly DietMenuDbContextFactory factory;
+    private readonly FamilyRepository familyRepository;
+    private readonly IngredientRepository ingredientRepository;
     private readonly NullLogger<DeleteIngredientHandler> logger;
     private readonly Mock<IMediator> mediator;
-    private readonly IngredientRepository repository;
+
 
     public DeleteIngredientHandlerTests()
     {
-        var family = new FamilyEntity(Guid.NewGuid());
+        var family = new FamilyEntity(this.familyId);
 
         var ingredientType = new IngredientTypeEntity(Guid.NewGuid())
         {
@@ -51,28 +54,53 @@ public sealed class DeleteIngredientHandlerTests : IDisposable
         {
             FamilyId = family.Id,
             InternalName = "system ingredient",
-            IsSystem = true,
             Name = "system ingredient",
             TypeId = ingredientType.Id,
         };
 
         this.factory = new DietMenuDbContextFactory(family, ingredientType, ingredient, systemIngredient);
 
+        this.familyRepository = new FamilyRepository(this.factory.Context);
         this.logger = new NullLogger<DeleteIngredientHandler>();
         this.mediator = new Mock<IMediator>();
-        this.repository = new IngredientRepository(this.factory.Context);
+        this.ingredientRepository = new IngredientRepository(this.factory.Context);
     }
 
     [TestMethod]
-    public async Task ShouldThrowIngredientNotFoundExceptionWhenInvalidId()
+    public async Task ShouldThrowFamilyNotFoundExceptionWhenInvalidIdOnDeleteIngredient()
     {
         //GIVEN
         var command = new DeleteIngredient
         {
             Id = Guid.NewGuid(),
+            FamilyId = Guid.NewGuid(),
         };
 
-        var commandHandler = new DeleteIngredientHandler(this.logger, this.mediator.Object, this.repository);
+        var commandHandler = new DeleteIngredientHandler(this.familyRepository, this.ingredientRepository, this.logger, this.mediator.Object);
+
+        //WHEN
+        Func<Task<Unit>> action = async () => await commandHandler.Handle(command, CancellationToken.None);
+
+        //THEN
+        await action.Should()
+                .ThrowAsync<FamilyNotFoundException>()
+                .Where(i =>
+                    i.Code == ErrorCodes.FAMILY_NOT_FOUND
+                    && i.Id == command.FamilyId)
+            ;
+    }
+
+    [TestMethod]
+    public async Task ShouldThrowIngredientNotFoundExceptionWhenInvalidIdOnDeleteIngredient()
+    {
+        //GIVEN
+        var command = new DeleteIngredient
+        {
+            Id = Guid.NewGuid(),
+            FamilyId = this.familyId,
+        };
+
+        var commandHandler = new DeleteIngredientHandler(this.familyRepository, this.ingredientRepository, this.logger, this.mediator.Object);
 
         //WHEN
         Func<Task<Unit>> action = async () => await commandHandler.Handle(command, CancellationToken.None);
@@ -87,38 +115,16 @@ public sealed class DeleteIngredientHandlerTests : IDisposable
     }
 
     [TestMethod]
-    public async Task ShouldThrowDeleteSystemValueExceptionWhenDeleteSystemIngredient()
-    {
-        //GIVEN
-        var command = new DeleteIngredient
-        {
-            Id = this.systemIngredientId,
-        };
-
-        var commandHandler = new DeleteIngredientHandler(this.logger, this.mediator.Object, this.repository);
-
-        //WHEN
-        Func<Task<Unit>> action = async () => await commandHandler.Handle(command, CancellationToken.None);
-
-        //THEN
-        await action.Should()
-                .ThrowAsync<DeleteSystemValueException>()
-                .Where(i =>
-                    i.Code == ErrorCodes.DELETE_SYSTEM_VALUE
-                    && i.Id == command.Id)
-            ;
-    }
-
-    [TestMethod]
-    public async Task ShouldDeleteIngredient()
+    public async Task ShouldDeleteIngredientOnDeleteIngredient()
     {
         //GIVEN
         var command = new DeleteIngredient
         {
             Id = this.ingredientId,
+            FamilyId = this.familyId,
         };
 
-        var commandHandler = new DeleteIngredientHandler(this.logger, this.mediator.Object, this.repository);
+        var commandHandler = new DeleteIngredientHandler(this.familyRepository, this.ingredientRepository, this.logger, this.mediator.Object);
 
         //WHEN
         await commandHandler.Handle(command, CancellationToken.None);
@@ -128,7 +134,10 @@ public sealed class DeleteIngredientHandlerTests : IDisposable
 
         var ingredient = this.factory.Context.Ingredients.SingleOrDefault(i => i.Id == command.Id);
         ingredient.Should()
-            .BeNull()
+            .NotBeNull()
+            ;
+        ingredient!.IsActive.Should()
+            .BeFalse()
             ;
     }
 

@@ -26,14 +26,14 @@ public sealed class CreatedFamilyHandlerTests
             Id = Guid.NewGuid(),
         };
         var handlerLogger = new NullLogger<CreatedFamilyHandler>();
-        var handler = new CreatedFamilyHandler(jobClient.Object, handlerLogger);
+        var handler = new CreatedFamilyHandler(jobClient.Object);
 
         //WHEN
         handler.Handle(assignEvent, CancellationToken.None).Wait(CancellationToken.None);
 
         //THEN
         jobClient.Verify(x => x.Create(
-            It.Is<Job>(job => job.Type == typeof(ImportFamilyLibraries)
+            It.Is<Job>(job => job.Type == typeof(ImportFamilyData)
                               && job.Args[0].ToString() == assignEvent.Id.ToString()
             ),
             It.IsAny<EnqueuedState>()));

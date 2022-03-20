@@ -48,7 +48,7 @@ public sealed class IngredientReadServiceTests : IDisposable
             Exchanger = 0.5m,
             FamilyId = this.familyId,
             InternalName = "ingredient one",
-            IsSystem = true,
+
             Name = "ingredient one",
             Type = ingredientTypeOne,
             TypeId = ingredientTypeOne.Id,
@@ -60,7 +60,7 @@ public sealed class IngredientReadServiceTests : IDisposable
             Exchanger = 2.3m,
             FamilyId = this.familyId,
             InternalName = "ingredient two",
-            IsSystem = true,
+
             Name = "ingredient two",
             Type = ingredientTypeTwo,
             TypeId = ingredientTypeTwo.Id,
@@ -95,7 +95,6 @@ public sealed class IngredientReadServiceTests : IDisposable
             .And
             .Contain(i =>
                 i.Exchanger == this.ingredientOne.Exchanger
-                && i.IsSystem == this.ingredientOne.IsSystem
                 && i.Id == this.ingredientOne.Id
                 && i.Name == this.ingredientOne.Name
                 && i.TypeId == this.ingredientOne.TypeId
@@ -129,7 +128,6 @@ public sealed class IngredientReadServiceTests : IDisposable
             .And
             .Contain(i =>
                 i.Exchanger == this.ingredientTwo.Exchanger
-                && i.IsSystem == this.ingredientTwo.IsSystem
                 && i.Id == this.ingredientTwo.Id
                 && i.Name == this.ingredientTwo.Name
                 && i.TypeId == this.ingredientTwo.TypeId
@@ -164,7 +162,6 @@ public sealed class IngredientReadServiceTests : IDisposable
             .And
             .Contain(i =>
                 i.Exchanger == this.ingredientTwo.Exchanger
-                && i.IsSystem == this.ingredientTwo.IsSystem
                 && i.Id == this.ingredientTwo.Id
                 && i.Name == this.ingredientTwo.Name
                 && i.TypeId == this.ingredientTwo.TypeId
@@ -190,7 +187,6 @@ public sealed class IngredientReadServiceTests : IDisposable
             .And
             .Contain(i =>
                 i.Exchanger == this.ingredientOne.Exchanger
-                && i.IsSystem == this.ingredientOne.IsSystem
                 && i.Id == this.ingredientOne.Id
                 && i.Name == this.ingredientOne.Name
                 && i.TypeId == this.ingredientOne.TypeId
@@ -199,7 +195,6 @@ public sealed class IngredientReadServiceTests : IDisposable
             .And
             .Contain(i =>
                 i.Exchanger == this.ingredientTwo.Exchanger
-                && i.IsSystem == this.ingredientTwo.IsSystem
                 && i.Id == this.ingredientTwo.Id
                 && i.Name == this.ingredientTwo.Name
                 && i.TypeId == this.ingredientTwo.TypeId
@@ -231,7 +226,6 @@ public sealed class IngredientReadServiceTests : IDisposable
             .ContainInOrder(new Ingredient
             {
                 Exchanger = this.ingredientTwo.Exchanger,
-                IsSystem = this.ingredientTwo.IsSystem,
                 Id = this.ingredientTwo.Id,
                 Name = this.ingredientTwo.Name,
                 TypeId = this.ingredientTwo.TypeId,
@@ -240,7 +234,6 @@ public sealed class IngredientReadServiceTests : IDisposable
             }, new Ingredient
             {
                 Exchanger = this.ingredientOne.Exchanger,
-                IsSystem = this.ingredientOne.IsSystem,
                 Id = this.ingredientOne.Id,
                 Name = this.ingredientOne.Name,
                 TypeId = this.ingredientOne.TypeId,
@@ -273,7 +266,6 @@ public sealed class IngredientReadServiceTests : IDisposable
             .ContainInOrder(new Ingredient
             {
                 Exchanger = this.ingredientOne.Exchanger,
-                IsSystem = this.ingredientOne.IsSystem,
                 Id = this.ingredientOne.Id,
                 Name = this.ingredientOne.Name,
                 TypeId = this.ingredientOne.TypeId,
@@ -282,7 +274,6 @@ public sealed class IngredientReadServiceTests : IDisposable
             }, new Ingredient
             {
                 Exchanger = this.ingredientTwo.Exchanger,
-                IsSystem = this.ingredientTwo.IsSystem,
                 Id = this.ingredientTwo.Id,
                 Name = this.ingredientTwo.Name,
                 TypeId = this.ingredientTwo.TypeId,
