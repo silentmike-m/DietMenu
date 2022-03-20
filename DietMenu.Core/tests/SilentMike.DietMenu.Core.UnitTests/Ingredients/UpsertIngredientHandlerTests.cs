@@ -16,7 +16,7 @@ using SilentMike.DietMenu.Core.Application.Exceptions.IngredientTypes;
 using SilentMike.DietMenu.Core.Application.Ingredients.CommandHandlers;
 using SilentMike.DietMenu.Core.Application.Ingredients.Commands;
 using SilentMike.DietMenu.Core.Application.Ingredients.Events;
-using SilentMike.DietMenu.Core.Application.Ingredients.ViewModels.ValueModels;
+using SilentMike.DietMenu.Core.Application.Ingredients.ValueModels;
 using SilentMike.DietMenu.Core.Domain.Entities;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Services;
 using SilentMike.DietMenu.Core.UnitTests.Services;
@@ -59,7 +59,7 @@ public sealed class UpsertIngredientHandlerTests : IDisposable
     }
 
     [TestMethod]
-    public async Task ShouldThrowFamilyNotFoundWhenInvalidFamilyId()
+    public async Task ShouldThrowFamilyNotFoundWhenInvalidFamilyIdOnUpsertIngredient()
     {
         //
         var command = new UpsertIngredient
@@ -87,11 +87,48 @@ public sealed class UpsertIngredientHandlerTests : IDisposable
     }
 
     [TestMethod]
-    public async Task ShouldThrowIngredientTypeNotFoundWhenInvalidTypeId()
+    public async Task ShouldThrowValidationExceptionWhenMissingTypeIdOnCreateOnUpsertIngredient()
     {
         //GIVEN
         var ingredientToUpsert = new IngredientToUpsert
         {
+            TypeId = null,
+        };
+
+        var command = new UpsertIngredient
+        {
+            FamilyId = this.familyId,
+            Ingredient = ingredientToUpsert,
+        };
+
+        var commandHandler = new UpsertIngredientHandler(
+            this.familyRepository,
+            this.ingredientRepository,
+            this.logger,
+            this.mediator.Object,
+            this.typeRepository);
+
+        //WHEN
+        Func<Task<Unit>> action = async () => await commandHandler.Handle(command, CancellationToken.None);
+
+        //THEN
+        await action.Should()
+                .ThrowAsync<ValidationException>()
+                .Where(i => i.Code == ErrorCodes.VALIDATION_FAILED
+                            && i.Errors.ContainsKey(ValidationErrorCodes.UPSERT_INGREDIENT_EMPTY_TYPE)
+                            && i.Errors[ValidationErrorCodes.UPSERT_INGREDIENT_EMPTY_TYPE].Contains(ValidationErrorCodes.UPSERT_INGREDIENT_EMPTY_TYPE_MESSAGE))
+            ;
+    }
+
+    [TestMethod]
+    public async Task ShouldThrowIngredientTypeNotFoundWhenInvalidTypeIdOnUpsertIngredient()
+    {
+        //GIVEN
+        var ingredientToUpsert = new IngredientToUpsert
+        {
+            Exchanger = 1,
+            Name = "name",
+            UnitSymbol = "kg",
             TypeId = Guid.NewGuid(),
         };
 
@@ -121,7 +158,7 @@ public sealed class UpsertIngredientHandlerTests : IDisposable
     }
 
     [TestMethod]
-    public async Task ShouldThrowValidationExceptionWhenAllParametersAreNullOnCreate()
+    public async Task ShouldThrowValidationExceptionWhenAllParametersAreNullOnCreateOnUpsertIngredient()
     {
         //GIVEN
         var ingredientToUpsert = new IngredientToUpsert
@@ -164,7 +201,7 @@ public sealed class UpsertIngredientHandlerTests : IDisposable
     }
 
     [TestMethod]
-    public async Task ShouldCreateIngredient()
+    public async Task ShouldCreateIngredientOnUpsertIngredient()
     {
         //GIVEN
         var ingredientToUpsert = new IngredientToUpsert
@@ -195,15 +232,12 @@ public sealed class UpsertIngredientHandlerTests : IDisposable
         //THEN
         this.mediator.Verify(i => i.Publish(It.IsAny<UpsertedIngredient>(), It.IsAny<CancellationToken>()), Times.Once);
 
-        var ingredient = await this.ingredientRepository.Get(ingredientToUpsert.Id);
+        var ingredient = await this.ingredientRepository.Get(command.FamilyId, ingredientToUpsert.Id);
         ingredient.Should()
             .NotBeNull()
             ;
         ingredient!.Exchanger.Should()
             .Be(ingredientToUpsert.Exchanger)
-            ;
-        ingredient.IsSystem.Should()
-            .BeFalse()
             ;
         ingredient.Name.Should()
             .Be(ingredientToUpsert.Name)
@@ -220,7 +254,7 @@ public sealed class UpsertIngredientHandlerTests : IDisposable
     }
 
     [TestMethod]
-    public async Task ShouldUpdateIngredient()
+    public async Task ShouldUpdateIngredientOnUpsertIngredient()
     {
         //GIVEN
         var ingredientToUpsert = new IngredientToUpsert
@@ -251,7 +285,7 @@ public sealed class UpsertIngredientHandlerTests : IDisposable
         //THEN
         this.mediator.Verify(i => i.Publish(It.IsAny<UpsertedIngredient>(), It.IsAny<CancellationToken>()), Times.Once);
 
-        var ingredient = await this.ingredientRepository.Get(ingredientToUpsert.Id);
+        var ingredient = await this.ingredientRepository.Get(command.FamilyId, ingredientToUpsert.Id);
         ingredient.Should()
                 .NotBeNull()
                 ;

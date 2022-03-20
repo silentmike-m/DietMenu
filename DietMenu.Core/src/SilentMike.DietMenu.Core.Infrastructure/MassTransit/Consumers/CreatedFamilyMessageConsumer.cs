@@ -4,7 +4,7 @@ using global::MassTransit;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SilentMike.DietMenu.Core.Application.Families.Commands;
-using SilentMike.DietMenu.Shared.MassTransit;
+using SilentMike.DietMenu.Shared.MassTransit.Core;
 
 internal sealed class CreatedFamilyMessageConsumer : IConsumer<ICreatedFamilyMessage>
 {

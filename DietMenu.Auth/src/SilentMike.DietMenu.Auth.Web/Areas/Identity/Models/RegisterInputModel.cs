@@ -22,7 +22,7 @@ public sealed class RegisterInputModel
     [Display(Name = "Imię")]
     public string FirstName { get; set; } = string.Empty;
 
-    [Display(Name = "Imię")]
+    [Display(Name = "Nazwisko")]
     public string LastName { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Należy podać hasło.")]

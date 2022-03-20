@@ -9,9 +9,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework;
+using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Interfaces;
 using SilentMike.DietMenu.Core.Infrastructure.Hangfire;
 using SilentMike.DietMenu.Core.Infrastructure.HealthChecks;
 using SilentMike.DietMenu.Core.Infrastructure.IdentityServer4;
+using SilentMike.DietMenu.Core.Infrastructure.MailingServer;
 using SilentMike.DietMenu.Core.Infrastructure.MassTransit;
 using SilentMike.DietMenu.Core.Infrastructure.Swagger;
 
@@ -36,6 +38,8 @@ public static class DependencyInjection
 
         services.AddHangfire(configuration, hangFireServerName);
 
+        services.AddMailingServer(configuration);
+
         services.AddSingleton<IFileProvider>(new ManifestEmbeddedFileProvider(Assembly.GetExecutingAssembly()));
     }
 
@@ -57,10 +61,19 @@ public static class DependencyInjection
             app.UseEntityFramework(context);
 
             app.UseHangfire(hangFireServerName);
+
+            app.MigrateCore();
         }
         catch (Exception exception)
         {
-            logger.LogWarning(exception, exception.Message);
+            logger.LogWarning(exception, "{Message}", exception.Message);
         }
+    }
+
+    private static void MigrateCore(this IApplicationBuilder app)
+    {
+        using var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>()!.CreateScope();
+        var migrationService = serviceScope.ServiceProvider.GetRequiredService<ICoreMigrationService>();
+        migrationService.MigrateCoreAsync().Wait();
     }
 }

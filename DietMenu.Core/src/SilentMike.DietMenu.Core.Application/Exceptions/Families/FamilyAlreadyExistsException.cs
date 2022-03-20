@@ -11,7 +11,7 @@ public sealed class FamilyAlreadyExistsException : ApplicationException
     public override string Code => ErrorCodes.FAMILY_ALREADY_EXISTS;
 
     public FamilyAlreadyExistsException(Guid id)
-        : base($"Family with id {id} already exists")
+        : base($"Family with id '{id}' already exists")
     {
         this.Id = id;
     }

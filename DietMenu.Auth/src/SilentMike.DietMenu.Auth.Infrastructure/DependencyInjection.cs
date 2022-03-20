@@ -28,7 +28,7 @@ public static class DependencyInjection
         services.AddMassTransit(configuration);
     }
 
-    public static void UseInfrastructure(this IApplicationBuilder app)
+    public static void UseInfrastructure(this IApplicationBuilder app, IConfiguration configuration)
     {
         using var scope = app.ApplicationServices.CreateScope();
         var loggerFactory = scope.ServiceProvider.GetRequiredService<ILoggerFactory>();
@@ -41,11 +41,11 @@ public static class DependencyInjection
 
             app.UseHealthChecks();
 
-            app.UseIdentity(context, userManager);
+            app.UseIdentity(configuration, context, userManager);
         }
         catch (Exception exception)
         {
-            logger.LogError(exception, exception.Message);
+            logger.LogError(exception, "{Message}", exception.Message);
         }
     }
 }

@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SilentMike.DietMenu.Core.Application.Common.Constants;
 using SilentMike.DietMenu.Core.Application.Ingredients.Commands;
 using SilentMike.DietMenu.Core.Application.Ingredients.Validators;
-using SilentMike.DietMenu.Core.Application.Ingredients.ViewModels.ValueModels;
+using SilentMike.DietMenu.Core.Application.Ingredients.ValueModels;
 
 [TestClass]
 public sealed class UpsertIngredientValidatorTests
@@ -23,7 +23,7 @@ public sealed class UpsertIngredientValidatorTests
             },
         };
 
-        var validator = new UpsertIngredientsValidator();
+        var validator = new UpsertIngredientValidator();
 
         //WHEN
         var result = validator.Validate(command);
@@ -50,7 +50,7 @@ public sealed class UpsertIngredientValidatorTests
             },
         };
 
-        var validator = new UpsertIngredientsValidator();
+        var validator = new UpsertIngredientValidator();
 
         //WHEN
         var result = validator.Validate(command);
@@ -86,7 +86,7 @@ public sealed class UpsertIngredientValidatorTests
             },
         };
 
-        var validator = new UpsertIngredientsValidator();
+        var validator = new UpsertIngredientValidator();
 
         //WHEN
         var result = validator.Validate(command);

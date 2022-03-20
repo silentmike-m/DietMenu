@@ -1,7 +1,7 @@
 ﻿namespace SilentMike.DietMenu.Core.Infrastructure.Families.EventHandlers;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using SilentMike.DietMenu.Core.Application.Common;
+using SilentMike.DietMenu.Core.Application.Extensions;
 using SilentMike.DietMenu.Core.Application.Families.Events;
 
 internal sealed class CreatedFamilyHandler : INotificationHandler<CreatedFamily>

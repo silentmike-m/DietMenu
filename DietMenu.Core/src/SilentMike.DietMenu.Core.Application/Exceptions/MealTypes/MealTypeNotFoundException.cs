@@ -11,7 +11,7 @@ public sealed class MealTypeNotFoundException : ApplicationException
     public override string Code => ErrorCodes.MEAL_TYPE_NOT_FOUND;
 
     public MealTypeNotFoundException(Guid id)
-        : base($"Meal type with id {id} has not been found")
+        : base($"Meal type with id '{id}' has not been found")
     {
         this.Id = id;
     }

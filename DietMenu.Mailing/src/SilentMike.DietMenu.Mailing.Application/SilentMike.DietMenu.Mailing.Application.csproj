@@ -13,6 +13,12 @@
 	<ItemGroup>
 		<EmbeddedResource Include="Resources\**" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="Resources\Core\ImportedCoreDataTextEmail.xslt" />
+	  <None Remove="Resources\Family\ImportedFamilyDataHtmlEmail.xslt" />
+	  <None Remove="Resources\Family\ImportedFamilyDataTextEmail.xslt" />
+	</ItemGroup>
 	
 	<ItemGroup>
 		<InternalsVisibleTo Include="SilentMike.DietMenu.Mailing.UnitTests" />

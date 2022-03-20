@@ -12,6 +12,7 @@ public sealed class RecipeEntity
     public FamilyEntity FamilyEntity { get; set; } = null!;
     public decimal Fat { get; set; } = default;
     public List<RecipeIngredientEntity> Ingredients { get; set; } = null!;
+    public bool IsActive { get; set; } = true;
     public MealTypeEntity MealType { get; set; } = null!;
     public Guid MealTypeId { get; set; } = Guid.Empty;
     public string Name { get; set; } = string.Empty;

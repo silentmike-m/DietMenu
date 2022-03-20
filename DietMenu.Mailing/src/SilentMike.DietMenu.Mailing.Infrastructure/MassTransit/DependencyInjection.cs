@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SilentMike.DietMenu.Mailing.Infrastructure.MassTransit.Consumers;
 using SilentMike.DietMenu.Mailing.Infrastructure.MassTransit.Middlewares;
+using SilentMike.DietMenu.Shared.MassTransit.Identity;
 
 [ExcludeFromCodeCoverage]
 internal static class DependencyInjection
@@ -16,8 +17,11 @@ internal static class DependencyInjection
 
         services.AddMassTransit(configure =>
         {
-            configure.AddConsumer<SendResetPasswordMessageConsumer>();
-            configure.AddConsumer<SendVerifyUserMessageConsumer>();
+            configure.AddConsumer<SendResetPasswordMessageRequestConsumer>();
+            configure.AddConsumer<SendVerifyUserMessageRequestConsumer>();
+
+            configure.AddRequestClient<IGetFamilyUserEmailRequest>();
+            configure.AddRequestClient<IGetSystemUserEmailRequest>();
 
             configure.UsingRabbitMq((context, cfg) =>
             {

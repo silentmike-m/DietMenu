@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using global::MassTransit;
 using GreenPipes;
 using Microsoft.Extensions.Logging;
-using SilentMike.DietMenu.Core.Application.Common;
+using SilentMike.DietMenu.Core.Application.Extensions;
 
 [ExcludeFromCodeCoverage]
 internal sealed class ExceptionLoggerFilter<T> : IFilter<ConsumeContext<T>>

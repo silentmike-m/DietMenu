@@ -10,7 +10,7 @@ public sealed class CreateUserException : ApplicationException
     public override string Code => ErrorCodes.CREATE_USER_ERROR;
 
     public CreateUserException(string email, string message)
-        : base($"Unable to create user {email}: {message}")
+        : base($"Unable to create user '{email}': {message}")
     {
     }
 

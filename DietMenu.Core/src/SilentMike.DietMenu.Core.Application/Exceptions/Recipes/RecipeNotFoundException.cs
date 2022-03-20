@@ -11,7 +11,7 @@ public sealed class RecipeNotFoundException : ApplicationException
     public override string Code => ErrorCodes.RECIPE_NOT_FOUND;
 
     public RecipeNotFoundException(Guid id)
-        : base($"Recipe with id {id} has not been found")
+        : base($"Recipe with id '{id}' has not been found")
     {
         this.Id = id;
     }

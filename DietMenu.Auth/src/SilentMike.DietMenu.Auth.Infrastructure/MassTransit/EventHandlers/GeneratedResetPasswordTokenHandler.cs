@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 using SilentMike.DietMenu.Auth.Application.Common;
 using SilentMike.DietMenu.Auth.Application.Users.Events;
 using SilentMike.DietMenu.Auth.Infrastructure.MassTransit.Models;
-using SilentMike.DietMenu.Shared.MassTransit;
+using SilentMike.DietMenu.Shared.MassTransit.Identity;
 
 internal sealed class GeneratedResetPasswordTokenHandler : INotificationHandler<GeneratedResetPasswordToken>
 {
@@ -52,14 +52,14 @@ internal sealed class GeneratedResetPasswordTokenHandler : INotificationHandler<
                               protocol: schema)
                           ?? string.Empty;
 
-        var message = new SendResetPasswordMessage
+        var request = new SendResetPasswordMessageRequest
         {
             Email = notification.Email,
             Url = callbackUrl,
         };
 
-        await this.publishEndpoint.Publish<ISendResetPasswordMessage>(
-            message,
+        await this.publishEndpoint.Publish<ISendResetPasswordMessageRequest>(
+            request,
             context => context.TimeToLive = TimeSpan.FromMinutes(DEFAULT_MESSAGE_EXPIRATION_IN_MINUTES),
             cancellationToken);
 

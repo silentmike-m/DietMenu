@@ -38,7 +38,7 @@ public static class DependencyInjection
         }
         catch (Exception exception)
         {
-            logger.LogWarning(exception, exception.Message);
+            logger.LogWarning(exception, "{Message}", exception.Message);
         }
     }
 }

@@ -13,8 +13,6 @@ public sealed class IngredientProfile : Profile
                 opt => opt.MapFrom(source => source.Id))
             .ForMember(target => target.Exchanger,
                 opt => opt.MapFrom(source => source.Exchanger))
-            .ForMember(target => target.IsSystem,
-                opt => opt.MapFrom(source => source.IsSystem))
             .ForMember(target => target.Name,
                 opt => opt.MapFrom(source => source.Name))
             .ForMember(target => target.TypeId,

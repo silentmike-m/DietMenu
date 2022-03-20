@@ -10,26 +10,9 @@ internal sealed class IngredientTypeRepository : IIngredientTypeRepository
 
     public IngredientTypeRepository(DietMenuDbContext context) => (this.context) = (context);
 
-    public async Task<IngredientTypeEntity?> Get(Guid ingredientTypeId, CancellationToken cancellationToken = default)
+    public async Task<IngredientTypeEntity?> Get(Guid familyId, Guid ingredientTypeId, CancellationToken cancellationToken = default)
     {
         return await this.context.IngredientTypes
             .SingleOrDefaultAsync(i => i.Id == ingredientTypeId, cancellationToken);
-    }
-
-    public async Task<IEnumerable<IngredientTypeEntity>> GetByFamilyId(Guid familyId, CancellationToken cancellationToken = default)
-    {
-        var result = this.context.IngredientTypes.Where(i => i.FamilyId == familyId);
-
-        return await Task.FromResult(result);
-    }
-
-    public async Task Save(IEnumerable<IngredientTypeEntity> ingredientTypes, CancellationToken cancellationToken = default)
-    {
-        await this.context.Save(ingredientTypes, cancellationToken);
-    }
-
-    public async Task Save(IngredientTypeEntity ingredientType, CancellationToken cancellationToken = default)
-    {
-        await this.context.Save(ingredientType, cancellationToken);
     }
 }

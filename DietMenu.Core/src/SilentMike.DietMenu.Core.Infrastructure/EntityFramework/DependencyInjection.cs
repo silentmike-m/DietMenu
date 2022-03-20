@@ -22,6 +22,9 @@ internal static class DependencyInjection
 
         services.AddDbContext<DietMenuDbContext>(options => options.UseSqlServer(defaultConnectionString));
 
+        services.AddScoped<ICoreMigrationService, CoreMigrationService>();
+
+        services.AddScoped<ICoreRepository, CoreRepository>();
         services.AddScoped<IFamilyRepository, FamilyRepository>();
         services.AddScoped<IIngredientRepository, IngredientRepository>();
         services.AddScoped<IIngredientTypeRepository, IngredientTypeRepository>();
@@ -37,5 +40,7 @@ internal static class DependencyInjection
     public static void UseEntityFramework(this IApplicationBuilder _, DietMenuDbContext context)
     {
         context.Database.Migrate();
+
+
     }
 }

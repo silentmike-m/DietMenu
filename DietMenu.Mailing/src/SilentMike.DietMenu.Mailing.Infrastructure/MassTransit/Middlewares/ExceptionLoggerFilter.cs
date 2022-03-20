@@ -1,10 +1,12 @@
 ﻿namespace SilentMike.DietMenu.Mailing.Infrastructure.MassTransit.Middlewares;
 
+using System.Diagnostics.CodeAnalysis;
 using global::MassTransit;
 using GreenPipes;
 using Microsoft.Extensions.Logging;
-using SilentMike.DietMenu.Mailing.Application.Common;
+using SilentMike.DietMenu.Mailing.Application.Extensions;
 
+[ExcludeFromCodeCoverage]
 internal sealed class ExceptionLoggerFilter<T> : IFilter<ConsumeContext<T>>
     where T : class
 {

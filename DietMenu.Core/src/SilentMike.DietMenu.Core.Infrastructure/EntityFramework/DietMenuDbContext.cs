@@ -8,6 +8,10 @@ using SilentMike.DietMenu.Core.Domain.Entities;
 [ExcludeFromCodeCoverage]
 internal sealed class DietMenuDbContext : DbContext
 {
+    public DbSet<CoreEntity> Core => Set<CoreEntity>();
+    public DbSet<CoreIngredientEntity> CoreIngredients => Set<CoreIngredientEntity>();
+    public DbSet<CoreIngredientTypeEntity> CoreIngredientTypes => Set<CoreIngredientTypeEntity>();
+    public DbSet<CoreMealTypeEntity> CoreMealTypes => Set<CoreMealTypeEntity>();
     public DbSet<FamilyEntity> Families => Set<FamilyEntity>();
     public DbSet<IngredientEntity> Ingredients => Set<IngredientEntity>();
     public DbSet<IngredientTypeEntity> IngredientTypes => Set<IngredientTypeEntity>();

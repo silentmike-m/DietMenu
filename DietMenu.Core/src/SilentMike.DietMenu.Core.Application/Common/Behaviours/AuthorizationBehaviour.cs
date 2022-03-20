@@ -3,7 +3,7 @@
 using SilentMike.DietMenu.Core.Application.Exceptions;
 
 internal sealed class AuthorizationBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : IRequest<TResponse>
+    where TRequest : IRequest<TResponse>, IAuthRequest
 {
     private readonly ICurrentRequestService currentUserService;
 
@@ -14,18 +14,15 @@ internal sealed class AuthorizationBehaviour<TRequest, TResponse> : IPipelineBeh
 
     public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
     {
-        if (request is IAuthRequest authId)
+        var (familyId, userId) = this.currentUserService.CurrentUser;
+
+        if (familyId == Guid.Empty || userId == Guid.Empty)
         {
-            var (familyId, userId) = this.currentUserService.CurrentUser;
-
-            if (familyId == Guid.Empty || userId == Guid.Empty)
-            {
-                throw new DietMenuUnauthorizedException(familyId, userId);
-            }
-
-            authId.FamilyId = familyId;
-            authId.UserId = userId;
+            throw new DietMenuUnauthorizedException(familyId, userId);
         }
+
+        request.FamilyId = familyId;
+        request.UserId = userId;
 
         return await next();
     }

@@ -2,7 +2,7 @@
 
 using MediatR;
 using Microsoft.Extensions.Logging;
-using SilentMike.DietMenu.Core.Application.Common;
+using SilentMike.DietMenu.Core.Application.Extensions;
 using SilentMike.DietMenu.Core.Application.Recipes.Events;
 
 internal sealed class DeletedRecipeHandler : INotificationHandler<DeletedRecipe>
