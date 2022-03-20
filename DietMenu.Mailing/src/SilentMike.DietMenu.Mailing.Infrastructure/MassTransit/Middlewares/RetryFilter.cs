@@ -1,9 +1,11 @@
 ﻿namespace SilentMike.DietMenu.Mailing.Infrastructure.MassTransit.Middlewares;
 
+using System.Diagnostics.CodeAnalysis;
 using global::MassTransit;
 using GreenPipes;
 using Microsoft.Extensions.Logging;
 
+[ExcludeFromCodeCoverage]
 internal sealed class RetryFilter<T> : IFilter<ConsumeContext<T>>
     where T : class
 {
@@ -22,7 +24,7 @@ internal sealed class RetryFilter<T> : IFilter<ConsumeContext<T>>
         }
         catch (Exception exception)
         {
-            this.logger.LogError(exception, exception.Message);
+            this.logger.LogError(exception, "{Message}", exception.Message);
 
             if (context.ExpirationTime.HasValue && DateTime.UtcNow <= context.ExpirationTime.Value.ToUniversalTime())
             {

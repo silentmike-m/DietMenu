@@ -11,6 +11,8 @@ using SilentMike.DietMenu.Core.Infrastructure.Hangfire.Filters;
 [ExcludeFromCodeCoverage]
 internal static class DependencyInjection
 {
+    private const string INIT_DATABASE_QUERY = "IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = @DatabaseName) CREATE DATABASE [@DatabaseName]";
+
     public static void AddHangfire(this IServiceCollection services, IConfiguration configuration, string hangFireServerName)
     {
         var connectionString = configuration.GetConnectionString("HangfireConnection");
@@ -61,7 +63,8 @@ internal static class DependencyInjection
         using var connection = new SqlConnection(connectionStringBuilder.ConnectionString);
         connection.Open();
         using var command = connection.CreateCommand();
-        command.CommandText = $"IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = '{catalog}') CREATE DATABASE {catalog}";
+        command.CommandText = INIT_DATABASE_QUERY;
+        command.Parameters.AddWithValue("@DatabaseName", catalog);
         command.ExecuteNonQuery();
     }
 }

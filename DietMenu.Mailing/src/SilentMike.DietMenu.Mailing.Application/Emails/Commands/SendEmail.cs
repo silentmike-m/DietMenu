@@ -1,7 +1,7 @@
 ﻿namespace SilentMike.DietMenu.Mailing.Application.Emails.Commands;
 
 using System.Text.Json.Serialization;
-using SilentMike.DietMenu.Mailing.Application.Common;
+using SilentMike.DietMenu.Mailing.Application.Emails.Models;
 
 public sealed record SendEmail : IRequest
 {

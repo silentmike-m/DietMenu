@@ -11,7 +11,7 @@ public sealed class FamilyNotFoundException : ApplicationException
     public override string Code => ErrorCodes.FAMILY_NOT_FOUND;
 
     public FamilyNotFoundException(Guid id)
-        : base($"Family with id {id} has not been found")
+        : base($"Family with id '{id}' has not been found")
     {
         this.Id = id;
     }

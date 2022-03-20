@@ -22,7 +22,7 @@ internal sealed class RetryFilter<T> : IFilter<ConsumeContext<T>>
         }
         catch (Exception exception)
         {
-            this.logger.LogError(exception, exception.Message);
+            this.logger.LogError(exception, "{Message}", exception.Message);
 
             if (context.ExpirationTime.HasValue && DateTime.UtcNow <= context.ExpirationTime.Value.ToUniversalTime())
             {

@@ -2,7 +2,7 @@
 
 using System.Text.Json.Serialization;
 using SilentMike.DietMenu.Core.Application.Common;
-using SilentMike.DietMenu.Core.Application.Recipes.ViewModels.ValueModels;
+using SilentMike.DietMenu.Core.Application.Recipes.ValueModels;
 
 public sealed record UpsertRecipe : IRequest, IAuthRequest
 {

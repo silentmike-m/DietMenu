@@ -20,11 +20,11 @@ internal sealed class ProfileService : IProfileService
 
         var claims = new List<Claim>
         {
-            new Claim(JwtRegisteredClaimNames.Email, user.Email),
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+            new(JwtRegisteredClaimNames.Email, user.Email),
+            new(JwtRegisteredClaimNames.Sub, user.Id),
 
-            new Claim(DietMenuClaimNames.FamilyId, user.FamilyId.ToString()),
-            new Claim(DietMenuClaimNames.UserId, user.Id),
+            new(DietMenuClaimNames.FamilyId, user.FamilyId.ToString()),
+            new(DietMenuClaimNames.UserId, user.Id),
         };
 
         context.IssuedClaims.AddRange(claims);

@@ -8,6 +8,10 @@ services:
         value: https://localhost:8080
       - name: CONFIG_IDENTITYSERVER4__AUTHORITY
         value: https://localhost:30000
+      - name: CONFIG_IDENTITYSERVER4__CLIENTID
+        value: bff
+      - name: CONFIG_IDENTITYSERVER4__CLIENTSECRET
+        value: P@ssw0rd    
     bindings:
     - protocol: https
       port: 8080
@@ -19,6 +23,10 @@ services:
       - name: CONFIG_CONNECTIONSTRINGS__DEFAULTCONNECTION
         value: Server=localhost,1433;Database=dietmenu-aspnet-identity;User Id=sa;Password=P@ssw0rd;MultipleActiveResultSets=true
       - name: CONFIG_IDENTITY__REGISTERCODE
+        value: P@ssw0rd
+      - name: CONFIG_IDENTITY__SYSTEMUSEREMAIL
+        value: system@domain.com
+      - name: CONFIG_IDENTITY__SYSTEMUSERPASSWORD
         value: P@ssw0rd
       - name: CONFIG_RABBITMQ__HOSTNAME
         value: localhost   
@@ -75,4 +83,7 @@ services:
       - name: CONFIG_SMTP__USER
         value: admin  
       - name: CONFIG_SMTP__PASSWORD
-        value: P@ssw0rd           
+        value: P@ssw0rd     
+    bindings:
+    - port: 30003
+      protocol: http        

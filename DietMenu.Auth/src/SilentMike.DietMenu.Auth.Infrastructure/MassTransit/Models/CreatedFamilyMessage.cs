@@ -1,8 +1,7 @@
 ﻿namespace SilentMike.DietMenu.Auth.Infrastructure.MassTransit.Models;
+using SilentMike.DietMenu.Shared.MassTransit.Core;
 
-using SilentMike.DietMenu.Shared.MassTransit;
-
-internal sealed class CreatedFamilyMessage : ICreatedFamilyMessage
+internal sealed record CreatedFamilyMessage : ICreatedFamilyMessage
 {
     public Guid Id { get; init; } = Guid.Empty;
 }

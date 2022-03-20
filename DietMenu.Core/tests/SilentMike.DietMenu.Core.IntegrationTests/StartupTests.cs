@@ -58,11 +58,14 @@ public sealed class StartupTests
             .NotBeNull()
             ;
         baseResponse.Response!.HealthChecks.Count.Should()
-            .Be(5)
+            .Be(6)
             ;
 
         baseResponse.Response.HealthChecks.Should()
             .ContainSingle(i => i.Component == "Db Context")
+            ;
+        baseResponse.Response.HealthChecks.Should()
+            .ContainSingle(i => i.Component == "Mailing server")
             ;
         baseResponse.Response.HealthChecks.Should()
             .ContainSingle(i => i.Component == "RabbitMQ")

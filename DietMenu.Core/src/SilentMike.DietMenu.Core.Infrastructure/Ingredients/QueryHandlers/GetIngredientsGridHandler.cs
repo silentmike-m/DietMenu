@@ -2,7 +2,7 @@
 
 using MediatR;
 using Microsoft.Extensions.Logging;
-using SilentMike.DietMenu.Core.Application.Common;
+using SilentMike.DietMenu.Core.Application.Extensions;
 using SilentMike.DietMenu.Core.Application.Ingredients.Queries;
 using SilentMike.DietMenu.Core.Application.Ingredients.ViewModels;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Interfaces;

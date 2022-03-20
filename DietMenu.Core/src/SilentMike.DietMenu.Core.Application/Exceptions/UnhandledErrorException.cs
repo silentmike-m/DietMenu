@@ -8,7 +8,7 @@ using ApplicationException = SilentMike.DietMenu.Core.Application.Common.Applica
 [Serializable]
 public sealed class UnhandledErrorException : ApplicationException
 {
-    public override string Code => ErrorCodes.UNHANDLED_ERROR;
+    public override string Code => ErrorCodes.UNKNOWN_ERROR;
 
     public UnhandledErrorException()
         : base("Unhandled error has occurred")

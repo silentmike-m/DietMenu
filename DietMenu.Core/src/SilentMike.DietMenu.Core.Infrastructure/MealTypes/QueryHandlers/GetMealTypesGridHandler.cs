@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using SilentMike.DietMenu.Core.Application.Common;
+using SilentMike.DietMenu.Core.Application.Extensions;
 using SilentMike.DietMenu.Core.Application.MealTypes.Queries;
 using SilentMike.DietMenu.Core.Application.MealTypes.ViewModels;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Interfaces;

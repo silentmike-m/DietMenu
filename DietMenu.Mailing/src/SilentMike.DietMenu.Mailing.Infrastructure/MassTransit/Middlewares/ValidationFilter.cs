@@ -1,10 +1,12 @@
 ﻿namespace SilentMike.DietMenu.Mailing.Infrastructure.MassTransit.Middlewares;
 
+using System.Diagnostics.CodeAnalysis;
 using FluentValidation;
 using global::MassTransit;
 using GreenPipes;
 using ValidationException = SilentMike.DietMenu.Mailing.Application.Exceptions.ValidationException;
 
+[ExcludeFromCodeCoverage]
 internal sealed class ValidationFilter<T> : IFilter<ConsumeContext<T>>
     where T : class
 {

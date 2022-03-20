@@ -12,6 +12,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using RabbitMQ.Client;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework;
 using SilentMike.DietMenu.Core.Infrastructure.HealthChecks.Models;
+using SilentMike.DietMenu.Core.Infrastructure.MailingServer;
 using SilentMike.DietMenu.Core.Infrastructure.MassTransit;
 
 [ExcludeFromCodeCoverage]
@@ -21,6 +22,7 @@ internal static class DependencyInjection
     {
         var defaultConnectionString = configuration.GetConnectionString("DefaultConnection");
         var rabbitMqOptions = configuration.GetSection(RabbitMqOptions.SectionName).Get<RabbitMqOptions>();
+        var mailingServerOptions = configuration.GetSection(MailingServerOptions.SectionName).Get<MailingServerOptions>();
 
         services.AddHealthChecks()
             .AddDbContextCheck<DietMenuDbContext>(name: "Db Context")
@@ -32,6 +34,7 @@ internal static class DependencyInjection
             }, "RabbitMQ")
             .AddSqlServer(connectionString: defaultConnectionString, name: "SQL Default")
             .AddSqlServer(connectionString: defaultConnectionString, name: "SQL Hangfire")
+            .AddUrlGroup(options => options.AddUri(mailingServerOptions.BaseAddress), name: "Mailing server")
             ;
     }
 

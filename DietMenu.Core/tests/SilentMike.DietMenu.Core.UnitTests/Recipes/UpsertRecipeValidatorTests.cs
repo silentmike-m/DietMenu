@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SilentMike.DietMenu.Core.Application.Common.Constants;
 using SilentMike.DietMenu.Core.Application.Recipes.Commands;
 using SilentMike.DietMenu.Core.Application.Recipes.Validators;
-using SilentMike.DietMenu.Core.Application.Recipes.ViewModels.ValueModels;
+using SilentMike.DietMenu.Core.Application.Recipes.ValueModels;
 
 [TestClass]
 public sealed class UpsertRecipeValidatorTests

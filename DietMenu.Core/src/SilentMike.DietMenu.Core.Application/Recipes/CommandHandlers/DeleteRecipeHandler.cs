@@ -1,20 +1,31 @@
 ﻿namespace SilentMike.DietMenu.Core.Application.Recipes.CommandHandlers;
 
 using Microsoft.Extensions.Logging;
-using SilentMike.DietMenu.Core.Application.Common;
+using SilentMike.DietMenu.Core.Application.Exceptions.Families;
 using SilentMike.DietMenu.Core.Application.Exceptions.Recipes;
+using SilentMike.DietMenu.Core.Application.Extensions;
 using SilentMike.DietMenu.Core.Application.Recipes.Commands;
 using SilentMike.DietMenu.Core.Application.Recipes.Events;
 using SilentMike.DietMenu.Core.Domain.Repositories;
 
 internal sealed class DeleteRecipeHandler : IRequestHandler<DeleteRecipe>
 {
+    private readonly IFamilyRepository familyRepository;
     private readonly ILogger<DeleteRecipeHandler> logger;
     private readonly IMediator mediator;
-    private readonly IRecipeRepository repository;
+    private readonly IRecipeRepository recipeRepository;
 
-    public DeleteRecipeHandler(ILogger<DeleteRecipeHandler> logger, IMediator mediator, IRecipeRepository repository)
-        => (this.logger, this.mediator, this.repository) = (logger, mediator, repository);
+    public DeleteRecipeHandler(
+        IFamilyRepository familyRepository,
+        ILogger<DeleteRecipeHandler> logger,
+        IMediator mediator,
+        IRecipeRepository recipeRepository)
+    {
+        this.familyRepository = familyRepository;
+        this.logger = logger;
+        this.mediator = mediator;
+        this.recipeRepository = recipeRepository;
+    }
 
     public async Task<Unit> Handle(DeleteRecipe request, CancellationToken cancellationToken)
     {
@@ -26,14 +37,23 @@ internal sealed class DeleteRecipeHandler : IRequestHandler<DeleteRecipe>
 
         this.logger.LogInformation("Try to delete recipe");
 
-        var recipe = await this.repository.Get(request.Id, cancellationToken);
+        var family = await this.familyRepository.Get(request.FamilyId, cancellationToken);
+
+        if (family is null)
+        {
+            throw new FamilyNotFoundException(request.FamilyId);
+        }
+
+        var recipe = await this.recipeRepository.Get(request.FamilyId, request.Id, cancellationToken);
 
         if (recipe is null)
         {
             throw new RecipeNotFoundException(request.Id);
         }
 
-        await this.repository.Delete(recipe, cancellationToken);
+        recipe.IsActive = false;
+
+        await this.recipeRepository.Save(recipe, cancellationToken);
 
         var notification = new DeletedRecipe
         {

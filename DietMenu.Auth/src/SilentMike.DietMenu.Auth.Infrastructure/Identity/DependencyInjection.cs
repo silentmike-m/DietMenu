@@ -16,7 +16,7 @@ internal static class DependencyInjection
 
         var connectionString = configuration.GetConnectionString("DefaultConnection");
 
-        services.AddDbContext<IDietMenuDbContext, DietMenuDbContext>(options => options.UseSqlServer(connectionString));
+        services.AddDbContext<DietMenuDbContext>(options => options.UseSqlServer(connectionString));
 
         services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -25,40 +25,48 @@ internal static class DependencyInjection
             .AddDefaultTokenProviders();
     }
 
-    public static void UseIdentity(this IApplicationBuilder _, DietMenuDbContext context, UserManager<DietMenuUser> userManager)
+    public static void UseIdentity(
+        this IApplicationBuilder _,
+        IConfiguration configuration,
+        DietMenuDbContext context,
+        UserManager<DietMenuUser> userManager)
     {
         context.Database.Migrate();
 
-        AddSystemUser(userManager);
+        var identityOptions = configuration.GetSection(IdentityOptions.SectionName).Get<IdentityOptions>();
+
+        AddSystemUser(identityOptions, userManager);
     }
 
-    private static void AddSystemUser(UserManager<DietMenuUser> userManager)
+    private static void AddSystemUser(IdentityOptions options, UserManager<DietMenuUser> userManager)
     {
-        var user = userManager.FindByNameAsync("saruman@dietmenu.pl").Result;
+        var user = userManager.FindByNameAsync(options.SystemUserEmail).Result;
 
         if (user is not null)
         {
             return;
         }
 
+        var userId = Guid.NewGuid();
+
         var family = new DietMenuFamily
         {
-            Id = Guid.NewGuid(),
+            Id = userId,
             Name = "System",
         };
 
         user = new DietMenuUser
         {
-            Id = Guid.NewGuid().ToString(),
-            Email = "saruman@dietmenu.pl",
+            Id = userId.ToString(),
+            Email = options.SystemUserEmail,
             EmailConfirmed = true,
             Family = family,
             FamilyId = family.Id,
             FirstName = "Saruman",
             LastName = "White",
-            UserName = "saruman@dietmenu.pl",
+            UserName = options.SystemUserEmail,
         };
 
-        _ = userManager.CreateAsync(user, "P@ssw0rd").Result;
+        _ = userManager.CreateAsync(user, options.SystemUserPassword).Result;
     }
 }

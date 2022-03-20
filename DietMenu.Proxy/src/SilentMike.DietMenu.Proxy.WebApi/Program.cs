@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.HttpLogging;
+using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
@@ -34,7 +35,7 @@ try
     builder.Host.UseSerilog((ctx, lc) => lc
         .ReadFrom.Configuration(builder.Configuration)
         .Enrich.WithProperty("AppName", "SilentMike DietMenu Proxy")
-        .Enrich.WithProperty("Version", "1.0.0")        
+        .Enrich.WithProperty("Version", "1.0.0")
         .WriteTo.Seq(seqAddress)
     );
 
@@ -54,8 +55,6 @@ try
 
     var identityServerOptions = builder.Configuration.GetSection(IdentityServer4Options.SectionName).Get<IdentityServer4Options>();
 
-    builder.Services.AddAuthorization(options => options.AddPolicy("uiPolicy", policy => policy.RequireAuthenticatedUser()));
-
     builder.Services.AddReverseProxy()
         .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"))
         .AddTransforms(builderContext =>
@@ -72,6 +71,7 @@ try
         ;
 
     builder.Services
+        .AddAuthorization(options => options.AddPolicy("uiPolicy", policy => policy.RequireAuthenticatedUser()))
         .AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
         .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
         .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
@@ -80,8 +80,8 @@ try
             options.Authority = identityServerOptions.Authority;
             options.RequireHttpsMetadata = false;
 
-            options.ClientId = "bff";
-            options.ClientSecret = "secret";
+            options.ClientId = identityServerOptions.ClientId;
+            options.ClientSecret = identityServerOptions.ClientSecret;
             options.ResponseType = OpenIdConnectResponseType.Code;
             options.UsePkce = true;
 
@@ -127,12 +127,37 @@ try
         endpoints.MapGet("/logout", async context =>
         {
             await context.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
-            await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            await context.SignOutAsync();
-            context.Response.Redirect("/");
         });
 
-        endpoints.MapReverseProxy();
+        endpoints.MapGet("/logged-out", async context =>
+        {
+            await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            await context.SignOutAsync();
+        });
+
+        endpoints.MapGet("/getToken", async context =>
+        {
+            var result = await context.GetTokenAsync(OpenIdConnectParameterNames.AccessToken);
+
+            result ??= string.Empty;
+
+            await context.Response.WriteAsync(result, CancellationToken.None);
+        });
+
+        endpoints.MapReverseProxy(proxyPipeline =>
+        {
+            proxyPipeline.Use((context, next) =>
+            {
+                var cacheControlValues = new[]
+                {
+                    "no-cache", "no-store",
+                };
+
+                context.Response.Headers.Add("Cache-Control", new StringValues(cacheControlValues));
+
+                return next();
+            });
+        });
     });
 
     await app.RunAsync();
