@@ -38,6 +38,10 @@ export default function useBreadcrumbs() {
                 addItem(list, BreadcrumbType.Desktop, false)
                 list.push({ text: "RODZAJE SKŁADNIKÓW", href: "/ingredientTypes", disabled: disabled });
                 break;
+            case BreadcrumbType.MealTypes:
+                addItem(list, BreadcrumbType.Desktop, false)
+                list.push({ text: "RODZAJE POSIŁKÓW", href: "/mealTypes", disabled: disabled });
+                break;
             case BreadcrumbType.Recipes:
                 addItem(list, BreadcrumbType.Desktop, false)
                 list.push({ text: "Przepisy", href: "/recipes", disabled: disabled });

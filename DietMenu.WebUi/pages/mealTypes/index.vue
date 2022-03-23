@@ -5,10 +5,10 @@
         :canFilter="false"
         :canPage="false"
         :canSort="true"
-        :columns="ingredientTypeColumns"
+        :columns="mealTypeColumns"
         :getData="getData"
-        :id="ingredientTypesGridId"
-        name="IngredientTypes"
+        :id="mealTypesGridId"
+        name="MealTypes"
       />
     </v-card-text>
   </v-card>
@@ -20,7 +20,6 @@ import Vue from "vue";
 import { onMounted, Ref, ref } from "@nuxtjs/composition-api";
 import Grid from "~/components/grid.vue";
 import useBreadcrumbs from "~/capi/core/useBreadcrumbs";
-import useIngredient from "~/capi/useIngredients";
 import { BreadcrumbType } from "~/types/core/breadcrumbs";
 import {
   GridColumn,
@@ -28,6 +27,7 @@ import {
   GridRequest,
   GridResponse,
 } from "~/types/core/grid";
+import useMealTypes from "~/capi/useMealTypes";
 
 export default Vue.extend({
   name: "Ingredients",
@@ -35,9 +35,16 @@ export default Vue.extend({
     Grid,
   },
   setup() {
-    const ingredientTypesGridId: Ref<number> = ref(0);
+    const mealTypesGridId: Ref<number> = ref(0);
 
-    const ingredientTypeColumns: GridColumn[] = [
+    const mealTypeColumns: GridColumn[] = [
+      {
+        value: "order",
+        text: "Kolejność",
+        type: GridColumnType.number,
+        sortable: true,
+        filterable: true,
+      },
       {
         value: "name",
         text: "Nazwa",
@@ -48,19 +55,19 @@ export default Vue.extend({
     ];
 
     const { setBreadcrumbs } = useBreadcrumbs();
-    const { getIngredientTypesGrid } = useIngredient();
+    const { getMealTypesGrid } = useMealTypes();
 
     onMounted(() => {
-      setBreadcrumbs(BreadcrumbType.IngredientTypes, "");
+      setBreadcrumbs(BreadcrumbType.MealTypes, "");
     });
 
     const getData = (request: GridRequest): Promise<GridResponse> => {
-      return getIngredientTypesGrid(request);
+      return getMealTypesGrid(request);
     };
 
     return {
-      ingredientTypesGridId,
-      ingredientTypeColumns,
+      mealTypesGridId,
+      mealTypeColumns,
       getData,
     };
   },

@@ -6,6 +6,7 @@ export enum BreadcrumbType {
     Ingredient,
     IngredientDetails,
     IngredientTypes,
+    MealTypes,
     Recipes,
     RecipeDetails,
     Replacements,

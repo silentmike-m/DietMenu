@@ -1,5 +1,5 @@
 import { useContext } from '@nuxtjs/composition-api'
-import { NuxtAxiosInstance } from '@nuxtjs/axios'
+import { NuxtAxiosInstance, AxiosOptions } from '@nuxtjs/axios'
 import { BaseResponse, RestError } from '~/types/core/rest'
 import useAlert from './useAlert'
 
@@ -8,18 +8,13 @@ export default function useRest() {
     const { app }: any = useContext()
 
     async function post<T>(path: string, data: any): Promise<T> {
-        console.log(JSON.stringify(data));
+        const headers = {
+            "Content-Type": "application/json"
+        };
 
-        return await (app.$axios as NuxtAxiosInstance).post<BaseResponse<T>>(path, JSON.stringify(data), )
+        return await (app.$axios as NuxtAxiosInstance).post<BaseResponse<T>>(path, JSON.stringify(data), { headers })
             .then(response => handleResponse(response.data))
             .catch((error) => handleError(error))
-    }
-
-    function applyToken(): AxiosRequestConfig {
-        AxiosConf
-
-        config.headers['Authorization'] = 'Bearer ' + authorizationState.getAccessToken();
-        config.headers['Content-Type'] = 'application/json';
     }
 
     function handleError<T>(error: any): Promise<T> {
@@ -31,13 +26,12 @@ export default function useRest() {
     }
 
     function handleResponse<T>(response: BaseResponse<T>): T {
-        if (response.code === "OK") {
-            response.response;
+        if (response.code !== "OK") {
+            throw new RestError(response.code, response.error ?? "");
         }
 
-        throw new RestError(response.code, response.error ?? "");
+        return response.response;
     }
-
 
     return {
         post,

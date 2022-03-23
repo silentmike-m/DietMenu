@@ -135,6 +135,12 @@ export default Vue.extend({
             []
           ),
           new MenuElement(
+            "Rodzaje posiłków",
+            "/mealTypes",
+            "mdi-food-drumstick",
+            []
+          ),
+          new MenuElement(
             "Rodzaje składników",
             "/ingredientTypes",
             "mdi-dresser",

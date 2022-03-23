@@ -52,13 +52,13 @@ internal sealed class ImportCoreDataHandler : IRequestHandler<ImportCoreData>
                 IsSuccess = true,
             };
 
-            //await this.mediator.Publish(notification, cancellationToken);
+            await this.mediator.Publish(notification, cancellationToken);
 
             return await Task.FromResult(Unit.Value);
         }
         catch (Exception exception)
         {
-            //await this.HandleException(exception, cancellationToken);
+            await this.HandleException(exception, cancellationToken);
 
             throw;
         }

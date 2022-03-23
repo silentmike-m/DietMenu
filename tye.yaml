@@ -11,7 +11,7 @@ services:
       - name: CONFIG_IDENTITYSERVER4__CLIENTID
         value: bff
       - name: CONFIG_IDENTITYSERVER4__CLIENTSECRET
-        value: P@ssw0rd    
+        value: secret   
     bindings:
     - protocol: https
       port: 8080
@@ -50,6 +50,14 @@ services:
         value: https://localhost:8080/api
       - name: CONFIG_IDENTITYSERVER4__AUTHORITY
         value: https://localhost:30000
+      - name: CONFIG_MailingServer__BaseAddress
+        value: http://localhost:30003
+      - name: CONFIG_MAILINGSERVER__RETRYCOUNT
+        value: 3
+      - name: CONFIG_MAILINGSERVER__RETRYSLEEPDURATIONINMILLISECONDS
+        value: 5000
+      - name: CONFIG_MailingServer__TimeoutInMilliSeconds
+        value: 30000      
       - name: CONFIG_RABBITMQ__HOSTNAME
         value: localhost   
       - name: CONFIG_RABBITMQ__SERVER
@@ -57,7 +65,7 @@ services:
       - name: CONFIG_RABBITMQ__USER
         value: user
       - name: CONFIG_RABBITMQ__PASSWORD
-        value: P@ssw0rd       
+        value: P@ssw0rd          
     bindings:
     - port: 30002
       protocol: http

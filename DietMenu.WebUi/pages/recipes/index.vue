@@ -69,7 +69,7 @@ import { RecipeRow, RecipesGridFilter } from "~/types/recipes";
 import { MealType } from "~/types/mealTypes";
 import { GridDialogOptions, YesNoDialogOptions } from "~/types/core/dialog";
 import useDialog from "~/capi/core/useDialog";
-import gridState from "~/store/grid";
+import gridState from "~/store/gridStore";
 import useIngredients from "~/capi/useIngredients";
 import { Ingredient } from "~/types/ingredients";
 

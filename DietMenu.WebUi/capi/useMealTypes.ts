@@ -31,11 +31,12 @@ export default function useMealTypes() {
     }
 
     async function getMealTypesGrid(request: GridRequest): Promise<GridResponse> {
-        const response = await post<GridResponse>("MealType/GetMealTypesGrid", { grid_request: request });
+        const response = await post<GridResponse>("MealTypes/GetMealTypesGrid", { grid_request: request });
         return response;
     }
 
     return {
         getMealTypes,
+        getMealTypesGrid
     }
 }

@@ -26,6 +26,10 @@ internal sealed class LoginUserHandler : IRequestHandler<LoginUser>
 
         if (!result.Succeeded)
         {
+            this.logger.LogError($"IsLockedOut: {result.IsLockedOut}");
+            this.logger.LogError($"IsNotAllowed: {result.IsNotAllowed}");
+            this.logger.LogError($"Succeeded: {result.Succeeded}");
+
             throw new LoginUserException();
         }
 

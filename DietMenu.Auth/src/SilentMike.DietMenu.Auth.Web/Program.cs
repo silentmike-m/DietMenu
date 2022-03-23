@@ -20,6 +20,7 @@ var seqAddress = Environment.GetEnvironmentVariable("SEQ_ADDRESS") ?? "http://lo
 
 var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json")
+    .AddJsonFile("clients.json")
     .AddEnvironmentVariables("CONFIG_")
     .Build();
 
@@ -34,7 +35,9 @@ try
 
     var builder = WebApplication.CreateBuilder(args);
 
-    builder.Configuration.AddEnvironmentVariables("CONFIG_");
+    builder.Configuration
+        .AddJsonFile("clients.json")
+        .AddEnvironmentVariables("CONFIG_");
 
     builder.Host.UseSerilog((ctx, lc) => lc
         .ReadFrom.Configuration(builder.Configuration)

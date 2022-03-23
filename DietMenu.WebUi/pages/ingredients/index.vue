@@ -46,7 +46,7 @@ import {
   GridResponse,
 } from "~/types/core/grid";
 import editorState from "~/store/editor";
-import gridState from "~/store/grid";
+import gridState from "~/store/gridStore";
 
 export default Vue.extend({
   name: "Ingredients",

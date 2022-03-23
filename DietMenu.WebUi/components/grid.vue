@@ -231,6 +231,7 @@ import {
   GridRequest,
   GridResponse,
 } from "~/types/core/grid";
+import gridState from "~/store/gridStore";
 
 export default Vue.extend({
   name: "Grid",
@@ -247,8 +248,8 @@ export default Vue.extend({
     columns: Array,
     getData: Function,
     id: Number,
-    initialFilter: String,
     menuButtons: Array,
+    name: String,
     onRowAdd: Function,
     onRowEdit: Function,
     onRowDelete: Function,
@@ -271,16 +272,16 @@ export default Vue.extend({
     const sortDesc: Ref<Boolean> = ref(false);
     const totalCount: Ref<number> = ref(0);
 
-    watch(pageNumber, () => getGridData());
-    watch(pageSize, () => getGridData());
-    watch(
-      () => sortBy.value,
-      () => getGridData()
-    );
-    watch(
-      () => sortDesc.value,
-      () => getGridData()
-    );
+    // watch(pageNumber, () => getGridData());
+    // watch(pageSize, () => getGridData());
+    // watch(
+    //   () => sortBy.value,
+    //   () => getGridData()
+    // );
+    // watch(
+    //   () => sortDesc.value,
+    //   () => getGridData()
+    // );
     watch(
       () => props.id,
       () => getGridData()
@@ -291,12 +292,21 @@ export default Vue.extend({
 
       let columns = props.columns as GridColumn[];
 
-      if (props.initialFilter) {
-        search.value = props.initialFilter as string;
+      sortableColumns.value = columns.filter((i) => i.sortable);
+
+      const request = gridState.getRequest(props.name as string);
+
+      if (request) {
+        search.value = request.filter;
+        // sortBy.value = request.order_by;
+        // sortDesc.value = request.is_descending;
+        pageNumber.value = request.page_number + 1;
+        pageSize.value = request.page_size;
+      } else {
+        sortBy.value = columns[0].value;
       }
 
-      sortableColumns.value = columns.filter((i) => i.sortable);
-      sortBy.value = columns[0].value;
+      getGridData();
 
       isLoading.value = false;
     });
@@ -346,6 +356,8 @@ export default Vue.extend({
       };
 
       isLoading.value = true;
+
+      gridState.setRequest(props.name as string, request);
 
       (props as any)
         .getData(request)
