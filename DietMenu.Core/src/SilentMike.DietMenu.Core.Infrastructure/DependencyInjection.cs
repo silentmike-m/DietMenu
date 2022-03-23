@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
+using SilentMike.DietMenu.Core.Infrastructure.Dapper;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Interfaces;
 using SilentMike.DietMenu.Core.Infrastructure.Hangfire;
@@ -33,6 +34,7 @@ public static class DependencyInjection
         services.AddIdentityServer4(configuration);
 
         services.AddEntityFramework(configuration);
+        services.AddDapper(configuration);
 
         services.AddMassTransit(configuration);
 

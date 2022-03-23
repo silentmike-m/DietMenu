@@ -11,7 +11,7 @@ services:
       - name: CONFIG_IDENTITYSERVER4__CLIENTID
         value: bff
       - name: CONFIG_IDENTITYSERVER4__CLIENTSECRET
-        value: P@ssw0rd    
+        value: secret   
     bindings:
     - protocol: https
       port: 8080

@@ -61,7 +61,7 @@ public sealed class MealTypeReadServiceTests : IDisposable
         };
 
         //WHEN
-        var result = await this.service.GetMealTypesGrid(this.familyId, request);
+        var result = await this.service.GetMealTypesGridAsync(this.familyId, request);
 
         //THEN
         result.Count.Should()
@@ -91,7 +91,7 @@ public sealed class MealTypeReadServiceTests : IDisposable
         };
 
         //WHEN
-        var result = await this.service.GetMealTypesGrid(this.familyId, request);
+        var result = await this.service.GetMealTypesGridAsync(this.familyId, request);
 
         //THEN
         result.Count.Should()
@@ -122,7 +122,7 @@ public sealed class MealTypeReadServiceTests : IDisposable
         };
 
         //WHEN
-        var result = await this.service.GetMealTypesGrid(this.familyId, request);
+        var result = await this.service.GetMealTypesGridAsync(this.familyId, request);
 
         //THEN
         result.Count.Should()
@@ -144,7 +144,7 @@ public sealed class MealTypeReadServiceTests : IDisposable
         var request = new GridRequest();
 
         //WHEN
-        var result = await this.service.GetMealTypesGrid(this.familyId, request);
+        var result = await this.service.GetMealTypesGridAsync(this.familyId, request);
 
         //THEN
         result.Count.Should()
@@ -176,7 +176,7 @@ public sealed class MealTypeReadServiceTests : IDisposable
         };
 
         //WHEN
-        var result = await this.service.GetMealTypesGrid(this.familyId, request);
+        var result = await this.service.GetMealTypesGridAsync(this.familyId, request);
 
         //THEN
         result.Count.Should()
@@ -210,7 +210,7 @@ public sealed class MealTypeReadServiceTests : IDisposable
         };
 
         //WHEN
-        var result = await this.service.GetMealTypesGrid(this.familyId, request);
+        var result = await this.service.GetMealTypesGridAsync(this.familyId, request);
 
         //THEN
         result.Count.Should()

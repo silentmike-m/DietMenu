@@ -33,7 +33,7 @@ internal static class DependencyInjection
 
         services.AddScoped<IIngredientReadService, IngredientReadService>();
         services.AddScoped<IIngredientTypeReadService, IngredientTypeReadService>();
-        services.AddScoped<IMealTypeReadService, MealTypeReadService>();
+        //services.AddScoped<IMealTypeReadService, MealTypeReadService>();
         services.AddScoped<IRecipeReadService, RecipeReadService>();
     }
 

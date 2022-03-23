@@ -450,3 +450,4 @@ $RECYCLE.BIN/
 ## Sonar Qube
 ##
 **/.sonarqube/**
+/DietMenu.WebUi/.nuxt

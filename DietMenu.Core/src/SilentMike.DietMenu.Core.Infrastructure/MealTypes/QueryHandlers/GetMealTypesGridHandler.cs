@@ -7,7 +7,9 @@ using Microsoft.Extensions.Logging;
 using SilentMike.DietMenu.Core.Application.Extensions;
 using SilentMike.DietMenu.Core.Application.MealTypes.Queries;
 using SilentMike.DietMenu.Core.Application.MealTypes.ViewModels;
-using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Interfaces;
+//using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Interfaces;
+
+using SilentMike.DietMenu.Core.Infrastructure.Dapper.Interfaces;
 
 internal sealed class GetMealTypesGridHandler : IRequestHandler<GetMealTypesGrid, MealTypesGrid>
 {
@@ -26,7 +28,7 @@ internal sealed class GetMealTypesGridHandler : IRequestHandler<GetMealTypesGrid
 
         this.logger.LogInformation("Try to get meal types grid");
 
-        var result = await this.service.GetMealTypesGrid(request.FamilyId, request.GridRequest);
+        var result = await this.service.GetMealTypesGridAsync(request.FamilyId, request.GridRequest, cancellationToken);
 
         return result;
     }

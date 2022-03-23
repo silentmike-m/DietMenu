@@ -1,4 +1,4 @@
-﻿namespace SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Interfaces;
+﻿namespace SilentMike.DietMenu.Core.Infrastructure.Dapper.Interfaces;
 
 using SilentMike.DietMenu.Core.Application.Common;
 using SilentMike.DietMenu.Core.Application.MealTypes.ViewModels;

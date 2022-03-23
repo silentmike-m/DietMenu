@@ -4,9 +4,14 @@ public sealed class MealTypeEntity
 {
     public MealTypeEntity(Guid id) => this.Id = id;
 
+    public MealTypeEntity()
+    {
+
+    }
+
     public Guid Id { get; private set; }
     public Guid FamilyId { get; set; } = Guid.Empty;
-    public FamilyEntity FamilyEntity { get; set; } = null!;
+    //public FamilyEntity FamilyEntity { get; set; } = null!;
     public string InternalName { get; set; } = string.Empty;
     public bool IsActive { get; set; } = true;
     public string Name { get; set; } = string.Empty;
