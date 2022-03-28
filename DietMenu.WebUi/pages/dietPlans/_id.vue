@@ -1,3 +1,5 @@
+<!--
+
 <template>
   <v-container fluid>
     <v-row dense>
@@ -665,3 +667,4 @@ table tbody tr:nth-child(odd) {
   font-weight: bold;
 }
 </style>
+-->

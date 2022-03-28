@@ -1,3 +1,4 @@
+<!--
 <template>
   <v-card elevation="5">
     <v-card-text v-if="family">
@@ -214,3 +215,4 @@ table tbody tr:nth-child(odd) {
   text-align: center !important;
 }
 </style>
+-->

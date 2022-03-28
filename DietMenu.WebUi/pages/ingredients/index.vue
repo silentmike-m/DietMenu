@@ -1,3 +1,4 @@
+<!--
 <template>
   <v-card elevation="5">
     <v-card-text>
@@ -45,7 +46,7 @@ import {
   GridRequest,
   GridResponse,
 } from "~/types/core/grid";
-import editorState from "~/store/editor";
+import editorState from "~/store/editorStore";
 import gridState from "~/store/gridStore";
 
 export default Vue.extend({
@@ -160,3 +161,4 @@ export default Vue.extend({
   },
 });
 </script>
+-->

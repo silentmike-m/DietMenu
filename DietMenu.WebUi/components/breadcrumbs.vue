@@ -18,7 +18,7 @@
 <script lang="ts">
 import { Ref, ref, watch } from "@nuxtjs/composition-api";
 import Vue from "vue";
-import breadCrumbsState from "~/store/breadCrumbs";
+import breadCrumbsState from "~/store/breadCrumbsStore";
 import { BreadcrumbItem } from "~/types/core/breadcrumbs";
 
 export default Vue.extend({

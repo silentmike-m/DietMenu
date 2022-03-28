@@ -294,14 +294,14 @@ export default Vue.extend({
 
       sortableColumns.value = columns.filter((i) => i.sortable);
 
-      const request = gridState.getRequest(props.name as string);
+      const gridRequest = gridState.getRequest(props.name as string);
 
-      if (request) {
-        search.value = request.filter;
-        // sortBy.value = request.order_by;
-        // sortDesc.value = request.is_descending;
-        pageNumber.value = request.page_number + 1;
-        pageSize.value = request.page_size;
+      if (gridRequest) {
+        search.value = gridRequest.filter;
+        sortBy.value = gridRequest.order_by;
+        sortDesc.value = gridRequest.is_descending;
+        pageNumber.value = gridRequest.page_number + 1;
+        pageSize.value = gridRequest.page_size;
       } else {
         sortBy.value = columns[0].value;
       }
@@ -328,6 +328,7 @@ export default Vue.extend({
 
     const clearSearch = (): void => {
       search.value = "";
+
       getGridData();
     };
 
@@ -346,6 +347,7 @@ export default Vue.extend({
     };
 
     function getGridData() {
+      return;
       let request: GridRequest = {
         filter: search.value,
         order_by: sortBy.value,

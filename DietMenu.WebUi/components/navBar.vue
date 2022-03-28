@@ -96,7 +96,7 @@ import Vue from "vue";
 import { onMounted, reactive, Ref, ref } from "@nuxtjs/composition-api";
 import { MenuElement } from "~/types/core/navigation";
 import { Framework } from "vuetify";
-import applicationBarState from "~/store/appBar";
+import applicationBarState from "~/store/appBarStore";
 
 export default Vue.extend({
   name: "NavBar",

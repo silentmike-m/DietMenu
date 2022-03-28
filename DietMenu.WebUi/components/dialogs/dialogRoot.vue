@@ -20,7 +20,7 @@
 <script lang="ts">
 import { Ref, ref, watch } from "@nuxtjs/composition-api";
 import Vue from "vue";
-import dialogState from "~/store/dialog";
+import dialogState from "~/store/dialogStore";
 import { DialogOptions } from "~/types/core/dialog";
 
 export default Vue.extend({

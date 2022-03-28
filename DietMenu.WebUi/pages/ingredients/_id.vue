@@ -1,3 +1,4 @@
+<!--
 <template>
   <v-card elevation="5">
     <ValidationObserver v-slot="{ invalid }">
@@ -126,7 +127,7 @@ import useIngredient from "~/capi/useIngredients";
 import useBreadcrumbs from "~/capi/core/useBreadcrumbs";
 import { Ingredient, IngredientType } from "~/types/ingredients";
 import { BreadcrumbType } from "~/types/core/breadcrumbs";
-import editorState from "~/store/editor";
+import editorState from "~/store/editorStore";
 import { GridRequest } from "~/types/core/grid";
 import useAlert from "~/capi/core/useAlert";
 import useDialog from "~/capi/core/useDialog";
@@ -257,3 +258,5 @@ export default Vue.extend({
   },
 });
 </script>
+
+-->

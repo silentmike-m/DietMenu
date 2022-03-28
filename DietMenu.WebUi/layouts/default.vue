@@ -70,8 +70,7 @@ import DialogRoot from "~/components/dialogs/dialogRoot.vue";
 import NavBar from "~/components/navBar.vue";
 import Breadcrumbs from "~/components/breadcrumbs.vue";
 import { onMounted, Ref, ref } from "@nuxtjs/composition-api";
-import applicationBarState from "~/store/appBar";
-import useUsers from "~/capi/useUsers";
+import applicationBarState from "~/store/appBarStore";
 
 export default Vue.extend({
   name: "empty",
@@ -85,7 +84,7 @@ export default Vue.extend({
     const showMenu: Ref<Boolean> = ref(true);
     const userName: Ref<string> = ref("");
 
-    const { logOut } = useUsers();
+    // const { logOut } = useUsers();
 
     onMounted(() => {
       userName.value = "USERNAME";
@@ -100,7 +99,7 @@ export default Vue.extend({
     };
 
     const logoutUser = (): void => {
-      logOut();
+      //logOut();
     };
 
     return {

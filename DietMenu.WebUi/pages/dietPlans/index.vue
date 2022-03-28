@@ -1,3 +1,4 @@
+<!--
 <template>
   <v-card elevation="5"
     ><v-card-title
@@ -284,3 +285,5 @@ export default Vue.extend({
   },
 });
 </script>
+
+-->

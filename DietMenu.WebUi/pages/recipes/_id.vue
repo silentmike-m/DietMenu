@@ -1,3 +1,4 @@
+<!--
 <template>
   <v-container fluid>
     <v-row dense>
@@ -528,6 +529,7 @@ export default Vue.extend({
     };
   },
 });
+
 </script>
 
 <style scoped>
@@ -584,4 +586,7 @@ table tbody tr:nth-child(odd) {
   width: 110px;
   text-align: center !important;
 }
+
 </style>
+
+-->

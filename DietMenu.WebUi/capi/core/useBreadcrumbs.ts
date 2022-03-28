@@ -1,4 +1,4 @@
-import breadCrumbsState from '~/store/breadCrumbs';
+import breadCrumbsState from '~/store/breadCrumbsStore';
 import { BreadcrumbType, BreadcrumbItem } from "~/types/core/breadcrumbs";
 
 export default function useBreadcrumbs() {

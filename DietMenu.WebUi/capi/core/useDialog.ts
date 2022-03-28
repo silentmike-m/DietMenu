@@ -2,7 +2,7 @@ import { GridDialogOptions, InputDialogOptions, YesNoDialogOptions } from '~/typ
 import GridDialog from "~/components/dialogs/dialogGrid.vue";
 import InputDialog from "~/components/dialogs/dialogInput.vue";
 import DialogYestNo from "~/components/dialogs/dialogYestNo.vue";
-import dialogState from '~/store/dialog';
+import dialogState from '~/store/dialogStore';
 
 export default function useDialog() {
 

@@ -1,3 +1,4 @@
+<!--
 <template>
   <v-card elevation="5">
     <v-card-text>
@@ -66,3 +67,4 @@ export default Vue.extend({
   },
 });
 </script>
+-->
