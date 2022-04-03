@@ -10,14 +10,14 @@ internal sealed class RecipeRepository : IRecipeRepository
 
     public RecipeRepository(DietMenuDbContext context) => (this.context) = (context);
 
-    public async Task<RecipeEntity?> Get(Guid familyId, Guid recipeId, CancellationToken cancellationToken = default)
+    public async Task<RecipeEntity?> GetAsync(Guid familyId, Guid recipeId, CancellationToken cancellationToken = default)
     {
         return await this.context.Recipes
             .Include(i => i.Ingredients)
             .SingleOrDefaultAsync(i => i.Id == recipeId, cancellationToken);
     }
 
-    public async Task Save(RecipeEntity recipe, CancellationToken cancellationToken = default)
+    public async Task SaveAsync(RecipeEntity recipe, CancellationToken cancellationToken = default)
     {
         var track = this.context.Entry(recipe);
 

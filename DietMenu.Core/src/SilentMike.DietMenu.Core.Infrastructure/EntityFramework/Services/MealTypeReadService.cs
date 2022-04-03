@@ -2,7 +2,6 @@
 
 using System.Linq.Expressions;
 using global::AutoMapper;
-using Microsoft.EntityFrameworkCore;
 using SilentMike.DietMenu.Core.Application.Common;
 using SilentMike.DietMenu.Core.Application.MealTypes.ViewModels;
 using SilentMike.DietMenu.Core.Domain.Entities;
@@ -17,16 +16,15 @@ internal sealed class MealTypeReadService : IMealTypeReadService
     public MealTypeReadService(DietMenuDbContext context, IMapper mapper)
         => (this.context, this.mapper) = (context, mapper);
 
-    public async Task<MealTypesGrid> GetMealTypesGrid(Guid familyId, GridRequest gridRequest)
+    public async Task<MealTypesGrid> GetMealTypesGridAsync(Guid familyId, GridRequest gridRequest, CancellationToken cancellationToken = default)
     {
         var filter = GetFilter(familyId, gridRequest.Filter);
         var orderBy = GetOrderBy(gridRequest.OrderBy);
 
-        var types = await this.context.MealTypes
+        var types = this.context.MealTypes
             .GetFiltered(filter)
             .GetOrdered(orderBy, gridRequest.IsDescending)
-            .GetPaged(gridRequest.PageNumber, gridRequest.IsPaged, gridRequest.PageSize)
-            .ToListAsync();
+            .GetPaged(gridRequest.PageNumber, gridRequest.IsPaged, gridRequest.PageSize);
 
         var count = this.context.MealTypes.GetItemsCount(filter);
 

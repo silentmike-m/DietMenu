@@ -37,14 +37,14 @@ internal sealed class DeleteIngredientHandler : IRequestHandler<DeleteIngredient
 
         this.logger.LogInformation("Try to delete ingredient");
 
-        var family = await this.familyRepository.Get(request.FamilyId, cancellationToken);
+        var family = await this.familyRepository.GetAsync(request.FamilyId, cancellationToken);
 
         if (family is null)
         {
             throw new FamilyNotFoundException(request.FamilyId);
         }
 
-        var ingredient = await this.ingredientRepository.Get(request.FamilyId, request.Id, cancellationToken);
+        var ingredient = await this.ingredientRepository.GetAsync(request.FamilyId, request.Id, cancellationToken);
 
         if (ingredient is null)
         {
@@ -53,7 +53,7 @@ internal sealed class DeleteIngredientHandler : IRequestHandler<DeleteIngredient
 
         ingredient.IsActive = false;
 
-        await this.ingredientRepository.Save(ingredient, cancellationToken);
+        await this.ingredientRepository.SaveAsync(ingredient, cancellationToken);
 
         var notification = new DeletedIngredient
         {

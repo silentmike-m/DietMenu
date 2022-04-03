@@ -125,7 +125,7 @@ public sealed class RecipeReadServiceTests : IDisposable
         };
 
         //WHEN
-        var result = await this.service.GetRecipesGrid(request, null, null, Guid.NewGuid());
+        var result = await this.service.GetRecipesGridAsync(request, null, null, Guid.NewGuid());
 
         //THEN
         result.Count.Should()
@@ -148,7 +148,7 @@ public sealed class RecipeReadServiceTests : IDisposable
         };
 
         //WHEN
-        var result = await this.service.GetRecipesGrid(request, null, Guid.NewGuid(), this.userId);
+        var result = await this.service.GetRecipesGridAsync(request, null, Guid.NewGuid(), this.userId);
 
         //THEN
         result.Count.Should()
@@ -171,7 +171,7 @@ public sealed class RecipeReadServiceTests : IDisposable
         };
 
         //WHEN
-        var result = await this.service.GetRecipesGrid(request, null, null, this.userId);
+        var result = await this.service.GetRecipesGridAsync(request, null, null, this.userId);
 
         //THEN
         result.Count.Should()
@@ -199,7 +199,7 @@ public sealed class RecipeReadServiceTests : IDisposable
         };
 
         //WHEN
-        var result = await this.service.GetRecipesGrid(request, null, null, this.userId);
+        var result = await this.service.GetRecipesGridAsync(request, null, null, this.userId);
 
         //THEN
         result.Count.Should()
@@ -228,7 +228,7 @@ public sealed class RecipeReadServiceTests : IDisposable
         };
 
         //WHEN
-        var result = await this.service.GetRecipesGrid(request, null, null, this.userId);
+        var result = await this.service.GetRecipesGridAsync(request, null, null, this.userId);
 
         //THEN
         result.Count.Should()
@@ -256,7 +256,7 @@ public sealed class RecipeReadServiceTests : IDisposable
         };
 
         //WHEN
-        var result = await this.service.GetRecipesGrid(request, "ingredient two", null, this.userId);
+        var result = await this.service.GetRecipesGridAsync(request, "ingredient two", null, this.userId);
 
         //THEN
         result.Count.Should()
@@ -284,7 +284,7 @@ public sealed class RecipeReadServiceTests : IDisposable
         };
 
         //WHEN
-        var result = await this.service.GetRecipesGrid(request, null, this.mealTypeId, this.userId);
+        var result = await this.service.GetRecipesGridAsync(request, null, this.mealTypeId, this.userId);
 
         //THEN
         result.Count.Should()
@@ -305,7 +305,7 @@ public sealed class RecipeReadServiceTests : IDisposable
         var request = new GridRequest();
 
         //WHEN
-        var result = await this.service.GetRecipesGrid(request, null, null, this.userId);
+        var result = await this.service.GetRecipesGridAsync(request, null, null, this.userId);
 
         //THEN
         result.Count.Should()
@@ -335,7 +335,7 @@ public sealed class RecipeReadServiceTests : IDisposable
         };
 
         //WHEN
-        var result = await this.service.GetRecipesGrid(request, null, null, this.userId);
+        var result = await this.service.GetRecipesGridAsync(request, null, null, this.userId);
 
         //THEN
         result.Count.Should()
@@ -364,7 +364,7 @@ public sealed class RecipeReadServiceTests : IDisposable
         };
 
         //WHEN
-        var result = await this.service.GetRecipesGrid(request, null, null, this.userId);
+        var result = await this.service.GetRecipesGridAsync(request, null, null, this.userId);
 
         //THEN
         result.Count.Should()

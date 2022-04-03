@@ -28,7 +28,6 @@ export default {
   setup() {
     const gridColumns: GridColumn[] = [
       {
-        filterable: false,
         sortable: false,
         title: "Nazwa",
         type: GridColumnType.text,

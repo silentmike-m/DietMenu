@@ -4,6 +4,6 @@ using SilentMike.DietMenu.Core.Domain.Entities;
 
 public interface IFamilyRepository
 {
-    Task<FamilyEntity?> Get(Guid id, CancellationToken cancellationToken = default);
-    Task Save(FamilyEntity family, CancellationToken cancellationToken = default);
+    Task<FamilyEntity?> GetAsync(Guid id, CancellationToken cancellationToken = default);
+    Task SaveAsync(FamilyEntity family, CancellationToken cancellationToken = default);
 }

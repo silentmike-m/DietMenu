@@ -45,14 +45,14 @@ internal sealed class UpsertIngredientHandler : IRequestHandler<UpsertIngredient
 
         this.logger.LogInformation("Try to upsert ingredient");
 
-        var family = await this.familyRepository.Get(request.FamilyId, cancellationToken);
+        var family = await this.familyRepository.GetAsync(request.FamilyId, cancellationToken);
 
         if (family is null)
         {
             throw new FamilyNotFoundException(request.FamilyId);
         }
 
-        var ingredient = await this.ingredientRepository.Get(request.FamilyId, request.Ingredient.Id, cancellationToken);
+        var ingredient = await this.ingredientRepository.GetAsync(request.FamilyId, request.Ingredient.Id, cancellationToken);
 
         if (ingredient is null)
         {
@@ -63,7 +63,7 @@ internal sealed class UpsertIngredientHandler : IRequestHandler<UpsertIngredient
             await this.Update(request.FamilyId, ingredient, request.Ingredient, cancellationToken);
         }
 
-        await this.ingredientRepository.Save(ingredient, cancellationToken);
+        await this.ingredientRepository.SaveAsync(ingredient, cancellationToken);
 
         var notification = new UpsertedIngredient
         {
@@ -159,7 +159,7 @@ internal sealed class UpsertIngredientHandler : IRequestHandler<UpsertIngredient
             return;
         }
 
-        var type = await this.typeRepository.Get(familyId, typeId.Value, cancellationToken);
+        var type = await this.typeRepository.GetAsync(familyId, typeId.Value, cancellationToken);
 
         if (type is null)
         {

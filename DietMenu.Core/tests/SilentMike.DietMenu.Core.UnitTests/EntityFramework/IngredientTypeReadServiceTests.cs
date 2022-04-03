@@ -48,6 +48,26 @@ public sealed class IngredientTypeReadServiceTests : IDisposable
     }
 
     [TestMethod]
+    public async Task ShouldReturnIngredientTypes()
+    {
+        //WHEN
+        var result = await this.service.GetIngredientTypesAsync(this.familyId);
+
+        //THEN
+        result.Types.Should()
+            .HaveCount(2)
+            .And
+            .Contain(i =>
+                i.Id == this.firstType.Id
+                && i.Name == this.firstType.Name)
+            .And
+            .Contain(i =>
+                i.Id == this.secondType.Id
+                && i.Name == this.secondType.Name)
+            ;
+    }
+
+    [TestMethod]
     public async Task ShouldReturnPagedIngredientTypesGrid()
     {
         //GIVEN
@@ -59,7 +79,7 @@ public sealed class IngredientTypeReadServiceTests : IDisposable
         };
 
         //WHEN
-        var result = await this.service.GetIngredientTypesGrid(this.familyId, request);
+        var result = await this.service.GetIngredientTypesGridAsync(this.familyId, request);
 
         //THEN
         result.Count.Should()
@@ -88,7 +108,7 @@ public sealed class IngredientTypeReadServiceTests : IDisposable
         };
 
         //WHEN
-        var result = await this.service.GetIngredientTypesGrid(this.familyId, request);
+        var result = await this.service.GetIngredientTypesGridAsync(this.familyId, request);
 
         //THEN
         result.Count.Should()
@@ -118,7 +138,7 @@ public sealed class IngredientTypeReadServiceTests : IDisposable
         };
 
         //WHEN
-        var result = await this.service.GetIngredientTypesGrid(this.familyId, request);
+        var result = await this.service.GetIngredientTypesGridAsync(this.familyId, request);
 
         //THEN
         result.Count.Should()
@@ -140,7 +160,7 @@ public sealed class IngredientTypeReadServiceTests : IDisposable
         var request = new GridRequest();
 
         //WHEN
-        var result = await this.service.GetIngredientTypesGrid(this.familyId, request);
+        var result = await this.service.GetIngredientTypesGridAsync(this.familyId, request);
 
         //THEN
         result.Count.Should()
@@ -170,7 +190,7 @@ public sealed class IngredientTypeReadServiceTests : IDisposable
         };
 
         //WHEN
-        var result = await this.service.GetIngredientTypesGrid(this.familyId, request);
+        var result = await this.service.GetIngredientTypesGridAsync(this.familyId, request);
 
         //THEN
         result.Count.Should()
@@ -202,7 +222,7 @@ public sealed class IngredientTypeReadServiceTests : IDisposable
         };
 
         //WHEN
-        var result = await this.service.GetIngredientTypesGrid(this.familyId, request);
+        var result = await this.service.GetIngredientTypesGridAsync(this.familyId, request);
 
         //THEN
         result.Count.Should()

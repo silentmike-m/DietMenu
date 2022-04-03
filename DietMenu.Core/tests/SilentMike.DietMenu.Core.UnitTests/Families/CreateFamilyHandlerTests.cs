@@ -76,7 +76,7 @@ public sealed class CreateFamilyHandlerTests : IDisposable
         //THEN
         this.mediator.Verify(i => i.Publish(It.IsAny<CreatedFamily>(), It.IsAny<CancellationToken>()), Times.Once);
 
-        var family = await this.repository.Get(command.Id, CancellationToken.None);
+        var family = await this.repository.GetAsync(command.Id, CancellationToken.None);
         family.Should()
             .NotBeNull()
             ;

@@ -26,7 +26,7 @@ internal sealed class GetMealTypesGridHandler : IRequestHandler<GetMealTypesGrid
 
         this.logger.LogInformation("Try to get meal types grid");
 
-        var result = await this.service.GetMealTypesGrid(request.FamilyId, request.GridRequest);
+        var result = await this.service.GetMealTypesGridAsync(request.FamilyId, request.GridRequest, cancellationToken);
 
         return result;
     }

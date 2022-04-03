@@ -17,14 +17,14 @@ using SilentMike.DietMenu.Core.Application.Ingredients.Commands;
 public sealed class AuthorizationBehaviourTests
 {
     [TestMethod]
-    public async Task ShouldThrowUnauthorizedExceptionWhenMissingFamilyId()
+    public async Task ShouldThrowUnauthorizedExceptionWhenMissingFamilyIdAndUserId()
     {
         //GIVEN
         var request = new UpsertIngredient();
 
         var service = new Mock<ICurrentRequestService>();
         service.Setup(i => i.CurrentUser)
-            .Returns(() => (Guid.Empty, Guid.NewGuid()));
+            .Returns(() => (Guid.Empty, Guid.Empty));
 
         var behaviour = new AuthorizationBehaviour<UpsertIngredient, Unit>(service.Object);
 
@@ -38,27 +38,6 @@ public sealed class AuthorizationBehaviourTests
             ;
     }
 
-    [TestMethod]
-    public async Task ShouldThrowUnauthorizedExceptionWhenMissingUserId()
-    {
-        //GIVEN
-        var request = new UpsertIngredient();
-
-        var service = new Mock<ICurrentRequestService>();
-        service.Setup(i => i.CurrentUser)
-            .Returns(() => (Guid.NewGuid(), Guid.Empty));
-
-        var behaviour = new AuthorizationBehaviour<UpsertIngredient, Unit>(service.Object);
-
-        //WHEN
-        Func<Task<Unit>> action = async () => await behaviour.Handle(request, CancellationToken.None, () => Task.FromResult(Unit.Value));
-
-        //THEN
-        await action.Should()
-                .ThrowAsync<DietMenuUnauthorizedException>()
-                .Where(i => i.Code == ErrorCodes.USER_NOT_FOUND)
-            ;
-    }
 
     [TestMethod]
     public async Task ShouldFillFamilyIdAndUserId()

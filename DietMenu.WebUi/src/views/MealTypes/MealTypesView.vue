@@ -28,14 +28,12 @@ export default {
   setup() {
     const gridColumns: GridColumn[] = [
       {
-        filterable: false,
         sortable: false,
         title: "Kolejność",
         type: GridColumnType.number,
         value: "order",
       },
       {
-        filterable: false,
         sortable: false,
         title: "Nazwa",
         type: GridColumnType.text,
@@ -56,9 +54,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.card {
-  margin: 2px;
-}
-</style>

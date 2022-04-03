@@ -2,6 +2,7 @@
 
 using System.Linq.Expressions;
 using global::AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using SilentMike.DietMenu.Core.Application.Common;
 using SilentMike.DietMenu.Core.Application.IngredientTypes.ViewModels;
 using SilentMike.DietMenu.Core.Domain.Entities;
@@ -16,7 +17,23 @@ internal sealed class IngredientTypeReadService : IIngredientTypeReadService
     public IngredientTypeReadService(DietMenuDbContext context, IMapper mapper)
         => (this.context, this.mapper) = (context, mapper);
 
-    public async Task<IngredientTypesGrid> GetIngredientTypesGrid(Guid familyId, GridRequest gridRequest)
+    public async Task<IngredientTypes> GetIngredientTypesAsync(Guid familyId, CancellationToken cancellationToken = default)
+    {
+        var types = await this.context.IngredientTypes
+            .Where(type => type.FamilyId == familyId)
+            .ToListAsync(cancellationToken);
+
+        var ingredientTypes = this.mapper.Map<IReadOnlyList<IngredientType>>(types);
+
+        var result = new IngredientTypes
+        {
+            Types = ingredientTypes,
+        };
+
+        return result;
+    }
+
+    public async Task<IngredientTypesGrid> GetIngredientTypesGridAsync(Guid familyId, GridRequest gridRequest, CancellationToken cancellationToken = default)
     {
         var filter = GetFilter(familyId, gridRequest.Filter);
         var orderBy = GetOrderBy();

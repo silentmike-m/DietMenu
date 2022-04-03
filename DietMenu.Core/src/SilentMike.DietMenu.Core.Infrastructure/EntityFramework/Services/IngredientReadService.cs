@@ -17,19 +17,22 @@ internal sealed class IngredientReadService : IIngredientReadService
     public IngredientReadService(DietMenuDbContext context, IMapper mapper)
         => (this.context, this.mapper) = (context, mapper);
 
-    public async Task<IngredientsGrid> GetIngredientsGrid(Guid familyId, GridRequest gridRequest)
+    public async Task<IngredientsGrid> GetIngredientsGridAsync(Guid familyId, GridRequest gridRequest, Guid? typeId, CancellationToken cancellationToken = default)
     {
         var filter = GetFilter(familyId, gridRequest.Filter);
+        var typeFilter = GetTypeFilter(typeId);
         var orderBy = GetOrderBy(gridRequest.OrderBy);
 
-        var ingredients = this.context.Ingredients
+        var query = this.context.Ingredients
             .Include(i => i.Type)
             .GetFiltered(filter)
-            .GetOrdered(orderBy, gridRequest.IsDescending)
-            .GetPaged(gridRequest.PageNumber, gridRequest.IsPaged, gridRequest.PageSize)
-            .ToList();
+            .GetFiltered(typeFilter);
 
-        var count = this.context.Ingredients.GetItemsCount(filter);
+        var ingredients = query
+            .GetOrdered(orderBy, gridRequest.IsDescending)
+            .GetPaged(gridRequest.PageNumber, gridRequest.IsPaged, gridRequest.PageSize);
+
+        var count = query.Count();
 
         var resultType = this.mapper.Map<List<Ingredient>>(ingredients);
 
@@ -54,6 +57,15 @@ internal sealed class IngredientReadService : IIngredientReadService
         return entity => entity.FamilyId == familyId
                          && entity.Name.ToLower().Contains(filter)
                          || entity.Type.Name.ToLower().Contains(filter);
+    }
+    private static Expression<Func<IngredientEntity, bool>> GetTypeFilter(Guid? typeId)
+    {
+        if (typeId is null)
+        {
+            return entity => true;
+        }
+
+        return entity => entity.TypeId == typeId;
     }
 
     private static Expression<Func<IngredientEntity, object>> GetOrderBy(string orderBy)

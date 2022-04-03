@@ -26,7 +26,7 @@ internal sealed class CreateFamilyHandler : IRequestHandler<CreateFamily>
 
         this.logger.LogInformation("Try to create family");
 
-        var family = await this.repository.Get(request.Id, cancellationToken);
+        var family = await this.repository.GetAsync(request.Id, cancellationToken);
 
         if (family is not null)
         {
@@ -35,7 +35,7 @@ internal sealed class CreateFamilyHandler : IRequestHandler<CreateFamily>
 
         family = new FamilyEntity(request.Id);
 
-        await this.repository.Save(family, cancellationToken);
+        await this.repository.SaveAsync(family, cancellationToken);
 
         var notification = new CreatedFamily
         {

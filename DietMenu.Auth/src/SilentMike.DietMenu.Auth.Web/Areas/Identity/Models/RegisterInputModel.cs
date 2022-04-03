@@ -7,7 +7,7 @@ public sealed class RegisterInputModel
     [DataType(DataType.Password)]
     [Display(Name = "Potwiedź hasło")]
     [Compare("Password", ErrorMessage = "Hasło i potwierdzenie hasło nie są zgodne.")]
-    public string ConfirmPassword { get; set; }
+    public string ConfirmPassword { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Należy podać email.")]
     [EmailAddress]

@@ -14,11 +14,6 @@ internal sealed class AuthorizationBehaviour<TRequest, TResponse> : IPipelineBeh
 
     public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
     {
-        if (request is IAuthRequest test)
-        {
-
-        }
-
         if (request.FamilyId == Guid.Empty || request.UserId == Guid.Empty)
         {
             var (portfolioId, userId) = this.currentUserService.CurrentUser;

@@ -5,5 +5,5 @@ using SilentMike.DietMenu.Core.Application.MealTypes.ViewModels;
 
 internal interface IMealTypeReadService
 {
-    Task<MealTypesGrid> GetMealTypesGrid(Guid familyId, GridRequest gridRequest);
+    Task<MealTypesGrid> GetMealTypesGridAsync(Guid familyId, GridRequest gridRequest, CancellationToken cancellationToken = default);
 }

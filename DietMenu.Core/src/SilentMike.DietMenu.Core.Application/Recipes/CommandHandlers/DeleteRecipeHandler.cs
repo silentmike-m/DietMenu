@@ -37,14 +37,14 @@ internal sealed class DeleteRecipeHandler : IRequestHandler<DeleteRecipe>
 
         this.logger.LogInformation("Try to delete recipe");
 
-        var family = await this.familyRepository.Get(request.FamilyId, cancellationToken);
+        var family = await this.familyRepository.GetAsync(request.FamilyId, cancellationToken);
 
         if (family is null)
         {
             throw new FamilyNotFoundException(request.FamilyId);
         }
 
-        var recipe = await this.recipeRepository.Get(request.FamilyId, request.Id, cancellationToken);
+        var recipe = await this.recipeRepository.GetAsync(request.FamilyId, request.Id, cancellationToken);
 
         if (recipe is null)
         {
@@ -53,7 +53,7 @@ internal sealed class DeleteRecipeHandler : IRequestHandler<DeleteRecipe>
 
         recipe.IsActive = false;
 
-        await this.recipeRepository.Save(recipe, cancellationToken);
+        await this.recipeRepository.SaveAsync(recipe, cancellationToken);
 
         var notification = new DeletedRecipe
         {

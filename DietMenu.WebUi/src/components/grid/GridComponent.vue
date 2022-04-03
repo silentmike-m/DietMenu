@@ -1,264 +1,268 @@
 <template>
-  <div class="table-responsive">
-    <div class="text-center" v-if="isLoading">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
-      </div>
-    </div>
-    <div v-if="canAdd">
-      <button
-        v-if="canAdd"
-        type="button"
-        class="btn btn-secondary btn-sm"
-        @click="onElementAdd()"
-      >
-        <i class="bi-plus" />
-      </button>
-    </div>
-    <template v-if="isMobile"
-      ><table class="table table-hover table-striped mobile">
-        <thead>
-          <tr v-if="canFilter">
-            <td :colspan="columns.length + 1">
-              <div class="input-group mb-3">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="szukaj ..."
-                  aria-label="szukaj ..."
-                  v-model="filter"
-                  @focus="$event.target.select()"
-                  @keydown.enter="getData()"
-                />
-                <button
-                  class="btn btn-outline-secondary"
-                  type="button"
-                  @click="clearFilter()"
+  <div class="card shadow">
+    <div class="card-body">
+      <div class="table-responsive">
+        <div class="text-center" v-if="isLoading">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+        <div v-if="canAdd">
+          <button
+            v-if="canAdd"
+            type="button"
+            class="btn btn-secondary btn-sm"
+            @click="onElementAdd()"
+          >
+            <i class="bi-plus" />
+          </button>
+        </div>
+        <template v-if="isMobile"
+          ><table class="table table-hover table-striped mobile">
+            <thead>
+              <tr v-if="canFilter">
+                <td :colspan="columns.length + 1">
+                  <div class="input-group mb-3">
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="szukaj ..."
+                      aria-label="szukaj ..."
+                      v-model="filter"
+                      @focus="$event.target.select()"
+                      @keydown.enter="getData()"
+                    />
+                    <button
+                      class="btn btn-outline-secondary"
+                      type="button"
+                      @click="clearFilter()"
+                    >
+                      <i class="bi-x" />
+                    </button>
+                    <button
+                      class="btn btn-outline-secondary"
+                      type="button"
+                      @click="getData()"
+                    >
+                      <i class="bi-search" />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="element in elements" :key="element.id">
+                <td
+                  :id="element.id"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
                 >
-                  <i class="bi-x" />
-                </button>
-                <button
-                  class="btn btn-outline-secondary"
-                  type="button"
-                  @click="getData()"
+                  <ul class="flex-content">
+                    <li
+                      class="flex-item"
+                      v-for="gridColumn in columns"
+                      :key="gridColumn.value"
+                      :data-label="gridColumn.title"
+                    >
+                      <span v-if="gridColumn.type === columnTypes.boolean">
+                        <span v-if="item[gridColumn.value]">TAK</span>
+                        <span v-else>NIE</span>
+                      </span>
+                      <span v-else-if="gridColumn.type == columnTypes.date">
+                        {{
+                          new Date(
+                            element[gridColumn.value]
+                          ).toLocaleDateString("pl-PL")
+                        }}
+                      </span>
+                      <span v-else>
+                        {{ element[gridColumn.value] }}
+                      </span>
+                    </li>
+                  </ul>
+                </td>
+                <ul
+                  v-if="canDelete || canEdit"
+                  class="dropdown-menu table-dropdown-menu"
+                  :aria-labelledby="element.id"
                 >
-                  <i class="bi-search" />
-                </button>
-              </div>
-            </td>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="element in elements" :key="element.id">
-            <td
-              :id="element.id"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              <ul class="flex-content">
-                <li
-                  class="flex-item"
+                  <li>
+                    <a
+                      class="dropdown-item"
+                      href="#"
+                      @click="onElementEdit(element)"
+                      >Edytuj</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      class="dropdown-item"
+                      href="#"
+                      @click="onElementDelete(element)"
+                      >Usuń</a
+                    >
+                  </li>
+                </ul>
+              </tr>
+            </tbody>
+          </table></template
+        >
+        <template v-else>
+          <table class="table table-hover table-striped">
+            <thead>
+              <tr v-if="canFilter">
+                <td :colspan="columns.length + 1">
+                  <div class="input-group mb-3">
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="szukaj ..."
+                      aria-label="szukaj ..."
+                      v-model="filter"
+                      @focus="$event.target.select()"
+                      @keydown.enter="getData()"
+                    />
+                    <button
+                      class="btn btn-outline-secondary"
+                      type="button"
+                      @click="clearFilter()"
+                    >
+                      <i class="bi-x" />
+                    </button>
+                    <button
+                      class="btn btn-outline-secondary"
+                      type="button"
+                      @click="getData()"
+                    >
+                      <i class="bi-search" />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <th
+                  scope="col"
                   v-for="gridColumn in columns"
                   :key="gridColumn.value"
-                  :data-label="gridColumn.title"
+                  @click="changeSort(gridColumn.value)"
                 >
-                  <span v-if="gridColumn.type === columnTypes.boolean">
-                    <span v-if="item[gridColumn.value]">TAK</span>
-                    <span v-else>NIE</span>
-                  </span>
-                  <span v-else-if="gridColumn.type == columnTypes.date">
-                    {{
-                      new Date(element[gridColumn.value]).toLocaleDateString(
-                        "pl-PL"
-                      )
-                    }}
-                  </span>
-                  <span v-else>
-                    {{ element[gridColumn.value] }}
-                  </span>
-                </li>
-              </ul>
-            </td>
-            <ul
-              v-if="canDelete || canEdit"
-              class="dropdown-menu table-dropdown-menu"
-              :aria-labelledby="element.id"
-            >
-              <li>
-                <a
-                  class="dropdown-item"
-                  href="#"
-                  @click="onElementEdit(element)"
-                  >Edytuj</a
+                  <template v-if="sortBy == gridColumn.value">
+                    <i v-if="sortDescending" class="bi-arrow-up"></i>
+                    <i v-else class="bi-arrow-down"></i>
+                  </template>
+                  {{ gridColumn.title }}
+                </th>
+                <th v-if="canDelete || canEdit" class="action-column"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="element in elements" :key="element.id">
+                <td v-for="gridColumn in columns" :key="gridColumn.value">
+                  {{ element[gridColumn.value] }}
+                </td>
+                <td v-if="canDelete || canEdit" class="action-column">
+                  <button
+                    v-if="canEdit"
+                    type="button"
+                    class="btn btn-secondary btn-sm"
+                    @click="onElementEdit(element)"
+                  >
+                    <i class="bi-pencil" />
+                  </button>
+                  <button
+                    v-if="canDelete"
+                    type="button"
+                    class="btn btn-outline-danger btn-sm"
+                    @click="onElementDelete(element)"
+                  >
+                    <i class="bi-x" />
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </template>
+        <div v-if="canPage">
+          <nav>
+            <ul class="pagination pagination-sm justify-content-end">
+              <li class="page-item">
+                <button
+                  class="btn btn-outline-secondary dropdown-toggle btn-sm"
+                  type="button"
+                  id="dropdownMenuButton1"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
                 >
+                  {{ pageSize }}
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                  <li v-for="size in itemsPerPage" :key="size">
+                    <a
+                      class="dropdown-item"
+                      href="#"
+                      @click="changePageSort(size)"
+                      >{{ size }}</a
+                    >
+                  </li>
+                </ul>
               </li>
-              <li>
-                <a
-                  class="dropdown-item"
-                  href="#"
-                  @click="onElementDelete(element)"
-                  >Usuń</a
+              <li class="page-item">
+                {{ pageNumber * pageSize - pageSize + 1 }} -
+                {{ pageNumber * pageSize }} / {{ totalCount }}
+              </li>
+              <li class="page-item">
+                <button
+                  class="btn btn-outline-secondary btn-sm"
+                  type="button"
+                  :disabled="pageNumber === 1"
+                  @click="getFirstPage"
                 >
+                  |&lt;
+                </button>
+              </li>
+              <li class="page-item">
+                <button
+                  class="btn btn-outline-secondary btn-sm"
+                  type="button"
+                  :disabled="pageNumber === 1"
+                  @click="getPreviousPage()"
+                >
+                  &lt;
+                </button>
+              </li>
+              <li class="page-item">
+                <button
+                  class="btn btn-outline-secondary btn-sm"
+                  type="button"
+                  disabled
+                >
+                  {{ pageNumber }}
+                </button>
+              </li>
+              <li class="page-item">
+                <button
+                  class="btn btn-outline-secondary btn-sm"
+                  type="button"
+                  :disabled="pageNumber * pageSize >= totalCount"
+                  @click="getNextPage()"
+                >
+                  &gt;
+                </button>
+              </li>
+              <li class="page-item">
+                <button
+                  class="btn btn-outline-secondary btn-sm"
+                  type="button"
+                  :disabled="pageNumber * pageSize >= totalCount"
+                  @click="getLastPage()"
+                >
+                  &gt;|
+                </button>
               </li>
             </ul>
-          </tr>
-        </tbody>
-      </table></template
-    >
-    <template v-else>
-      <table class="table table-hover table-striped">
-        <thead>
-          <tr v-if="canFilter">
-            <td :colspan="columns.length + 1">
-              <div class="input-group mb-3">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="szukaj ..."
-                  aria-label="szukaj ..."
-                  v-model="filter"
-                  @focus="$event.target.select()"
-                  @keydown.enter="getData()"
-                />
-                <button
-                  class="btn btn-outline-secondary"
-                  type="button"
-                  @click="clearFilter()"
-                >
-                  <i class="bi-x" />
-                </button>
-                <button
-                  class="btn btn-outline-secondary"
-                  type="button"
-                  @click="getData()"
-                >
-                  <i class="bi-search" />
-                </button>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <th
-              scope="col"
-              v-for="gridColumn in columns"
-              :key="gridColumn.value"
-              @click="changeSort(gridColumn.value)"
-            >
-              <template v-if="sortBy == gridColumn.value">
-                <i v-if="sortDescending" class="bi-arrow-up"></i>
-                <i v-else class="bi-arrow-down"></i>
-              </template>
-              {{ gridColumn.title }}
-            </th>
-            <th v-if="canDelete || canEdit" class="action-column"></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="element in elements" :key="element.id">
-            <td v-for="gridColumn in columns" :key="gridColumn.value">
-              {{ element[gridColumn.value] }}
-            </td>
-            <td v-if="canDelete || canEdit" class="action-column">
-              <button
-                v-if="canEdit"
-                type="button"
-                class="btn btn-secondary btn-sm"
-                @click="onElementEdit(element)"
-              >
-                <i class="bi-pencil" />
-              </button>
-              <button
-                v-if="canDelete"
-                type="button"
-                class="btn btn-outline-danger btn-sm"
-                @click="onElementDelete(element)"
-              >
-                <i class="bi-x" />
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </template>
-    <div v-if="canPage">
-      <nav>
-        <ul class="pagination pagination-sm justify-content-end">
-          <li class="page-item">
-            <button
-              class="btn btn-outline-secondary dropdown-toggle btn-sm"
-              type="button"
-              id="dropdownMenuButton1"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              {{ pageSize }}
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-              <li v-for="size in itemsPerPage" :key="size">
-                <a
-                  class="dropdown-item"
-                  href="#"
-                  @click="changePageSort(size)"
-                  >{{ size }}</a
-                >
-              </li>
-            </ul>
-          </li>
-          <li class="page-item">
-            {{ pageNumber * pageSize - pageSize + 1 }} -
-            {{ pageNumber * pageSize }} / {{ totalCount }}
-          </li>
-          <li class="page-item">
-            <button
-              class="btn btn-outline-secondary btn-sm"
-              type="button"
-              :disabled="pageNumber === 1"
-              @click="getFirstPage"
-            >
-              |&lt;
-            </button>
-          </li>
-          <li class="page-item">
-            <button
-              class="btn btn-outline-secondary btn-sm"
-              type="button"
-              :disabled="pageNumber === 1"
-              @click="getPreviousPage()"
-            >
-              &lt;
-            </button>
-          </li>
-          <li class="page-item">
-            <button
-              class="btn btn-outline-secondary btn-sm"
-              type="button"
-              disabled
-            >
-              {{ pageNumber }}
-            </button>
-          </li>
-          <li class="page-item">
-            <button
-              class="btn btn-outline-secondary btn-sm"
-              type="button"
-              :disabled="pageNumber * pageSize >= totalCount"
-              @click="getNextPage()"
-            >
-              &gt;
-            </button>
-          </li>
-          <li class="page-item">
-            <button
-              class="btn btn-outline-secondary btn-sm"
-              type="button"
-              :disabled="pageNumber * pageSize >= totalCount"
-              @click="getLastPage()"
-            >
-              &gt;|
-            </button>
-          </li>
-        </ul>
-      </nav>
+          </nav>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -446,6 +450,10 @@ export default {
 
 .btn-outline-secondary {
   color: #00aa95;
+}
+
+.card {
+  margin: 0px !important;
 }
 
 .dropdown-item:hover {

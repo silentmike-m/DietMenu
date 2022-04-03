@@ -10,12 +10,12 @@ internal sealed class FamilyRepository : IFamilyRepository
 
     public FamilyRepository(DietMenuDbContext context) => (this.context) = (context);
 
-    public async Task<FamilyEntity?> Get(Guid id, CancellationToken cancellationToken = default)
+    public async Task<FamilyEntity?> GetAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await this.context.Families.SingleOrDefaultAsync(i => i.Id == id, cancellationToken);
     }
 
-    public async Task Save(FamilyEntity family, CancellationToken cancellationToken = default)
+    public async Task SaveAsync(FamilyEntity family, CancellationToken cancellationToken = default)
     {
         await this.context.Save(family, cancellationToken);
     }
