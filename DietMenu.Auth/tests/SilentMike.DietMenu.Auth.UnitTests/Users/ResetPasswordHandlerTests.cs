@@ -37,11 +37,9 @@ public sealed class ResetPasswordHandlerTests
         var commandHandler = new ResetPasswordHandler(logger.Object, userManager.Object);
 
         //WHEN
-
         Func<Task<Unit>> action = async () => await commandHandler.Handle(command, CancellationToken.None);
 
         //THEN
-
         await action.Should()
                 .NotThrowAsync()
             ;

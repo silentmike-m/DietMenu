@@ -14,7 +14,7 @@ services:
         value: secret   
     bindings:
     - protocol: https
-      port: 8080
+      port: 8080   
   - name: identity
     project: DietMenu.Auth/src/SilentMike.DietMenu.Auth.Web/SilentMike.DietMenu.Auth.Web.csproj
     env:

@@ -2,6 +2,7 @@
 
 using System.Linq.Expressions;
 using global::AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using SilentMike.DietMenu.Core.Application.Common;
 using SilentMike.DietMenu.Core.Application.MealTypes.ViewModels;
 using SilentMike.DietMenu.Core.Domain.Entities;
@@ -21,10 +22,11 @@ internal sealed class MealTypeReadService : IMealTypeReadService
         var filter = GetFilter(familyId, gridRequest.Filter);
         var orderBy = GetOrderBy(gridRequest.OrderBy);
 
-        var types = this.context.MealTypes
+        var types = await this.context.MealTypes
             .GetFiltered(filter)
             .GetOrdered(orderBy, gridRequest.IsDescending)
-            .GetPaged(gridRequest.PageNumber, gridRequest.IsPaged, gridRequest.PageSize);
+            .GetPaged(gridRequest.PageNumber, gridRequest.IsPaged, gridRequest.PageSize)
+            .ToListAsync();
 
         var count = this.context.MealTypes.GetItemsCount(filter);
 

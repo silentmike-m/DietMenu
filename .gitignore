@@ -540,3 +540,4 @@ sw.*
 
 # Vim swap files
 *.swp
+/.tye/*

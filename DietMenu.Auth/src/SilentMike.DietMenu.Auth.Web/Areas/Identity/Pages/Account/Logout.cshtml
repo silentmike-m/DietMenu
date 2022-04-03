@@ -1,0 +1,31 @@
+﻿@page
+@model LogoutModel
+@{
+    ViewData["Title"] = "Wylogowanie";
+}
+
+<div class="content-title">
+    <img src="~/img/logo64x64.png" alt="DietMenu" class="content-logo">
+    <span class="font-weight-light">Wylogowanie</span>
+</div>
+
+<div class="content-text">
+    <div class="content-center">
+        @if (Model.PostLogoutRedirectUri != null)
+        {
+            <div>
+                Click <a class="url__text" href="@Model.PostLogoutRedirectUri">here</a> to return to the
+                <span>@Model.ClientName</span> application.
+            </div>
+        }
+        else
+        {
+            <div><p>Missing Client logout context</p></div>
+        }
+
+        @if (Model.SignOutIframeUrl != null)
+        {
+            <iframe width="0" height="0" class="signout" src="@Model.SignOutIframeUrl" title="Signout"></iframe>
+        }
+    </div>
+</div>

@@ -53,7 +53,7 @@ internal sealed class ApiExceptionFilterAttribute : ExceptionFilterAttribute
 
     private void HandleException(ExceptionContext context)
     {
-        this.logger.LogError(context.Exception, context.Exception.Message);
+        this.logger.LogError(context.Exception, "{Message}", context.Exception.Message);
 
         var exceptionHandler = context.Exception switch
         {
