@@ -3,7 +3,9 @@
     <div class="card-header">Rodzaje składników</div>
     <div class="card-body">
       <div>
+        <label for="ingredientTypeSelection">Rodzaj</label>
         <select
+          id="ingredientTypeSelection"
           class="form-select"
           aria-label="Rodzaj"
           v-model="ingredientTypeId"
@@ -33,7 +35,7 @@
         :getGridData="getGridData"
         :onElementAdd="addMealType"
         :onElementEdit="deleteMealType"
-        :onElementDelete="editMealType"
+        :onElementDelete="deleteRow"
         ref="grid"
       />
     </div>
@@ -49,7 +51,9 @@ import IngredientService from "@/services/IngredientService";
 import IngredientTypeService from "@/services/IngredientTypeService";
 import { GridColumnType } from "@/models/Grid/GridColumnType";
 import { onMounted, ref, Ref } from "@vue/runtime-core";
+import { Ingredient } from "@/models/Ingredient";
 import { IngredientType } from "@/models/IngredientType";
+import DialogService from "@/services/DialogService";
 
 export default {
   components: {
@@ -87,7 +91,8 @@ export default {
     const ingredientTypeId: Ref<string | null> = ref(null);
     const ingredientTypes: Ref<IngredientType[]> = ref([]);
 
-    const { getIngredientsGrid } = IngredientService();
+    const { closeDialog, showYesNoDialog } = DialogService();
+    const { deleteIngredient, getIngredientsGrid } = IngredientService();
     const { getIngredientTypes } = IngredientTypeService();
 
     onMounted(() => {
@@ -95,6 +100,22 @@ export default {
         (response) => (ingredientTypes.value = response)
       );
     });
+
+    const deleteRow = (ingredient: Ingredient) => {
+      const question = ingredient.is_system
+        ? `Czy na pewno chcesz usunąć systemowy składnik '${ingredient.name}'?`
+        : `Czy na pewno chcesz usunąć składnik '${ingredient.name}'?`;
+
+      showYesNoDialog({
+        title: "Usunięcie składnika",
+        question: question,
+        confirmAction: () => {
+          deleteIngredient(ingredient.id).then(() => refreshGrid());
+          closeDialog();
+        },
+        cancelAction: () => closeDialog(),
+      });
+    };
 
     const getGridData = (request: GridRequest): Promise<GridResponse> => {
       return getIngredientsGrid(request, ingredientTypeId.value);
@@ -109,9 +130,16 @@ export default {
       gridColumns,
       ingredientTypeId,
       ingredientTypes,
+      deleteRow,
       getGridData,
       refreshGrid,
     };
   },
 };
 </script>
+
+<style scoped>
+.form-select {
+  margin-bottom: 5px;
+}
+</style>

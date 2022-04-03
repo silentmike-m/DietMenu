@@ -21,6 +21,7 @@ internal sealed class IngredientTypeReadService : IIngredientTypeReadService
     {
         var types = await this.context.IngredientTypes
             .Where(type => type.FamilyId == familyId)
+            .Where(i => i.IsActive)
             .ToListAsync(cancellationToken);
 
         var ingredientTypes = this.mapper.Map<IReadOnlyList<IngredientType>>(types);
@@ -39,6 +40,7 @@ internal sealed class IngredientTypeReadService : IIngredientTypeReadService
         var orderBy = GetOrderBy();
 
         var types = this.context.IngredientTypes
+            .Where(i => i.IsActive)
             .GetFiltered(filter)
             .GetOrdered(orderBy, gridRequest.IsDescending)
             .GetPaged(gridRequest.PageNumber, gridRequest.IsPaged, gridRequest.PageSize);

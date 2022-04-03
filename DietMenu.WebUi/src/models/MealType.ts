@@ -1,11 +1,7 @@
-export class MealType {
-    id: string;
-    name: string;
-    order: number;
+import { Guid } from "guid-typescript";
 
-    constructor(id: string, name: string, order: number) {
-        this.id = id;
-        this.name = name;
-        this.order = order;
-    }
+export class MealType {
+    id: Guid = Guid.create();
+    name: string = "";
+    order: number = 1;
 }

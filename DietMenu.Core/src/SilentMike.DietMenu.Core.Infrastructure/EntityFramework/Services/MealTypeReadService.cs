@@ -22,6 +22,7 @@ internal sealed class MealTypeReadService : IMealTypeReadService
         var orderBy = GetOrderBy(gridRequest.OrderBy);
 
         var types = this.context.MealTypes
+            .Where(i => i.IsActive)
             .GetFiltered(filter)
             .GetOrdered(orderBy, gridRequest.IsDescending)
             .GetPaged(gridRequest.PageNumber, gridRequest.IsPaged, gridRequest.PageSize);

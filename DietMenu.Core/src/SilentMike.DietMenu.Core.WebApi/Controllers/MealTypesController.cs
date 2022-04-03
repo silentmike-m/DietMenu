@@ -14,7 +14,5 @@ public sealed class MealTypesController : ControllerBase
 
     [HttpPost(Name = "GetMealTypesGrid")]
     public async Task<MealTypesGrid> GetMealTypesGrid([FromBody] GetMealTypesGrid request)
-    {
-        return await this.mediator.Send(request, CancellationToken.None);
-    }
+    => await this.mediator.Send(request, CancellationToken.None);
 }

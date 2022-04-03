@@ -24,6 +24,7 @@ internal sealed class IngredientReadService : IIngredientReadService
         var orderBy = GetOrderBy(gridRequest.OrderBy);
 
         var query = this.context.Ingredients
+            .Where(i => i.IsActive)
             .Include(i => i.Type)
             .GetFiltered(filter)
             .GetFiltered(typeFilter);

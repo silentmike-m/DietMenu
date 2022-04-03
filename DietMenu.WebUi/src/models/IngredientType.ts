@@ -1,7 +1,7 @@
 import { Guid } from "guid-typescript";
 
 export class IngredientType {
-    id: string = Guid.create().toString();
+    id: Guid = Guid.create();
     name: string = "";
 }
 
