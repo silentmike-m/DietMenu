@@ -1,6 +1,7 @@
 $body-bg: #a5e887;
-$body-color: rgba(0,0,0,.87);
-$font-family-base : Roboto,sans-serif;
+$body-color: rgba(0, 0, 0, .87);
+$font-family-base : Roboto,
+sans-serif;
 $font-size-base : .875rem;
 $input-bg: #FFFFFF;
 $primary: #00aa95;
@@ -10,10 +11,15 @@ $table-hover-bg: rgba($primary, $table-hover-bg-factor);
 $table-striped-bg-factor: .2;
 $table-striped-bg: rgba($secondary, $table-striped-bg-factor);
 
-html,body { 
+html,
+body {
   height: 100%;
   margin: 0 !important;
   padding: 0 !important;
+}
+
+.card {
+  margin: 2px;
 }
 
 @import "bootstrap/scss/bootstrap";

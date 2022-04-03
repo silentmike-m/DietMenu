@@ -76,7 +76,7 @@
               <li>
                 <router-link
                   class="btn btn-primary dropdown-item"
-                  to="/ingredient-types"
+                  to="/meal-types"
                   @click="handleCollapse()"
                   >Rodzaje posiłków</router-link
                 >
@@ -84,7 +84,7 @@
               <li>
                 <router-link
                   class="dropdown-item"
-                  to="/meal-types"
+                  to="/ingredient-types"
                   @click="handleCollapse()"
                   >Rodzaje składników</router-link
                 >
@@ -92,24 +92,42 @@
             </ul>
           </li>
         </ul>
-        <button class="btn btn-primary">{{ isMobile }}</button>
+        <div class="dropdown">
+          <button
+            class="btn btn-primary dropdown-toggle shadow-sm rounded"
+            id="userDropdown"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            {{ user.email }}
+          </button>
+          <ul class="dropdown-menu bg-primary" aria-labelledby="userDropdown">
+            <li>
+              <a class="btn btn-primary dropdown-item" href="/logout"
+                >Wyloguj</a
+              >
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </nav>
 </template>
 
 <script lang="ts">
-import { inject, ComputedRef, onMounted } from "vue";
+import { inject, ComputedRef, onMounted, Ref, ref } from "vue";
 import AuthService from "@/services/AuthService";
+import { User } from "@/models/User";
 
 export default {
   setup() {
     const isMobile = inject("isMobile") as ComputedRef<any>;
+    const user: Ref<User> = ref({} as User);
 
     const { getInformationAboutMySelf } = AuthService();
 
     onMounted(() => {
-      getInformationAboutMySelf().then((response) => console.log(response));
+      getInformationAboutMySelf().then((response) => (user.value = response));
     });
 
     const handleCollapse = () => {
@@ -123,6 +141,7 @@ export default {
 
     return {
       isMobile,
+      user,
       handleCollapse,
     };
   },

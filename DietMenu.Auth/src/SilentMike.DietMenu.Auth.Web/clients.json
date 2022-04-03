@@ -27,7 +27,7 @@
             "Value": "K7gNU3sdo+OL0wNhqoVWhr3g6s1xYv72ol/pe/Unols="
           }
         ],
-        "FrontChannelLogoutUri": "https://localhost/logged-out",
+        "FrontChannelLogoutUri": "https://localhost:8080/logged-out",
         "PostLogoutRedirectUris": [
           "https://localhost:8080/signout-callback-oidc"
         ],

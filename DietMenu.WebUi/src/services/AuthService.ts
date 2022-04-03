@@ -1,19 +1,37 @@
 import axios from "axios";
 import { User } from "@/models/User";
-import RestService from "./RestService";
 import AlertService from "./AlertService";
 import { AlertType } from "@/models/Alert/AlertType";
-import { RestError } from "@/models/Rest/RestError";
 
 export default function AuthService() {
-    const { get, postWithToken } = RestService();
+    const { showAlert } = AlertService();
 
     async function getInformationAboutMySelf(): Promise<User> {
-        const token = await get<string>("/getToken");
-        console.log(token);
-        return new User();
+        try {
+            const token = await fetch("https://localhost:8080/getToken");
+            const tokenString = await token.text();
 
-        // return await postWithToken<User>("https://localhost:30000/User/GetInformationAboutMyself", {}, token);
+            const headers = {
+                "Authorization": `Bearer ${tokenString}`,
+                "Content-Type": "application/json",
+            };
+
+            const response = await axios.post<User>("https://localhost:30000/User/GetInformationAboutMyself", {}, { headers });
+
+            return response.data;
+        }
+        catch (error: any) {
+            return await handleError(error);
+        }
+    }
+
+    function handleError<T>(error: any): Promise<T> {
+        showAlert({
+            text: error.message,
+            type: AlertType.error,
+        });
+
+        return Promise.reject();
     }
 
     return {

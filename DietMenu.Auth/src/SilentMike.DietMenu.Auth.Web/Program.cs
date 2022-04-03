@@ -155,6 +155,8 @@ builder.Host.UseSystemd();
 
     app.UseRouting();
 
+    app.UseCors("Policy");
+
     app.UseIdentityServer();
 
     app.UseAuthentication();
