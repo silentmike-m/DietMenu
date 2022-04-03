@@ -1,4 +1,4 @@
-﻿namespace SilentMike.DietMenu.Auth.Web.Filters;
+﻿namespace SilentMike.DietMenu.Auth.Infrastructure.Swagger.Filters;
 
 using System;
 using System.Diagnostics.CodeAnalysis;

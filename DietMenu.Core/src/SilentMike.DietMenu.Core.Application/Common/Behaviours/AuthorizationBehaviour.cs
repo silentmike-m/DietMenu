@@ -14,15 +14,25 @@ internal sealed class AuthorizationBehaviour<TRequest, TResponse> : IPipelineBeh
 
     public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
     {
-        var (familyId, userId) = this.currentUserService.CurrentUser;
-
-        if (familyId == Guid.Empty || userId == Guid.Empty)
+        if (request.FamilyId == Guid.Empty || request.UserId == Guid.Empty)
         {
-            throw new DietMenuUnauthorizedException(familyId, userId);
-        }
+            var (portfolioId, userId) = this.currentUserService.CurrentUser;
 
-        request.FamilyId = familyId;
-        request.UserId = userId;
+            if (request.FamilyId == Guid.Empty)
+            {
+                request.FamilyId = portfolioId;
+            }
+
+            if (request.UserId == Guid.Empty)
+            {
+                request.UserId = userId;
+            }
+
+            if (request.FamilyId == Guid.Empty && request.UserId == Guid.Empty)
+            {
+                throw new DietMenuUnauthorizedException(portfolioId, userId);
+            }
+        }
 
         return await next();
     }

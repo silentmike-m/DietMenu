@@ -41,10 +41,10 @@ internal sealed class ImportCoreDataHandler : IRequestHandler<ImportCoreData>
 
             if (!request.ValidationOnly)
             {
-                await this.coreRepository.SaveIngredientTypes(dataToImport.IngredientTypes, cancellationToken);
-                await this.coreRepository.SaveIngredients(dataToImport.Ingredients, cancellationToken);
-                await this.coreRepository.SaveMealTypes(dataToImport.MealTypes, cancellationToken);
-                await this.coreRepository.SaveCore(dataToImport.Core, cancellationToken);
+                await this.coreRepository.SaveIngredientTypesAsync(dataToImport.IngredientTypes, cancellationToken);
+                await this.coreRepository.SaveIngredientsAsync(dataToImport.Ingredients, cancellationToken);
+                await this.coreRepository.SaveMealTypesAsync(dataToImport.MealTypes, cancellationToken);
+                await this.coreRepository.SaveCoreAsync(dataToImport.Core, cancellationToken);
             }
 
             var notification = new ImportedCoreData
@@ -52,13 +52,13 @@ internal sealed class ImportCoreDataHandler : IRequestHandler<ImportCoreData>
                 IsSuccess = true,
             };
 
-            //await this.mediator.Publish(notification, cancellationToken);
+            await this.mediator.Publish(notification, cancellationToken);
 
             return await Task.FromResult(Unit.Value);
         }
         catch (Exception exception)
         {
-            //await this.HandleException(exception, cancellationToken);
+            await this.HandleException(exception, cancellationToken);
 
             throw;
         }

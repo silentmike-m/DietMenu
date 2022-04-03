@@ -24,7 +24,8 @@ internal sealed class GetRecipesGridHandler : IRequestHandler<GetRecipesGrid, Re
 
         this.logger.LogInformation("Try to get recipes grid");
 
-        var result = await this.service.GetRecipesGrid(request.GridRequest, request.IngredientFilter, request.MealTypeId, request.UserId);
+        var result = await this.service
+            .GetRecipesGridAsync(request.GridRequest, request.IngredientFilter, request.MealTypeId, request.UserId, cancellationToken);
 
         return result;
     }

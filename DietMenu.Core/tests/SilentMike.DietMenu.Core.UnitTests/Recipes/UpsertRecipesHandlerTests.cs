@@ -391,7 +391,7 @@ public sealed class UpsertRecipesHandlerTests : IDisposable
         //THEN
         this.mediator.Verify(i => i.Publish(It.IsAny<UpsertedRecipe>(), It.IsAny<CancellationToken>()), Times.Once);
 
-        var recipe = await this.recipeRepository.Get(command.FamilyId, recipeToUpsert.Id, CancellationToken.None);
+        var recipe = await this.recipeRepository.GetAsync(command.FamilyId, recipeToUpsert.Id, CancellationToken.None);
 
         recipe.Should()
             .NotBeNull()
@@ -474,7 +474,7 @@ public sealed class UpsertRecipesHandlerTests : IDisposable
         //THEN
         this.mediator.Verify(i => i.Publish(It.IsAny<UpsertedRecipe>(), It.IsAny<CancellationToken>()), Times.Once);
 
-        var recipe = await this.recipeRepository.Get(command.FamilyId, recipeToUpsert.Id, CancellationToken.None);
+        var recipe = await this.recipeRepository.GetAsync(command.FamilyId, recipeToUpsert.Id, CancellationToken.None);
 
         recipe.Should()
             .NotBeNull()

@@ -4,5 +4,5 @@ using SilentMike.DietMenu.Core.Domain.Entities;
 
 public interface IMealTypeRepository
 {
-    Task<MealTypeEntity?> Get(Guid familyId, Guid mealTypeId, CancellationToken cancellationToken = default);
+    Task<MealTypeEntity?> GetAsync(Guid familyId, Guid mealTypeId, CancellationToken cancellationToken = default);
 }

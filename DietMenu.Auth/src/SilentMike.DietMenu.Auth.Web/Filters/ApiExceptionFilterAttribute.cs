@@ -27,7 +27,7 @@ internal sealed class ApiExceptionFilterAttribute : ExceptionFilterAttribute
         base.OnException(context);
     }
 
-    private void HandleApplicationException(ExceptionContext context)
+    private static void HandleApplicationException(ExceptionContext context)
     {
         if (context.Exception is not ApplicationException exception)
         {
@@ -53,19 +53,19 @@ internal sealed class ApiExceptionFilterAttribute : ExceptionFilterAttribute
 
     private void HandleException(ExceptionContext context)
     {
-        this.logger.LogError(context.Exception, context.Exception.Message);
+        this.logger.LogError(context.Exception, "{Message}", context.Exception.Message);
 
         var exceptionHandler = context.Exception switch
         {
-            ValidationException => this.HandleValidationException,
-            ApplicationException => this.HandleApplicationException,
-            _ => new Action<ExceptionContext>(this.HandleUnknownException),
+            ValidationException => HandleValidationException,
+            ApplicationException => HandleApplicationException,
+            _ => new Action<ExceptionContext>(HandleUnknownException),
         };
 
         exceptionHandler.Invoke(context);
     }
 
-    private void HandleUnknownException(ExceptionContext context)
+    private static void HandleUnknownException(ExceptionContext context)
     {
         var response = new BaseResponse<object>
         {
@@ -84,7 +84,7 @@ internal sealed class ApiExceptionFilterAttribute : ExceptionFilterAttribute
         context.ExceptionHandled = true;
     }
 
-    private void HandleValidationException(ExceptionContext context)
+    private static void HandleValidationException(ExceptionContext context)
     {
         if (context.Exception is not ValidationException exception)
         {

@@ -18,6 +18,8 @@ public sealed class IngredientReadServiceTests : IDisposable
     private readonly Guid familyId = Guid.NewGuid();
     private readonly IngredientEntity ingredientOne;
     private readonly IngredientEntity ingredientTwo;
+    private readonly Guid ingredientTypeOneId = Guid.NewGuid();
+    private readonly Guid ingredientTypeTwoId = Guid.NewGuid();
 
     private readonly DietMenuDbContextFactory factory;
     private readonly IngredientReadService service;
@@ -29,14 +31,14 @@ public sealed class IngredientReadServiceTests : IDisposable
 
         var family = new FamilyEntity(this.familyId);
 
-        var ingredientTypeOne = new IngredientTypeEntity(Guid.NewGuid())
+        var ingredientTypeOne = new IngredientTypeEntity(this.ingredientTypeOneId)
         {
             FamilyId = this.familyId,
             InternalName = "type one",
             Name = "type one",
         };
 
-        var ingredientTypeTwo = new IngredientTypeEntity(Guid.NewGuid())
+        var ingredientTypeTwo = new IngredientTypeEntity(this.ingredientTypeTwoId)
         {
             FamilyId = this.familyId,
             InternalName = "type two",
@@ -48,7 +50,6 @@ public sealed class IngredientReadServiceTests : IDisposable
             Exchanger = 0.5m,
             FamilyId = this.familyId,
             InternalName = "ingredient one",
-
             Name = "ingredient one",
             Type = ingredientTypeOne,
             TypeId = ingredientTypeOne.Id,
@@ -60,7 +61,6 @@ public sealed class IngredientReadServiceTests : IDisposable
             Exchanger = 2.3m,
             FamilyId = this.familyId,
             InternalName = "ingredient two",
-
             Name = "ingredient two",
             Type = ingredientTypeTwo,
             TypeId = ingredientTypeTwo.Id,
@@ -84,7 +84,7 @@ public sealed class IngredientReadServiceTests : IDisposable
         };
 
         //WHEN
-        var result = await this.service.GetIngredientsGrid(this.familyId, request);
+        var result = await this.service.GetIngredientsGridAsync(this.familyId, request, null);
 
         //THEN
         result.Count.Should()
@@ -117,7 +117,7 @@ public sealed class IngredientReadServiceTests : IDisposable
         };
 
         //WHEN
-        var result = await this.service.GetIngredientsGrid(this.familyId, request);
+        var result = await this.service.GetIngredientsGridAsync(this.familyId, request, null);
 
         //THEN
         result.Count.Should()
@@ -151,7 +151,7 @@ public sealed class IngredientReadServiceTests : IDisposable
         };
 
         //WHEN
-        var result = await this.service.GetIngredientsGrid(this.familyId, request);
+        var result = await this.service.GetIngredientsGridAsync(this.familyId, request, null);
 
         //THEN
         result.Count.Should()
@@ -176,7 +176,7 @@ public sealed class IngredientReadServiceTests : IDisposable
         var request = new GridRequest();
 
         //WHEN
-        var result = await this.service.GetIngredientsGrid(this.familyId, request);
+        var result = await this.service.GetIngredientsGridAsync(this.familyId, request, null);
 
         //THEN
         result.Count.Should()
@@ -214,7 +214,7 @@ public sealed class IngredientReadServiceTests : IDisposable
         };
 
         //WHEN
-        var result = await this.service.GetIngredientsGrid(this.familyId, request);
+        var result = await this.service.GetIngredientsGridAsync(this.familyId, request, null);
 
         //THEN
         result.Count.Should()
@@ -254,7 +254,7 @@ public sealed class IngredientReadServiceTests : IDisposable
         };
 
         //WHEN
-        var result = await this.service.GetIngredientsGrid(this.familyId, request);
+        var result = await this.service.GetIngredientsGridAsync(this.familyId, request, null);
 
         //THEN
         result.Count.Should()
@@ -280,6 +280,32 @@ public sealed class IngredientReadServiceTests : IDisposable
                 TypeName = this.ingredientTwo.Type.Name,
                 UnitSymbol = this.ingredientTwo.UnitSymbol,
             });
+    }
+
+    [TestMethod]
+    public async Task ShouldReturnFilteredByTypeIdIngredientsGrid()
+    {
+        //GIVEN
+        var request = new GridRequest();
+
+        //WHEN
+        var result = await this.service.GetIngredientsGridAsync(this.familyId, request, this.ingredientTypeOneId);
+
+        //THEN
+        result.Count.Should()
+            .Be(1)
+            ;
+        result.Elements.Should()
+            .HaveCount(1)
+            .And
+            .Contain(i =>
+                i.Exchanger == this.ingredientOne.Exchanger
+                && i.Id == this.ingredientOne.Id
+                && i.Name == this.ingredientOne.Name
+                && i.TypeId == this.ingredientOne.TypeId
+                && i.TypeName == this.ingredientOne.Type.Name
+                && i.UnitSymbol == this.ingredientOne.UnitSymbol)
+            ;
     }
 
     public void Dispose()

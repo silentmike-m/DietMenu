@@ -232,7 +232,7 @@ public sealed class UpsertIngredientHandlerTests : IDisposable
         //THEN
         this.mediator.Verify(i => i.Publish(It.IsAny<UpsertedIngredient>(), It.IsAny<CancellationToken>()), Times.Once);
 
-        var ingredient = await this.ingredientRepository.Get(command.FamilyId, ingredientToUpsert.Id);
+        var ingredient = await this.ingredientRepository.GetAsync(command.FamilyId, ingredientToUpsert.Id);
         ingredient.Should()
             .NotBeNull()
             ;
@@ -285,7 +285,7 @@ public sealed class UpsertIngredientHandlerTests : IDisposable
         //THEN
         this.mediator.Verify(i => i.Publish(It.IsAny<UpsertedIngredient>(), It.IsAny<CancellationToken>()), Times.Once);
 
-        var ingredient = await this.ingredientRepository.Get(command.FamilyId, ingredientToUpsert.Id);
+        var ingredient = await this.ingredientRepository.GetAsync(command.FamilyId, ingredientToUpsert.Id);
         ingredient.Should()
                 .NotBeNull()
                 ;

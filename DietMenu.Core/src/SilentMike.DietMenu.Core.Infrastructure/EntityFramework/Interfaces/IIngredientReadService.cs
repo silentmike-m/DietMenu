@@ -5,5 +5,5 @@ using SilentMike.DietMenu.Core.Application.Ingredients.ViewModels;
 
 internal interface IIngredientReadService
 {
-    Task<IngredientsGrid> GetIngredientsGrid(Guid familyId, GridRequest gridRequest);
+    Task<IngredientsGrid> GetIngredientsGridAsync(Guid familyId, GridRequest gridRequest, Guid? typeId, CancellationToken cancellationToken = default);
 }

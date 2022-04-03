@@ -12,6 +12,7 @@ using SilentMike.DietMenu.Auth.Infrastructure.Identity.Data;
 using SilentMike.DietMenu.Auth.Infrastructure.Identity.Models;
 using SilentMike.DietMenu.Auth.Infrastructure.IdentityServer;
 using SilentMike.DietMenu.Auth.Infrastructure.MassTransit;
+using SilentMike.DietMenu.Auth.Infrastructure.Swagger;
 
 public static class DependencyInjection
 {
@@ -26,6 +27,8 @@ public static class DependencyInjection
         services.AddIdentityServer4(configuration);
 
         services.AddMassTransit(configuration);
+
+        services.AddDietMenuSwagger();
     }
 
     public static void UseInfrastructure(this IApplicationBuilder app, IConfiguration configuration)
@@ -40,6 +43,8 @@ public static class DependencyInjection
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<DietMenuUser>>();
 
             app.UseHealthChecks();
+
+            app.UseDietMenuSwagger();
 
             app.UseIdentity(configuration, context, userManager);
         }

@@ -24,7 +24,7 @@ internal sealed class GetIngredientTypesGridHandler : IRequestHandler<GetIngredi
 
         this.logger.LogInformation("Try to get ingredient types grid");
 
-        var result = await this.service.GetIngredientTypesGrid(request.FamilyId, request.GridRequest);
+        var result = await this.service.GetIngredientTypesGridAsync(request.FamilyId, request.GridRequest, cancellationToken);
 
         return result;
     }

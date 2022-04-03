@@ -10,13 +10,13 @@ internal sealed class IngredientRepository : IIngredientRepository
 
     public IngredientRepository(DietMenuDbContext context) => (this.context) = (context);
 
-    public async Task<IngredientEntity?> Get(Guid familyId, Guid ingredientId, CancellationToken cancellationToken = default)
+    public async Task<IngredientEntity?> GetAsync(Guid familyId, Guid ingredientId, CancellationToken cancellationToken = default)
     {
         return await this.context.Ingredients
             .SingleOrDefaultAsync(i => i.Id == ingredientId && i.IsActive, cancellationToken);
     }
 
-    public async Task Save(IngredientEntity ingredient, CancellationToken cancellationToken = default)
+    public async Task SaveAsync(IngredientEntity ingredient, CancellationToken cancellationToken = default)
     {
         await this.context.Save(ingredient, cancellationToken);
     }

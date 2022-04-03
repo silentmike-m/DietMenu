@@ -16,7 +16,7 @@ internal sealed class MealTypeReadService : IMealTypeReadService
     public MealTypeReadService(DietMenuDbContext context, IMapper mapper)
         => (this.context, this.mapper) = (context, mapper);
 
-    public async Task<MealTypesGrid> GetMealTypesGrid(Guid familyId, GridRequest gridRequest)
+    public async Task<MealTypesGrid> GetMealTypesGridAsync(Guid familyId, GridRequest gridRequest, CancellationToken cancellationToken = default)
     {
         var filter = GetFilter(familyId, gridRequest.Filter);
         var orderBy = GetOrderBy(gridRequest.OrderBy);

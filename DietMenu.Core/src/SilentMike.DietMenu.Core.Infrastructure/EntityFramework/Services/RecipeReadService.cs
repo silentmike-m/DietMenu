@@ -17,7 +17,7 @@ internal sealed class RecipeReadService : IRecipeReadService
     public RecipeReadService(DietMenuDbContext context, IMapper mapper)
         => (this.context, this.mapper) = (context, mapper);
 
-    public async Task<RecipesGrid> GetRecipesGrid(GridRequest gridRequest, string? ingredientsFilter, Guid? mealTypeId, Guid userId)
+    public async Task<RecipesGrid> GetRecipesGridAsync(GridRequest gridRequest, string? ingredientsFilter, Guid? mealTypeId, Guid userId, CancellationToken cancellationToken = default)
     {
         var filter = GetFilter(gridRequest.Filter, mealTypeId, userId);
         var filterIngredients = GetIngredientsFilter(ingredientsFilter);
@@ -77,15 +77,15 @@ internal sealed class RecipeReadService : IRecipeReadService
 
     private static Expression<Func<RecipeEntity, object>> GetOrderBy(string orderBy)
     {
-        switch (orderBy.ToLower())
+        return orderBy.ToLower() switch
         {
-            case "carbohydrates": return entity => entity.Carbohydrates;
-            case "energy": return entity => entity.Energy;
-            case "fat": return entity => entity.Fat;
-            case "name": return entity => entity.Name;
-            case "meal_type_name": return entity => entity.MealType.Name;
-            case "protein": return entity => entity.Protein;
-            default: return entity => entity.Name;
-        }
+            "carbohydrates" => entity => entity.Carbohydrates,
+            "energy" => entity => entity.Energy,
+            "fat" => entity => entity.Fat,
+            "name" => entity => entity.Name,
+            "meal_type_name" => entity => entity.MealType.Name,
+            "protein" => entity => entity.Protein,
+            _ => entity => entity.Name,
+        };
     }
 }

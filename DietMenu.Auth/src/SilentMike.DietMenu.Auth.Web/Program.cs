@@ -1,14 +1,10 @@
-using System;
 using System.Reflection;
 using System.Text.Json.Serialization;
+using IdentityServer4;
 using MediatR;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpLogging;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Serilog;
 using SilentMike.DietMenu.Auth.Application;
 using SilentMike.DietMenu.Auth.Application.Common;
@@ -34,9 +30,11 @@ try
 
     var builder = WebApplication.CreateBuilder(args);
 
-    builder.Configuration.AddEnvironmentVariables("CONFIG_");
+    builder.Configuration
+        .AddJsonFile("clients.json")
+        .AddEnvironmentVariables("CONFIG_");
 
-    builder.Host.UseSerilog((ctx, lc) => lc
+    builder.Host.UseSerilog((_, lc) => lc
         .ReadFrom.Configuration(builder.Configuration)
         .Enrich.WithProperty("AppName", "SilentMike DietMenu Auth")
         .Enrich.WithProperty("Version", "1.0.0")
@@ -57,6 +55,24 @@ builder.Host.UseSystemd();
     builder.Services.AddTransient<IActionContextAccessor, ActionContextAccessor>();
     builder.Services.AddScoped<ICurrentRequestService, CurrentRequestService>();
 
+    builder.Services.AddAuthentication()
+        .AddLocalApi();
+
+    builder.Services.AddAuthorization(options =>
+    {
+        options.AddPolicy(IdentityServerConstants.LocalApi.PolicyName, policy =>
+        {
+            policy.AddAuthenticationSchemes(IdentityServerConstants.LocalApi.AuthenticationScheme);
+            policy.RequireAuthenticatedUser();
+        });
+
+        options.AddPolicy("System", policy =>
+        {
+            policy.AddAuthenticationSchemes(IdentityConstants.ApplicationScheme);
+            policy.RequireAuthenticatedUser();
+        });
+    });
+
     builder.Services.AddControllers(options =>
     {
         options.Filters.Add<ApiExceptionFilterAttribute>();
@@ -67,15 +83,27 @@ builder.Host.UseSystemd();
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
 
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy(name: "Policy",
+            corsBuilder => corsBuilder
+                .SetIsOriginAllowedToAllowWildcardSubdomains()
+                .WithOrigins(
+                    "http://localhost",
+                    "http://127.0.0.1",
+                    "http://localhost:30001",
+                    "http://127.0.0.1:30001",
+                    "https://localhost:8080",
+                    "https://127.0.0.1:8080")
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials());
+    });
+
     builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
     builder.Services.AddRazorPages();
 
     var app = builder.Build();
-
-    app.UseMiddleware<SwaggerAuthorizationMiddleware>();
-    app.UseSwagger();
-    app.UseSwaggerUI();
 
     if (app.Environment.IsDevelopment())
     {
@@ -126,6 +154,8 @@ builder.Host.UseSystemd();
     app.UseStaticFiles();
 
     app.UseRouting();
+
+    app.UseCors("Policy");
 
     app.UseIdentityServer();
 
