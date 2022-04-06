@@ -2,13 +2,7 @@
   <div class="card border-primary shadow">
     <div class="card-header">Rodzaje składników</div>
     <div class="card-body">
-      <GridComponent
-        :columns="gridColumns"
-        :getGridData="getGridData"
-        :onElementAdd="addMealType"
-        :onElementEdit="deleteMealType"
-        :onElementDelete="editMealType"
-      />
+      <GridComponent :columns="gridColumns" :getGridData="getGridData" />
     </div>
   </div>
 </template>

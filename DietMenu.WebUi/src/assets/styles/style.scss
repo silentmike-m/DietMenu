@@ -18,8 +18,21 @@ body {
   padding: 0 !important;
 }
 
+label {
+  color: #999;
+}
+
 .card {
   margin: 2px;
+}
+
+.card-actions {
+  border-top: 1px solid #dee2e6;
+  text-align: center !important;
+}
+
+.card-actions>* {
+  margin: .25rem;
 }
 
 @import "bootstrap/scss/bootstrap";

@@ -33,9 +33,9 @@
         :canSort="true"
         :columns="gridColumns"
         :getGridData="getGridData"
-        :onElementAdd="addMealType"
-        :onElementEdit="deleteMealType"
+        :onElementAdd="addRow"
         :onElementDelete="deleteRow"
+        :onElementEdit="editRow"
         ref="grid"
       />
     </div>
@@ -54,6 +54,7 @@ import { onMounted, ref, Ref } from "@vue/runtime-core";
 import { Ingredient } from "@/models/Ingredient";
 import { IngredientType } from "@/models/IngredientType";
 import DialogService from "@/services/DialogService";
+import { useRouter } from "vue-router";
 
 export default {
   components: {
@@ -94,12 +95,17 @@ export default {
     const { closeDialog, showYesNoDialog } = DialogService();
     const { deleteIngredient, getIngredientsGrid } = IngredientService();
     const { getIngredientTypes } = IngredientTypeService();
+    const router = useRouter();
 
     onMounted(() => {
       getIngredientTypes().then(
         (response) => (ingredientTypes.value = response)
       );
     });
+
+    const addRow = (): void => {
+      router.push({ path: "/ingredients/new" });
+    };
 
     const deleteRow = (ingredient: Ingredient) => {
       const question = ingredient.is_system
@@ -117,6 +123,10 @@ export default {
       });
     };
 
+    const editRow = (ingredient: Ingredient) => {
+      router.push({ path: `/ingredients/${ingredient.id}` });
+    };
+
     const getGridData = (request: GridRequest): Promise<GridResponse> => {
       return getIngredientsGrid(request, ingredientTypeId.value);
     };
@@ -130,7 +140,9 @@ export default {
       gridColumns,
       ingredientTypeId,
       ingredientTypes,
+      addRow,
       deleteRow,
+      editRow,
       getGridData,
       refreshGrid,
     };

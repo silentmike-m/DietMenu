@@ -5,7 +5,7 @@ export class Ingredient {
     exchanger: number = 0;
     is_system: boolean = false;
     name: string = "";
-    type_id = Guid.create();
+    type_id = Guid.createEmpty();
     type_name = "";
     unit_symbol = "";
 }

@@ -21,13 +21,16 @@ public sealed class IngredientsController : ControllerBase
         return await Task.FromResult(Ok());
     }
 
+    [HttpPost(Name = "GetIngredient")]
+    public async Task<Ingredient> GetIngredient([FromBody] GetIngredient request)
+        => await this.mediator.Send(request, CancellationToken.None);
+
     [HttpPost(Name = "GetIngredientsGrid")]
     public async Task<IngredientsGrid> GetIngredientsGrid([FromBody] GetIngredientsGrid request)
         => await this.mediator.Send(request, CancellationToken.None);
 
-
-    [HttpPost(Name = "UpsertIngredients")]
-    public async Task<ActionResult> UpsertIngredients([FromBody] UpsertIngredient request)
+    [HttpPost(Name = "UpsertIngredient")]
+    public async Task<ActionResult> UpsertIngredient([FromBody] UpsertIngredient request)
     {
         _ = await this.mediator.Send(request, CancellationToken.None);
 
