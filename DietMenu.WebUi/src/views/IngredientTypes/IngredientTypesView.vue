@@ -14,6 +14,7 @@ import { GridRequest } from "@/models/Grid/GridRequest";
 import { GridResponse } from "@/models/Grid/GridResponse";
 import IngredientTypeService from "@/services/IngredientTypeService";
 import { GridColumnType } from "@/models/Grid/GridColumnType";
+import { GetIngredientTypesGrid } from "@/models/IngredientType/IngredientTypeRequests";
 
 export default {
   components: {
@@ -31,7 +32,10 @@ export default {
 
     const { getIngredientTypesGrid } = IngredientTypeService();
 
-    const getGridData = (request: GridRequest): Promise<GridResponse> => {
+    const getGridData = (gridRequest: GridRequest): Promise<GridResponse> => {
+      const request = new GetIngredientTypesGrid();
+      request.grid_request = gridRequest;
+
       return getIngredientTypesGrid(request);
     };
 

@@ -17,7 +17,11 @@ internal sealed class IngredientReadService : IIngredientReadService
     public IngredientReadService(DietMenuDbContext context, IMapper mapper)
         => (this.context, this.mapper) = (context, mapper);
 
-    public async Task<IngredientsGrid> GetIngredientsGridAsync(Guid familyId, GridRequest gridRequest, Guid? typeId, CancellationToken cancellationToken = default)
+    public async Task<IngredientsGrid> GetIngredientsGridAsync(
+        Guid familyId,
+        GridRequest gridRequest,
+        Guid? typeId,
+        CancellationToken cancellationToken = default)
     {
         var filter = GetFilter(familyId, gridRequest.Filter);
         var typeFilter = GetTypeFilter(typeId);
@@ -46,6 +50,46 @@ internal sealed class IngredientReadService : IIngredientReadService
         return await Task.FromResult(result);
     }
 
+    public async Task<ReplacementsGrid> GetReplacementsGridAsync(
+        Guid familyId,
+        GridRequest gridRequest,
+        decimal exchanger,
+        decimal quantity,
+        Guid typeid,
+        CancellationToken cancellationToken = default)
+    {
+        var ingredients = await this.GetIngredientsGridAsync(familyId, gridRequest, typeid, cancellationToken);
+
+        var replacements = new List<Replacement>();
+
+        foreach (var ingredient in ingredients.Elements)
+        {
+            var replacementQuantity = exchanger == 0
+                ? 0
+                : Math.Round(quantity / exchanger * ingredient.Exchanger, 0);
+
+            var replacement = new Replacement
+            {
+                Exchanger = ingredient.Exchanger,
+                Id = ingredient.Id,
+                Name = ingredient.Name,
+                Quantity = replacementQuantity,
+                UnitSymbol = ingredient.UnitSymbol,
+            };
+
+
+            replacements.Add(replacement);
+        }
+
+        var result = new ReplacementsGrid
+        {
+            Count = ingredients.Count,
+            Elements = replacements.AsReadOnly(),
+        };
+
+        return result;
+    }
+
     private static Expression<Func<IngredientEntity, bool>> GetFilter(Guid familyId, string filter)
     {
         if (string.IsNullOrEmpty(filter))
@@ -59,6 +103,7 @@ internal sealed class IngredientReadService : IIngredientReadService
                          && entity.Name.ToLower().Contains(filter)
                          || entity.Type.Name.ToLower().Contains(filter);
     }
+
     private static Expression<Func<IngredientEntity, bool>> GetTypeFilter(Guid? typeId)
     {
         if (typeId is null)

@@ -43,7 +43,7 @@
             class="form-control"
             id="ingredientUnit"
             required
-            v-model="ingredient.ingredientUnit"
+            v-model="ingredient.unit_symbol"
           />
           <div class="invalid-feedback">Należy podać jednostkę.</div>
         </div>
@@ -97,33 +97,44 @@
 
 <script lang="ts">
 import { Ref, ref } from "@vue/reactivity";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { onMounted } from "vue";
-import { IngredientType } from "@/models/IngredientType";
+import { IngredientType } from "@/models/IngredientType/IngredientType";
 import IngredientTypeService from "@/services/IngredientTypeService";
-import { Ingredient } from "@/models/Ingredient";
+import { Ingredient } from "@/models/Ingredient/Ingredient";
 import IngredientService from "@/services/IngredientService";
+import {
+  GetIngredient,
+  UpsertIngredient,
+} from "@/models/Ingredient/IngredientRequests";
+import { GetIngredientTypes } from "@/models/IngredientType/IngredientTypeRequests";
 
 export default {
   setup() {
     const form: Ref<any> = ref(null);
     const id: Ref<string> = ref("");
-    const ingredient: Ref<Ingredient> = ref(new Ingredient());
+    const ingredient = ref(new Ingredient());
     const ingredientTypes: Ref<IngredientType[]> = ref([]);
 
     const { getIngredient, upsertIngredient } = IngredientService();
     const { getIngredientTypes } = IngredientTypeService();
     const route = useRoute();
+    const router = useRouter();
 
     onMounted(() => {
-      getIngredientTypes().then(
+      const request = new GetIngredientTypes();
+
+      getIngredientTypes(request).then(
         (response) => (ingredientTypes.value = response)
       );
 
       id.value = route.params.id.toString();
 
       if (id.value !== "new") {
-        getIngredient(id.value).then(
+        const request = new GetIngredient();
+        request.id = id.value;
+
+        getIngredient(request).then(
           (response) => (ingredient.value = response)
         );
       }
@@ -141,12 +152,20 @@ export default {
       ingredient.value.exchanger++;
     };
 
-    const save = () => {
-      if (form.value.checkValidity()) {
-        upsertIngredient(ingredient.value);
-      }
+    const save = async () => {
+      try {
+        if (form.value.checkValidity()) {
+          const request = new UpsertIngredient();
+          request.ingredient = ingredient.value;
 
-      form.value.classList.add("was-validated");
+          await upsertIngredient(request);
+          router.go(-1);
+        }
+      } catch {
+        //ignore
+      } finally {
+        form.value.classList.add("was-validated");
+      }
     };
 
     return {

@@ -29,6 +29,10 @@ public sealed class IngredientsController : ControllerBase
     public async Task<IngredientsGrid> GetIngredientsGrid([FromBody] GetIngredientsGrid request)
         => await this.mediator.Send(request, CancellationToken.None);
 
+    [HttpPost(Name = "GetReplacementsGrid")]
+    public async Task<ReplacementsGrid> GetReplacementsGrid([FromBody] GetReplacementsGrid request)
+        => await this.mediator.Send(request, CancellationToken.None);
+
     [HttpPost(Name = "UpsertIngredient")]
     public async Task<ActionResult> UpsertIngredient([FromBody] UpsertIngredient request)
     {

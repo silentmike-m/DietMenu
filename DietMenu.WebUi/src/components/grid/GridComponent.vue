@@ -279,13 +279,18 @@ export default {
     canDelete: Boolean,
     canEdit: Boolean,
     canFilter: Boolean,
+    canMultiSelect: Boolean,
     canPage: Boolean,
+    canSelect: Boolean,
     canSort: Boolean,
     columns: Array,
     getGridData: Function,
+    initialFilter: String,
     onElementAdd: Function,
     onElementEdit: Function,
     onElementDelete: Function,
+    onFocusRow: Function,
+    stopOnLoad: Boolean,
   },
   data() {
     return {
@@ -311,7 +316,9 @@ export default {
         sortDescending.value = false;
       }
 
-      getData();
+      if (!props.stopOnLoad) {
+        getData();
+      }
     });
 
     const changePageSort = (size: number) => {

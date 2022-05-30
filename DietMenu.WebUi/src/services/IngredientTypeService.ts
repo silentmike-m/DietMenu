@@ -1,19 +1,19 @@
 import RestService from "./RestService";
-import { GridRequest } from "@/models/Grid/GridRequest";
 import { GridResponse } from "@/models/Grid/GridResponse";
-import { IngredientType, IngredientTypes } from "@/models/IngredientType";
+import { IngredientType, IngredientTypes } from "@/models/IngredientType/IngredientType";
+import { GetIngredientTypes, GetIngredientTypesGrid } from "@/models/IngredientType/IngredientTypeRequests";
 
 export default function IngredientTypeService() {
     const { post } = RestService();
 
-    async function getIngredientTypes(): Promise<IngredientType[]> {
-        const ingredientTypes = await post<IngredientTypes>("/api/IngredientTypes/GetIngredientTypes", {});
+    async function getIngredientTypes(request: GetIngredientTypes): Promise<IngredientType[]> {
+        const ingredientTypes = await post<IngredientTypes>("/api/IngredientTypes/GetIngredientTypes", request);
 
         return ingredientTypes.types;
     }
 
-    async function getIngredientTypesGrid(gridRequest: GridRequest): Promise<GridResponse> {
-        return await post<GridResponse>("/api/IngredientTypes/GetIngredientTypesGrid", { grid_request: gridRequest });
+    async function getIngredientTypesGrid(request: GetIngredientTypesGrid): Promise<GridResponse> {
+        return await post<GridResponse>("/api/IngredientTypes/GetIngredientTypesGrid", request);
     }
 
     return {

@@ -2,7 +2,7 @@
   <div class="card border-primary shadow">
     <div class="card-header">Rodzaje składników</div>
     <div class="card-body">
-      <div>
+      <div class="mb-5">
         <label for="ingredientTypeSelection">Rodzaj</label>
         <select
           id="ingredientTypeSelection"
@@ -51,10 +51,15 @@ import IngredientService from "@/services/IngredientService";
 import IngredientTypeService from "@/services/IngredientTypeService";
 import { GridColumnType } from "@/models/Grid/GridColumnType";
 import { onMounted, ref, Ref } from "@vue/runtime-core";
-import { Ingredient } from "@/models/Ingredient";
-import { IngredientType } from "@/models/IngredientType";
+import { Ingredient } from "@/models/Ingredient/Ingredient";
+import { IngredientType } from "@/models/IngredientType/IngredientType";
 import DialogService from "@/services/DialogService";
 import { useRouter } from "vue-router";
+import {
+  DeleteIngredient,
+  GetIngredientsGrid,
+} from "@/models/Ingredient/IngredientRequests";
+import { GetIngredientTypes } from "@/models/IngredientType/IngredientTypeRequests";
 
 export default {
   components: {
@@ -98,7 +103,7 @@ export default {
     const router = useRouter();
 
     onMounted(() => {
-      getIngredientTypes().then(
+      getIngredientTypes(new GetIngredientTypes()).then(
         (response) => (ingredientTypes.value = response)
       );
     });
@@ -116,7 +121,11 @@ export default {
         title: "Usunięcie składnika",
         question: question,
         confirmAction: () => {
-          deleteIngredient(ingredient.id).then(() => refreshGrid());
+          const request = new DeleteIngredient();
+          request.id = ingredient.id;
+
+          deleteIngredient(request).then(() => refreshGrid());
+
           closeDialog();
         },
         cancelAction: () => closeDialog(),
@@ -127,8 +136,12 @@ export default {
       router.push({ path: `/ingredients/${ingredient.id}` });
     };
 
-    const getGridData = (request: GridRequest): Promise<GridResponse> => {
-      return getIngredientsGrid(request, ingredientTypeId.value);
+    const getGridData = (gridRequest: GridRequest): Promise<GridResponse> => {
+      const request = new GetIngredientsGrid();
+      request.grid_request = gridRequest;
+      request.type_id = ingredientTypeId.value;
+
+      return getIngredientsGrid(request);
     };
 
     const refreshGrid = () => {
@@ -149,9 +162,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.form-select {
-  margin-bottom: 5px;
-}
-</style>

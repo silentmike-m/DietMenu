@@ -1,6 +1,7 @@
 ﻿namespace SilentMike.DietMenu.Core.UnitTests.EntityFramework;
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using FluentAssertions;
@@ -304,6 +305,41 @@ public sealed class IngredientReadServiceTests : IDisposable
                 && i.Name == this.ingredientOne.Name
                 && i.TypeId == this.ingredientOne.TypeId
                 && i.TypeName == this.ingredientOne.Type.Name
+                && i.UnitSymbol == this.ingredientOne.UnitSymbol)
+            ;
+    }
+
+    [TestMethod]
+    public async Task ShouldReturnReplacementsGrid()
+    {
+        //GIVEN
+        var exchanger = 2.5m;
+        var request = new GridRequest();
+        var typeId = this.ingredientTypeOneId;
+        var quantity = 12m;
+
+        //WHEN
+        var result = await this.service
+            .GetReplacementsGridAsync(this.familyId, request, exchanger, quantity, typeId, CancellationToken.None);
+
+
+        //THEN
+        result.Count.Should()
+            .Be(1)
+            ;
+
+        var replacementQuantity = exchanger == 0
+            ? 0
+            : Math.Round(quantity / exchanger * this.ingredientOne.Exchanger, 0);
+
+        result.Elements.Should()
+            .HaveCount(1)
+            .And
+            .Contain(i =>
+                i.Exchanger == this.ingredientOne.Exchanger
+                && i.Id == this.ingredientOne.Id
+                && i.Name == this.ingredientOne.Name
+                && i.Quantity == replacementQuantity
                 && i.UnitSymbol == this.ingredientOne.UnitSymbol)
             ;
     }
