@@ -1,9 +1,5 @@
 ﻿namespace SilentMike.DietMenu.Core.UnitTests.Core.PostProcessors;
-using System.Threading;
-using System.Threading.Tasks;
-using FluentAssertions;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using SilentMike.DietMenu.Core.Application.Core.Interfaces;
 using SilentMike.DietMenu.Core.Application.Core.Models;
 using SilentMike.DietMenu.Core.Application.Core.PostProcessors;

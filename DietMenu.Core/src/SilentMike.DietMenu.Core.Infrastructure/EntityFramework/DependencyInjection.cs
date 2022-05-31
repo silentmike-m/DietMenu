@@ -40,7 +40,5 @@ internal static class DependencyInjection
     public static void UseEntityFramework(this IApplicationBuilder _, DietMenuDbContext context)
     {
         context.Database.Migrate();
-
-
     }
 }

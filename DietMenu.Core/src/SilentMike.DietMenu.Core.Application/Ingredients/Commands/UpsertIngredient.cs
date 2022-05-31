@@ -1,6 +1,5 @@
 ﻿namespace SilentMike.DietMenu.Core.Application.Ingredients.Commands;
 
-using System.Text.Json.Serialization;
 using SilentMike.DietMenu.Core.Application.Common;
 using SilentMike.DietMenu.Core.Application.Ingredients.ValueModels;
 

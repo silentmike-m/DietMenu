@@ -1,15 +1,5 @@
 ﻿namespace SilentMike.DietMenu.Core.UnitTests.Recipes;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using FluentAssertions;
-using MediatR;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using SilentMike.DietMenu.Core.Application.Common.Constants;
 using SilentMike.DietMenu.Core.Application.Exceptions;
 using SilentMike.DietMenu.Core.Application.Exceptions.Families;
@@ -17,7 +7,6 @@ using SilentMike.DietMenu.Core.Application.Exceptions.Ingredients;
 using SilentMike.DietMenu.Core.Application.Exceptions.MealTypes;
 using SilentMike.DietMenu.Core.Application.Recipes.CommandHandlers;
 using SilentMike.DietMenu.Core.Application.Recipes.Commands;
-using SilentMike.DietMenu.Core.Application.Recipes.Events;
 using SilentMike.DietMenu.Core.Application.Recipes.ValueModels;
 using SilentMike.DietMenu.Core.Domain.Entities;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Services;
@@ -36,7 +25,6 @@ public sealed class UpsertRecipesHandlerTests : IDisposable
     private readonly FamilyRepository familyRepository;
     private readonly IngredientRepository ingredientRepository;
     private readonly NullLogger<UpsertRecipeHandler> logger;
-    private readonly Mock<IMediator> mediator;
     private readonly MealTypeRepository mealTypeRepository;
     private readonly RecipeRepository recipeRepository;
 
@@ -80,7 +68,6 @@ public sealed class UpsertRecipesHandlerTests : IDisposable
         this.familyRepository = new FamilyRepository(this.factory.Context);
         this.ingredientRepository = new IngredientRepository(this.factory.Context);
         this.logger = new NullLogger<UpsertRecipeHandler>();
-        this.mediator = new Mock<IMediator>();
         this.mealTypeRepository = new MealTypeRepository(this.factory.Context);
         this.recipeRepository = new RecipeRepository(this.factory.Context);
     }
@@ -94,7 +81,7 @@ public sealed class UpsertRecipesHandlerTests : IDisposable
             FamilyId = Guid.NewGuid(),
         };
 
-        var commandHandler = new UpsertRecipeHandler(this.familyRepository, this.ingredientRepository, this.logger, this.mediator.Object, this.mealTypeRepository, this.recipeRepository);
+        var commandHandler = new UpsertRecipeHandler(this.familyRepository, this.ingredientRepository, this.logger, this.mealTypeRepository, this.recipeRepository);
 
         //WHEN
         Func<Task<Unit>> action = async () => await commandHandler.Handle(command, CancellationToken.None);
@@ -126,7 +113,7 @@ public sealed class UpsertRecipesHandlerTests : IDisposable
             },
         };
 
-        var commandHandler = new UpsertRecipeHandler(this.familyRepository, this.ingredientRepository, this.logger, this.mediator.Object, this.mealTypeRepository, this.recipeRepository);
+        var commandHandler = new UpsertRecipeHandler(this.familyRepository, this.ingredientRepository, this.logger, this.mealTypeRepository, this.recipeRepository);
 
         //WHEN
         Func<Task<Unit>> action = async () => await commandHandler.Handle(command, CancellationToken.None);
@@ -159,7 +146,7 @@ public sealed class UpsertRecipesHandlerTests : IDisposable
             },
         };
 
-        var commandHandler = new UpsertRecipeHandler(this.familyRepository, this.ingredientRepository, this.logger, this.mediator.Object, this.mealTypeRepository, this.recipeRepository);
+        var commandHandler = new UpsertRecipeHandler(this.familyRepository, this.ingredientRepository, this.logger, this.mealTypeRepository, this.recipeRepository);
 
         //WHEN
         Func<Task<Unit>> action = async () => await commandHandler.Handle(command, CancellationToken.None);
@@ -209,7 +196,7 @@ public sealed class UpsertRecipesHandlerTests : IDisposable
             Recipe = recipeToUpsert,
         };
 
-        var commandHandler = new UpsertRecipeHandler(this.familyRepository, this.ingredientRepository, this.logger, this.mediator.Object, this.mealTypeRepository, this.recipeRepository);
+        var commandHandler = new UpsertRecipeHandler(this.familyRepository, this.ingredientRepository, this.logger, this.mealTypeRepository, this.recipeRepository);
 
         //WHEN
         Func<Task<Unit>> action = async () => await commandHandler.Handle(command, CancellationToken.None);
@@ -244,7 +231,7 @@ public sealed class UpsertRecipesHandlerTests : IDisposable
             Recipe = recipeToUpsert,
         };
 
-        var commandHandler = new UpsertRecipeHandler(this.familyRepository, this.ingredientRepository, this.logger, this.mediator.Object, this.mealTypeRepository, this.recipeRepository);
+        var commandHandler = new UpsertRecipeHandler(this.familyRepository, this.ingredientRepository, this.logger, this.mealTypeRepository, this.recipeRepository);
 
         //WHEN
         Func<Task<Unit>> action = async () => await commandHandler.Handle(command, CancellationToken.None);
@@ -290,7 +277,7 @@ public sealed class UpsertRecipesHandlerTests : IDisposable
             Recipe = recipeToUpsert,
         };
 
-        var commandHandler = new UpsertRecipeHandler(this.familyRepository, this.ingredientRepository, this.logger, this.mediator.Object, this.mealTypeRepository, this.recipeRepository);
+        var commandHandler = new UpsertRecipeHandler(this.familyRepository, this.ingredientRepository, this.logger, this.mealTypeRepository, this.recipeRepository);
 
         //WHEN
         Func<Task<Unit>> action = async () => await commandHandler.Handle(command, CancellationToken.None);
@@ -336,7 +323,7 @@ public sealed class UpsertRecipesHandlerTests : IDisposable
             Recipe = recipeToUpsert,
         };
 
-        var commandHandler = new UpsertRecipeHandler(this.familyRepository, this.ingredientRepository, this.logger, this.mediator.Object, this.mealTypeRepository, this.recipeRepository);
+        var commandHandler = new UpsertRecipeHandler(this.familyRepository, this.ingredientRepository, this.logger, this.mealTypeRepository, this.recipeRepository);
 
         //WHEN
         Func<Task<Unit>> action = async () => await commandHandler.Handle(command, CancellationToken.None);
@@ -383,15 +370,13 @@ public sealed class UpsertRecipesHandlerTests : IDisposable
             Recipe = recipeToUpsert,
         };
 
-        var commandHandler = new UpsertRecipeHandler(this.familyRepository, this.ingredientRepository, this.logger, this.mediator.Object, this.mealTypeRepository, this.recipeRepository);
+        var commandHandler = new UpsertRecipeHandler(this.familyRepository, this.ingredientRepository, this.logger, this.mealTypeRepository, this.recipeRepository);
 
         //WHEN
         await commandHandler.Handle(command, CancellationToken.None);
 
         //THEN
-        this.mediator.Verify(i => i.Publish(It.IsAny<UpsertedRecipe>(), It.IsAny<CancellationToken>()), Times.Once);
-
-        var recipe = await this.recipeRepository.GetAsync(command.FamilyId, recipeToUpsert.Id, CancellationToken.None);
+        var recipe = this.recipeRepository.Get(command.FamilyId, recipeToUpsert.Id);
 
         recipe.Should()
             .NotBeNull()
@@ -466,15 +451,13 @@ public sealed class UpsertRecipesHandlerTests : IDisposable
             Recipe = recipeToUpsert,
         };
 
-        var commandHandler = new UpsertRecipeHandler(this.familyRepository, this.ingredientRepository, this.logger, this.mediator.Object, this.mealTypeRepository, this.recipeRepository);
+        var commandHandler = new UpsertRecipeHandler(this.familyRepository, this.ingredientRepository, this.logger, this.mealTypeRepository, this.recipeRepository);
 
         //WHEN
         await commandHandler.Handle(command, CancellationToken.None);
 
         //THEN
-        this.mediator.Verify(i => i.Publish(It.IsAny<UpsertedRecipe>(), It.IsAny<CancellationToken>()), Times.Once);
-
-        var recipe = await this.recipeRepository.GetAsync(command.FamilyId, recipeToUpsert.Id, CancellationToken.None);
+        var recipe = this.recipeRepository.Get(command.FamilyId, recipeToUpsert.Id);
 
         recipe.Should()
             .NotBeNull()

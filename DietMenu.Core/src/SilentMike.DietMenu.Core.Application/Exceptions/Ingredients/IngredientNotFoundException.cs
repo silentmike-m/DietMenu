@@ -1,8 +1,6 @@
 ﻿namespace SilentMike.DietMenu.Core.Application.Exceptions.Ingredients;
 
-using System;
 using System.Runtime.Serialization;
-using SilentMike.DietMenu.Core.Application.Common.Constants;
 using ApplicationException = SilentMike.DietMenu.Core.Application.Common.ApplicationException;
 
 [Serializable]

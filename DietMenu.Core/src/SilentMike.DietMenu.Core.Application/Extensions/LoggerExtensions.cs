@@ -1,7 +1,6 @@
 ﻿namespace SilentMike.DietMenu.Core.Application.Extensions;
 
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.Extensions.Logging;
 
 [ExcludeFromCodeCoverage]
 public static class LoggerExtensions

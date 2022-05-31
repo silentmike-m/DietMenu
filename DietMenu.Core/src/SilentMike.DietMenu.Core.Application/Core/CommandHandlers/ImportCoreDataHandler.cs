@@ -1,7 +1,5 @@
 ﻿namespace SilentMike.DietMenu.Core.Application.Core.CommandHandlers;
 
-using Microsoft.Extensions.Logging;
-using SilentMike.DietMenu.Core.Application.Common.Constants;
 using SilentMike.DietMenu.Core.Application.Core.Commands;
 using SilentMike.DietMenu.Core.Application.Core.Events;
 using SilentMike.DietMenu.Core.Application.Core.Models;
@@ -41,10 +39,10 @@ internal sealed class ImportCoreDataHandler : IRequestHandler<ImportCoreData>
 
             if (!request.ValidationOnly)
             {
-                await this.coreRepository.SaveIngredientTypesAsync(dataToImport.IngredientTypes, cancellationToken);
-                await this.coreRepository.SaveIngredientsAsync(dataToImport.Ingredients, cancellationToken);
-                await this.coreRepository.SaveMealTypesAsync(dataToImport.MealTypes, cancellationToken);
-                await this.coreRepository.SaveCoreAsync(dataToImport.Core, cancellationToken);
+                this.coreRepository.SaveIngredientTypes(dataToImport.IngredientTypes);
+                this.coreRepository.SaveIngredients(dataToImport.Ingredients);
+                this.coreRepository.SaveMealTypes(dataToImport.MealTypes);
+                this.coreRepository.SaveCore(dataToImport.Core);
             }
 
             var notification = new ImportedCoreData

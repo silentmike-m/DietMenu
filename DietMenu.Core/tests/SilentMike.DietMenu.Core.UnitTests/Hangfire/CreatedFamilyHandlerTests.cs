@@ -1,13 +1,8 @@
 ﻿namespace SilentMike.DietMenu.Core.UnitTests.Hangfire;
 
-using System;
-using System.Threading;
 using global::Hangfire;
 using global::Hangfire.Common;
 using global::Hangfire.States;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using SilentMike.DietMenu.Core.Application.Families.Events;
 using SilentMike.DietMenu.Core.Infrastructure.Hangfire.EventHandlers;
 using SilentMike.DietMenu.Core.Infrastructure.Hangfire.Jobs;

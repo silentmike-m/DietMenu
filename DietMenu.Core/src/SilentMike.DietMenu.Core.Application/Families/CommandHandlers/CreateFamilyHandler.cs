@@ -1,7 +1,5 @@
 ﻿namespace SilentMike.DietMenu.Core.Application.Families.CommandHandlers;
 
-using MediatR;
-using Microsoft.Extensions.Logging;
 using SilentMike.DietMenu.Core.Application.Exceptions.Families;
 using SilentMike.DietMenu.Core.Application.Families.Commands;
 using SilentMike.DietMenu.Core.Application.Families.Events;
@@ -26,7 +24,7 @@ internal sealed class CreateFamilyHandler : IRequestHandler<CreateFamily>
 
         this.logger.LogInformation("Try to create family");
 
-        var family = await this.repository.GetAsync(request.Id, cancellationToken);
+        var family = this.repository.Get(request.Id);
 
         if (family is not null)
         {
@@ -35,7 +33,7 @@ internal sealed class CreateFamilyHandler : IRequestHandler<CreateFamily>
 
         family = new FamilyEntity(request.Id);
 
-        await this.repository.SaveAsync(family, cancellationToken);
+        this.repository.Save(family);
 
         var notification = new CreatedFamily
         {

@@ -11,6 +11,11 @@ using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Interfaces;
 
 internal sealed class IngredientReadService : IIngredientReadService
 {
+    private const string EXCHANGER_ORDER_BY = "exchanger";
+    private const string NAME_ORDER_BY = "name";
+    private const string TYPE_ORDER_BY = "type_name";
+    private const string UNIT_ORDER_BY = "unit_symbol";
+
     private readonly DietMenuDbContext context;
     private readonly IMapper mapper;
 
@@ -72,10 +77,10 @@ internal sealed class IngredientReadService : IIngredientReadService
     {
         return orderBy.ToLower() switch
         {
-            "exchanger" => entity => entity.Exchanger,
-            "name" => entity => entity.Name,
-            "type_name" => entity => entity.Type.Name,
-            "unit_symbol" => entity => entity.UnitSymbol,
+            EXCHANGER_ORDER_BY => entity => entity.Exchanger,
+            NAME_ORDER_BY => entity => entity.Name,
+            TYPE_ORDER_BY => entity => entity.Type.Name,
+            UNIT_ORDER_BY => entity => entity.UnitSymbol,
             _ => entity => entity.Name,
         };
     }

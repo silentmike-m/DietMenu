@@ -1,7 +1,5 @@
 ﻿namespace SilentMike.DietMenu.Core.Infrastructure.MailingServer;
 
-using System;
-
 internal sealed class MailingServerOptions
 {
     public static readonly string SectionName = "MailingServer";

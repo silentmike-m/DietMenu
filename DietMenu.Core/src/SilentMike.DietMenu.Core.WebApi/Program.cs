@@ -55,6 +55,7 @@ try
         .AddControllers(options =>
         {
             options.Filters.Add<SerilogLoggingActionFilter>();
+            options.Filters.Add<ApiActionFilter>();
             options.Filters.Add<ApiExceptionFilterAttribute>();
         })
         .AddJsonOptions(options =>
@@ -72,7 +73,6 @@ try
     app.UseKestrelResponseHandlerMiddleware();
 
     app.UseInfrastructure(hangFireServerName);
-
 
     app.UseSerilogRequestLogging(options =>
     {

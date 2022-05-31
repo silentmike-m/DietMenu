@@ -1,8 +1,6 @@
 ﻿namespace SilentMike.DietMenu.Core.Infrastructure.MassTransit.Consumers;
 
 using global::MassTransit;
-using MediatR;
-using Microsoft.Extensions.Logging;
 using SilentMike.DietMenu.Core.Application.Families.Commands;
 using SilentMike.DietMenu.Shared.MassTransit.Core;
 

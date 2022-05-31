@@ -1,13 +1,5 @@
 ﻿namespace SilentMike.DietMenu.Core.UnitTests.Families;
 
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using FluentAssertions;
-using MediatR;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using SilentMike.DietMenu.Core.Application.Common.Constants;
 using SilentMike.DietMenu.Core.Application.Exceptions.Families;
 using SilentMike.DietMenu.Core.Application.Families.CommandHandlers;
@@ -76,7 +68,7 @@ public sealed class CreateFamilyHandlerTests : IDisposable
         //THEN
         this.mediator.Verify(i => i.Publish(It.IsAny<CreatedFamily>(), It.IsAny<CancellationToken>()), Times.Once);
 
-        var family = await this.repository.GetAsync(command.Id, CancellationToken.None);
+        var family = this.repository.Get(command.Id);
         family.Should()
             .NotBeNull()
             ;

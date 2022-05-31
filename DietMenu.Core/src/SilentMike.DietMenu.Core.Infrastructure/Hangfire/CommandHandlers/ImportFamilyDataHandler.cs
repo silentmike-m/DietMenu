@@ -1,9 +1,6 @@
 ﻿namespace SilentMike.DietMenu.Core.Infrastructure.Hangfire.CommandHandlers;
 
-using System.Threading;
-using System.Threading.Tasks;
 using global::Hangfire;
-using MediatR;
 using SilentMike.DietMenu.Core.Application.Families.Commands;
 using Job = SilentMike.DietMenu.Core.Infrastructure.Hangfire.Jobs.ImportFamilyData;
 

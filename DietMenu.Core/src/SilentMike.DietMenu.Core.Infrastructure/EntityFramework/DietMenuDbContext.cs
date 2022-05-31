@@ -32,49 +32,33 @@ internal sealed class DietMenuDbContext : DbContext
 
     }
 
-    public async Task Save<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
+    public void Upsert<TEntity>(TEntity entity)
         where TEntity : class
     {
-        var entities = new List<TEntity>
+        var list = new List<TEntity>
         {
             entity,
-        }.AsEnumerable();
+        };
 
-        await this.Save(entities, cancellationToken);
+        this.Upsert<TEntity>(list);
     }
 
-    public async Task Save<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+    public void Upsert<TEntity>(IEnumerable<TEntity> entities)
         where TEntity : class
     {
-        var saveChanges = this.UpsertEntities(entities);
-
-        if (saveChanges)
-        {
-            await this.SaveChangesAsync(cancellationToken);
-        }
-    }
-
-    private bool UpsertEntities<TEntity>(IEnumerable<TEntity> entities)
-    {
-        var saveChanges = false;
-
         foreach (var entity in entities)
         {
-            var track = this.Entry(entity!);
+            var track = this.Entry(entity);
 
             switch (track.State)
             {
                 case EntityState.Added or EntityState.Detached:
-                    this.Add(entity!);
-                    saveChanges = true;
+                    this.Add(entity);
                     break;
                 case EntityState.Modified:
-                    this.Update(entity!);
-                    saveChanges = true;
+                    this.Update(entity);
                     break;
             }
         }
-
-        return saveChanges;
     }
 }

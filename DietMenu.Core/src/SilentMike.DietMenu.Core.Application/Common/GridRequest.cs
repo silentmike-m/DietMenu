@@ -1,7 +1,5 @@
 ﻿namespace SilentMike.DietMenu.Core.Application.Common;
 
-using System.Text.Json.Serialization;
-
 public sealed record GridRequest
 {
     [JsonPropertyName("filter")] public string Filter { get; init; } = string.Empty;

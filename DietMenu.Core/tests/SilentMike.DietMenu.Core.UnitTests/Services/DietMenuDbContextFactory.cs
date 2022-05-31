@@ -1,6 +1,5 @@
 ﻿namespace SilentMike.DietMenu.Core.UnitTests.Services;
 
-using System;
 using System.Data.Common;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;

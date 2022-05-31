@@ -1,12 +1,8 @@
 ﻿namespace SilentMike.DietMenu.Core.UnitTests.Hangfire;
 
-using System;
-using System.Threading;
 using global::Hangfire;
 using global::Hangfire.Common;
 using global::Hangfire.States;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using SilentMike.DietMenu.Core.Infrastructure.Hangfire.CommandHandlers;
 using SilentMike.DietMenu.Core.Infrastructure.Hangfire.Jobs;
 using Request = SilentMike.DietMenu.Core.Application.Families.Commands.ImportFamilyData;

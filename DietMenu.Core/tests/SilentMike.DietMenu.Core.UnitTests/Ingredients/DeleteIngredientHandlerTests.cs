@@ -1,20 +1,10 @@
 ﻿namespace SilentMike.DietMenu.Core.UnitTests.Ingredients;
 
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using FluentAssertions;
-using MediatR;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using SilentMike.DietMenu.Core.Application.Common.Constants;
 using SilentMike.DietMenu.Core.Application.Exceptions.Families;
 using SilentMike.DietMenu.Core.Application.Exceptions.Ingredients;
 using SilentMike.DietMenu.Core.Application.Ingredients.CommandHandlers;
 using SilentMike.DietMenu.Core.Application.Ingredients.Commands;
-using SilentMike.DietMenu.Core.Application.Ingredients.Events;
 using SilentMike.DietMenu.Core.Domain.Entities;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Services;
 using SilentMike.DietMenu.Core.UnitTests.Services;
@@ -30,7 +20,6 @@ public sealed class DeleteIngredientHandlerTests : IDisposable
     private readonly FamilyRepository familyRepository;
     private readonly IngredientRepository ingredientRepository;
     private readonly NullLogger<DeleteIngredientHandler> logger;
-    private readonly Mock<IMediator> mediator;
 
 
     public DeleteIngredientHandlerTests()
@@ -62,7 +51,6 @@ public sealed class DeleteIngredientHandlerTests : IDisposable
 
         this.familyRepository = new FamilyRepository(this.factory.Context);
         this.logger = new NullLogger<DeleteIngredientHandler>();
-        this.mediator = new Mock<IMediator>();
         this.ingredientRepository = new IngredientRepository(this.factory.Context);
     }
 
@@ -76,7 +64,7 @@ public sealed class DeleteIngredientHandlerTests : IDisposable
             FamilyId = Guid.NewGuid(),
         };
 
-        var commandHandler = new DeleteIngredientHandler(this.familyRepository, this.ingredientRepository, this.logger, this.mediator.Object);
+        var commandHandler = new DeleteIngredientHandler(this.familyRepository, this.ingredientRepository, this.logger);
 
         //WHEN
         Func<Task<Unit>> action = async () => await commandHandler.Handle(command, CancellationToken.None);
@@ -100,7 +88,7 @@ public sealed class DeleteIngredientHandlerTests : IDisposable
             FamilyId = this.familyId,
         };
 
-        var commandHandler = new DeleteIngredientHandler(this.familyRepository, this.ingredientRepository, this.logger, this.mediator.Object);
+        var commandHandler = new DeleteIngredientHandler(this.familyRepository, this.ingredientRepository, this.logger);
 
         //WHEN
         Func<Task<Unit>> action = async () => await commandHandler.Handle(command, CancellationToken.None);
@@ -124,14 +112,12 @@ public sealed class DeleteIngredientHandlerTests : IDisposable
             FamilyId = this.familyId,
         };
 
-        var commandHandler = new DeleteIngredientHandler(this.familyRepository, this.ingredientRepository, this.logger, this.mediator.Object);
+        var commandHandler = new DeleteIngredientHandler(this.familyRepository, this.ingredientRepository, this.logger);
 
         //WHEN
         await commandHandler.Handle(command, CancellationToken.None);
 
         //THEN
-        this.mediator.Verify(i => i.Publish(It.IsAny<DeletedIngredient>(), It.IsAny<CancellationToken>()), Times.Once);
-
         var ingredient = this.factory.Context.Ingredients.SingleOrDefault(i => i.Id == command.Id);
         ingredient.Should()
             .NotBeNull()

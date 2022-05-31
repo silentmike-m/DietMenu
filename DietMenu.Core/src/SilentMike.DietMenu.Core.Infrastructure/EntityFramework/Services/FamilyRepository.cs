@@ -1,6 +1,5 @@
 ﻿namespace SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Services;
 
-using Microsoft.EntityFrameworkCore;
 using SilentMike.DietMenu.Core.Domain.Entities;
 using SilentMike.DietMenu.Core.Domain.Repositories;
 
@@ -10,13 +9,13 @@ internal sealed class FamilyRepository : IFamilyRepository
 
     public FamilyRepository(DietMenuDbContext context) => (this.context) = (context);
 
-    public async Task<FamilyEntity?> GetAsync(Guid id, CancellationToken cancellationToken = default)
-    {
-        return await this.context.Families.SingleOrDefaultAsync(i => i.Id == id, cancellationToken);
-    }
+    public FamilyEntity? Get(Guid id)
+        => this.context.Families.SingleOrDefault(family => family.Id == id);
 
-    public async Task SaveAsync(FamilyEntity family, CancellationToken cancellationToken = default)
+    public void Save(FamilyEntity family)
     {
-        await this.context.Save(family, cancellationToken);
+        this.context.Upsert(family);
+
+        this.context.SaveChanges();
     }
 }

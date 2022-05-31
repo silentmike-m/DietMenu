@@ -1,14 +1,11 @@
 ﻿namespace SilentMike.DietMenu.Core.Application.Ingredients.CommandHandlers;
 
 using FluentValidation.Results;
-using Microsoft.Extensions.Logging;
-using SilentMike.DietMenu.Core.Application.Common.Constants;
 using SilentMike.DietMenu.Core.Application.Exceptions;
 using SilentMike.DietMenu.Core.Application.Exceptions.Families;
 using SilentMike.DietMenu.Core.Application.Exceptions.IngredientTypes;
 using SilentMike.DietMenu.Core.Application.Extensions;
 using SilentMike.DietMenu.Core.Application.Ingredients.Commands;
-using SilentMike.DietMenu.Core.Application.Ingredients.Events;
 using SilentMike.DietMenu.Core.Application.Ingredients.ValueModels;
 using SilentMike.DietMenu.Core.Domain.Entities;
 using SilentMike.DietMenu.Core.Domain.Repositories;
@@ -18,20 +15,13 @@ internal sealed class UpsertIngredientHandler : IRequestHandler<UpsertIngredient
     private readonly IFamilyRepository familyRepository;
     private readonly IIngredientRepository ingredientRepository;
     private readonly ILogger<UpsertIngredientHandler> logger;
-    private readonly IMediator mediator;
     private readonly IIngredientTypeRepository typeRepository;
 
-    public UpsertIngredientHandler(
-        IFamilyRepository familyRepository,
-        IIngredientRepository ingredientRepository,
-        ILogger<UpsertIngredientHandler> logger,
-        IMediator mediator,
-        IIngredientTypeRepository typeRepository)
+    public UpsertIngredientHandler(IFamilyRepository familyRepository, IIngredientRepository ingredientRepository, ILogger<UpsertIngredientHandler> logger, IIngredientTypeRepository typeRepository)
     {
         this.familyRepository = familyRepository;
         this.ingredientRepository = ingredientRepository;
         this.logger = logger;
-        this.mediator = mediator;
         this.typeRepository = typeRepository;
     }
 
@@ -45,45 +35,36 @@ internal sealed class UpsertIngredientHandler : IRequestHandler<UpsertIngredient
 
         this.logger.LogInformation("Try to upsert ingredient");
 
-        var family = await this.familyRepository.GetAsync(request.FamilyId, cancellationToken);
+        var family = this.familyRepository.Get(request.FamilyId);
 
         if (family is null)
         {
             throw new FamilyNotFoundException(request.FamilyId);
         }
 
-        var ingredient = await this.ingredientRepository.GetAsync(request.FamilyId, request.Ingredient.Id, cancellationToken);
+        var ingredient = this.ingredientRepository.Get(request.FamilyId, request.Ingredient.Id);
 
         if (ingredient is null)
         {
-            ingredient = await this.Create(request.FamilyId, request.Ingredient, cancellationToken);
+            ingredient = this.Create(request.FamilyId, request.Ingredient);
         }
         else
         {
-            await this.Update(request.FamilyId, ingredient, request.Ingredient, cancellationToken);
+            this.Update(request.FamilyId, ingredient, request.Ingredient);
         }
 
-        await this.ingredientRepository.SaveAsync(ingredient, cancellationToken);
-
-        var notification = new UpsertedIngredient
-        {
-            FamilyId = request.FamilyId,
-            Id = ingredient.Id,
-            UserId = request.UserId,
-        };
-
-        await this.mediator.Publish(notification, cancellationToken);
+        this.ingredientRepository.Save(ingredient);
 
         return await Task.FromResult(Unit.Value);
     }
 
-    private async Task<IngredientEntity> Create(Guid familyId, IngredientToUpsert ingredientToUpsert, CancellationToken cancellationToken)
+    private IngredientEntity Create(Guid familyId, IngredientToUpsert ingredientToUpsert)
     {
         this.logger.LogInformation("Try to create ingredient");
 
         ValidateNewIngredient(ingredientToUpsert);
 
-        await this.ValidateIngredientType(familyId, ingredientToUpsert.TypeId, cancellationToken);
+        this.ValidateIngredientType(familyId, ingredientToUpsert.TypeId);
 
         var ingredient = new IngredientEntity(ingredientToUpsert.Id)
         {
@@ -98,11 +79,11 @@ internal sealed class UpsertIngredientHandler : IRequestHandler<UpsertIngredient
         return ingredient;
     }
 
-    private async Task Update(Guid familyId, IngredientEntity ingredient, IngredientToUpsert ingredientToUpsert, CancellationToken cancellationToken)
+    private void Update(Guid familyId, IngredientEntity ingredient, IngredientToUpsert ingredientToUpsert)
     {
         this.logger.LogInformation("Try to update ingredient");
 
-        await this.ValidateIngredientType(familyId, ingredientToUpsert.TypeId, cancellationToken);
+        this.ValidateIngredientType(familyId, ingredientToUpsert.TypeId);
 
         ingredient.Exchanger = ingredientToUpsert.Exchanger ?? ingredient.Exchanger;
         ingredient.Name = ingredientToUpsert.Name ?? ingredient.Name;
@@ -152,14 +133,14 @@ internal sealed class UpsertIngredientHandler : IRequestHandler<UpsertIngredient
         }
     }
 
-    private async Task ValidateIngredientType(Guid familyId, Guid? typeId, CancellationToken cancellationToken)
+    private void ValidateIngredientType(Guid familyId, Guid? typeId)
     {
         if (typeId is null)
         {
             return;
         }
 
-        var type = await this.typeRepository.GetAsync(familyId, typeId.Value, cancellationToken);
+        var type = this.typeRepository.Get(familyId, typeId.Value);
 
         if (type is null)
         {

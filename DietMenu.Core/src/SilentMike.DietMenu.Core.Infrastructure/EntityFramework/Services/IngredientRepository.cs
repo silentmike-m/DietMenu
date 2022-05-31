@@ -10,14 +10,16 @@ internal sealed class IngredientRepository : IIngredientRepository
 
     public IngredientRepository(DietMenuDbContext context) => (this.context) = (context);
 
-    public async Task<IngredientEntity?> GetAsync(Guid familyId, Guid ingredientId, CancellationToken cancellationToken = default)
-    {
-        return await this.context.Ingredients
-            .SingleOrDefaultAsync(i => i.Id == ingredientId && i.IsActive, cancellationToken);
-    }
+    public IngredientEntity? Get(Guid familyId, Guid ingredientId)
+        => this.context.Ingredients
+            .Include(ingredient => ingredient.Type)
+            .Where(ingredient => ingredient.FamilyId == familyId)
+            .SingleOrDefault(ingredient => ingredient.Id == ingredientId);
 
-    public async Task SaveAsync(IngredientEntity ingredient, CancellationToken cancellationToken = default)
+    public void Save(IngredientEntity ingredient)
     {
-        await this.context.Save(ingredient, cancellationToken);
+        this.context.Upsert(ingredient);
+
+        this.context.SaveChanges();
     }
 }

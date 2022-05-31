@@ -2,8 +2,6 @@
 
 using System.ComponentModel;
 using global::Hangfire;
-using MediatR;
-using Microsoft.Extensions.Logging;
 using SilentMike.DietMenu.Core.Application.Common.Constants;
 using SilentMike.DietMenu.Core.Application.Exceptions.Core;
 using SilentMike.DietMenu.Core.Application.Exceptions.Families;
@@ -45,10 +43,12 @@ internal sealed class ImportFamilyData
                 throw new FamilyDataImportException(familyDataToImport.Exceptions);
             }
 
-            await this.context.Save(familyDataToImport.IngredientTypes.AsEnumerable(), CancellationToken.None);
-            await this.context.Save(familyDataToImport.Ingredients.AsEnumerable(), CancellationToken.None);
-            await this.context.Save(familyDataToImport.MealTypes.AsEnumerable(), CancellationToken.None);
-            await this.context.Save(family, CancellationToken.None);
+            this.context.Upsert<IngredientTypeEntity>(familyDataToImport.IngredientTypes);
+            this.context.Upsert<IngredientEntity>(familyDataToImport.Ingredients);
+            this.context.Upsert<MealTypeEntity>(familyDataToImport.MealTypes);
+            this.context.Upsert(family);
+
+            this.context.SaveChanges();
 
             var notification = new ImportedFamilyData
             {

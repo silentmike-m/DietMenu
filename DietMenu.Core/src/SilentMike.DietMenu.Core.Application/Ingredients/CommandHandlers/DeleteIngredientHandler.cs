@@ -1,11 +1,9 @@
 ﻿namespace SilentMike.DietMenu.Core.Application.Ingredients.CommandHandlers;
 
-using Microsoft.Extensions.Logging;
 using SilentMike.DietMenu.Core.Application.Exceptions.Families;
 using SilentMike.DietMenu.Core.Application.Exceptions.Ingredients;
 using SilentMike.DietMenu.Core.Application.Extensions;
 using SilentMike.DietMenu.Core.Application.Ingredients.Commands;
-using SilentMike.DietMenu.Core.Application.Ingredients.Events;
 using SilentMike.DietMenu.Core.Domain.Repositories;
 
 internal sealed class DeleteIngredientHandler : IRequestHandler<DeleteIngredient>
@@ -13,18 +11,12 @@ internal sealed class DeleteIngredientHandler : IRequestHandler<DeleteIngredient
     private readonly IFamilyRepository familyRepository;
     private readonly IIngredientRepository ingredientRepository;
     private readonly ILogger<DeleteIngredientHandler> logger;
-    private readonly IMediator mediator;
 
-    public DeleteIngredientHandler(
-        IFamilyRepository familyRepository,
-        IIngredientRepository ingredientRepository,
-        ILogger<DeleteIngredientHandler> logger,
-        IMediator mediator)
+    public DeleteIngredientHandler(IFamilyRepository familyRepository, IIngredientRepository ingredientRepository, ILogger<DeleteIngredientHandler> logger)
     {
         this.familyRepository = familyRepository;
         this.ingredientRepository = ingredientRepository;
         this.logger = logger;
-        this.mediator = mediator;
     }
 
     public async Task<Unit> Handle(DeleteIngredient request, CancellationToken cancellationToken)
@@ -37,14 +29,14 @@ internal sealed class DeleteIngredientHandler : IRequestHandler<DeleteIngredient
 
         this.logger.LogInformation("Try to delete ingredient");
 
-        var family = await this.familyRepository.GetAsync(request.FamilyId, cancellationToken);
+        var family = this.familyRepository.Get(request.FamilyId);
 
         if (family is null)
         {
             throw new FamilyNotFoundException(request.FamilyId);
         }
 
-        var ingredient = await this.ingredientRepository.GetAsync(request.FamilyId, request.Id, cancellationToken);
+        var ingredient = this.ingredientRepository.Get(request.FamilyId, request.Id);
 
         if (ingredient is null)
         {
@@ -53,16 +45,7 @@ internal sealed class DeleteIngredientHandler : IRequestHandler<DeleteIngredient
 
         ingredient.IsActive = false;
 
-        await this.ingredientRepository.SaveAsync(ingredient, cancellationToken);
-
-        var notification = new DeletedIngredient
-        {
-            FamilyId = request.FamilyId,
-            Id = request.Id,
-            UserId = request.UserId,
-        };
-
-        await this.mediator.Publish(notification, cancellationToken);
+        this.ingredientRepository.Save(ingredient);
 
         return await Task.FromResult(Unit.Value);
     }

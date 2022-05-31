@@ -1,6 +1,5 @@
 ﻿namespace SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Services;
 
-using MediatR;
 using SilentMike.DietMenu.Core.Application.Core.Commands;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Interfaces;
 

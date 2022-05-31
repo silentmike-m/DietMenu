@@ -1,7 +1,5 @@
 ﻿namespace SilentMike.DietMenu.Core.Infrastructure.Recipes.QueryHandlers;
 
-using MediatR;
-using Microsoft.Extensions.Logging;
 using SilentMike.DietMenu.Core.Application.Extensions;
 using SilentMike.DietMenu.Core.Application.Recipes.Queries;
 using SilentMike.DietMenu.Core.Application.Recipes.ViewModels;

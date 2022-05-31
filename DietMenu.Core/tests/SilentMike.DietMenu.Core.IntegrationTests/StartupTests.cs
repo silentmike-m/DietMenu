@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SilentMike.DietMenu.Core.Application.Common;
+using SilentMike.DietMenu.Core.Application.ViewModels;
 using SilentMike.DietMenu.Core.Infrastructure.HealthChecks.Models;
 
 #if DEBUG

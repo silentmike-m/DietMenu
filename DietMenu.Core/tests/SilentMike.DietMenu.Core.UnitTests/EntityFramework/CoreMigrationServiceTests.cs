@@ -1,11 +1,5 @@
 ﻿namespace SilentMike.DietMenu.Core.UnitTests.EntityFramework;
 
-using System.Threading;
-using System.Threading.Tasks;
-using FluentAssertions;
-using MediatR;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using SilentMike.DietMenu.Core.Application.Core.Commands;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Services;
 

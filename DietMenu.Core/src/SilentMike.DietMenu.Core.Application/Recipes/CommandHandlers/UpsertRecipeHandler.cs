@@ -1,15 +1,12 @@
 ﻿namespace SilentMike.DietMenu.Core.Application.Recipes.CommandHandlers;
+
 using FluentValidation.Results;
-using MediatR;
-using Microsoft.Extensions.Logging;
-using SilentMike.DietMenu.Core.Application.Common.Constants;
 using SilentMike.DietMenu.Core.Application.Exceptions;
 using SilentMike.DietMenu.Core.Application.Exceptions.Families;
 using SilentMike.DietMenu.Core.Application.Exceptions.Ingredients;
 using SilentMike.DietMenu.Core.Application.Exceptions.MealTypes;
 using SilentMike.DietMenu.Core.Application.Extensions;
 using SilentMike.DietMenu.Core.Application.Recipes.Commands;
-using SilentMike.DietMenu.Core.Application.Recipes.Events;
 using SilentMike.DietMenu.Core.Application.Recipes.ValueModels;
 using SilentMike.DietMenu.Core.Domain.Entities;
 using SilentMike.DietMenu.Core.Domain.Repositories;
@@ -19,22 +16,14 @@ internal sealed class UpsertRecipeHandler : IRequestHandler<UpsertRecipe>
     private readonly IFamilyRepository familyRepository;
     private readonly IIngredientRepository ingredientRepository;
     private readonly ILogger<UpsertRecipeHandler> logger;
-    private readonly IMediator mediator;
     private readonly IMealTypeRepository mealTypeRepository;
     private readonly IRecipeRepository recipeRepository;
 
-    public UpsertRecipeHandler(
-        IFamilyRepository familyRepository,
-        IIngredientRepository ingredientRepository,
-        ILogger<UpsertRecipeHandler> logger,
-        IMediator mediator,
-        IMealTypeRepository mealTypeRepository,
-        IRecipeRepository recipeRepository)
+    public UpsertRecipeHandler(IFamilyRepository familyRepository, IIngredientRepository ingredientRepository, ILogger<UpsertRecipeHandler> logger, IMealTypeRepository mealTypeRepository, IRecipeRepository recipeRepository)
     {
         this.familyRepository = familyRepository;
         this.ingredientRepository = ingredientRepository;
         this.logger = logger;
-        this.mediator = mediator;
         this.mealTypeRepository = mealTypeRepository;
         this.recipeRepository = recipeRepository;
     }
@@ -49,45 +38,36 @@ internal sealed class UpsertRecipeHandler : IRequestHandler<UpsertRecipe>
 
         this.logger.LogInformation("Try to upsert recipe");
 
-        var family = await this.familyRepository.GetAsync(request.FamilyId, cancellationToken);
+        var family = this.familyRepository.Get(request.FamilyId);
 
         if (family is null)
         {
             throw new FamilyNotFoundException(request.FamilyId);
         }
 
-        var recipe = await this.recipeRepository.GetAsync(request.FamilyId, request.Recipe.Id, CancellationToken.None);
+        var recipe = this.recipeRepository.Get(request.FamilyId, request.Recipe.Id);
 
         if (recipe is null)
         {
-            await this.Create(request.FamilyId, request, cancellationToken);
+            this.Create(request.FamilyId, request);
         }
         else
         {
-            await this.Update(request.FamilyId, recipe, request.Recipe, cancellationToken);
+            this.Update(request.FamilyId, recipe, request.Recipe);
         }
-
-        var notification = new UpsertedRecipe
-        {
-            FamilyId = request.FamilyId,
-            Id = request.Recipe.Id,
-            UserId = request.UserId,
-        };
-
-        await this.mediator.Publish(notification, cancellationToken);
 
         return await Task.FromResult(Unit.Value);
     }
 
-    private async Task Create(Guid familyId, UpsertRecipe request, CancellationToken cancellationToken)
+    private void Create(Guid familyId, UpsertRecipe request)
     {
         this.logger.LogInformation("Try to create recipe");
 
         ValidateNewRecipe(request.Recipe);
 
-        await this.ValidateMealType(familyId, request.Recipe.MealTypeId, cancellationToken);
+        this.ValidateMealType(familyId, request.Recipe.MealTypeId);
 
-        var recipeIngredients = await this.CreateIngredients(familyId, request.Recipe, cancellationToken);
+        var recipeIngredients = this.CreateIngredients(familyId, request.Recipe);
 
         var recipe = new RecipeEntity(request.Recipe.Id)
         {
@@ -103,34 +83,34 @@ internal sealed class UpsertRecipeHandler : IRequestHandler<UpsertRecipe>
             UserId = request.UserId,
         };
 
-        await this.recipeRepository.SaveAsync(recipe, cancellationToken);
+        this.recipeRepository.Save(recipe);
     }
 
-    private async Task Update(Guid familyId, RecipeEntity recipe, RecipeToUpsert recipeToUpsert, CancellationToken cancellationToken)
+    private void Update(Guid familyId, RecipeEntity recipe, RecipeToUpsert recipeToUpsert)
     {
         this.logger.LogInformation("Try to update recipe");
 
-        await this.ValidateMealType(familyId, recipeToUpsert.MealTypeId, cancellationToken);
+        this.ValidateMealType(familyId, recipeToUpsert.MealTypeId);
 
         recipe.Carbohydrates = recipeToUpsert.Carbohydrates ?? recipe.Carbohydrates;
         recipe.Description = recipeToUpsert.Description ?? recipe.Description;
         recipe.Energy = recipeToUpsert.Energy ?? recipe.Energy;
         recipe.Fat = recipeToUpsert.Fat ?? recipe.Fat;
-        recipe.Ingredients = await this.CreateIngredients(familyId, recipeToUpsert, cancellationToken);
+        recipe.Ingredients = this.CreateIngredients(familyId, recipeToUpsert);
         recipe.MealTypeId = recipeToUpsert.MealTypeId ?? recipe.MealTypeId;
         recipe.Name = recipeToUpsert.Name ?? recipe.Name;
         recipe.Protein = recipeToUpsert.Protein ?? recipe.Protein;
 
-        await this.recipeRepository.SaveAsync(recipe, cancellationToken);
+        this.recipeRepository.Save(recipe);
     }
 
-    private async Task<List<RecipeIngredientEntity>> CreateIngredients(Guid familyId, RecipeToUpsert recipeToUpsert, CancellationToken cancellationToken)
+    private List<RecipeIngredientEntity> CreateIngredients(Guid familyId, RecipeToUpsert recipeToUpsert)
     {
         var recipeIngredients = new List<RecipeIngredientEntity>();
 
         foreach (var ingredientToUpsert in recipeToUpsert.Ingredients)
         {
-            var ingredient = await this.ingredientRepository.GetAsync(familyId, ingredientToUpsert.IngredientId, cancellationToken);
+            var ingredient = this.ingredientRepository.Get(familyId, ingredientToUpsert.IngredientId);
 
             if (ingredient is null)
             {
@@ -150,11 +130,11 @@ internal sealed class UpsertRecipeHandler : IRequestHandler<UpsertRecipe>
         return recipeIngredients;
     }
 
-    private async Task ValidateMealType(Guid familyId, Guid? mealTypeId, CancellationToken cancellationToken)
+    private void ValidateMealType(Guid familyId, Guid? mealTypeId)
     {
         if (mealTypeId.HasValue)
         {
-            var mealType = await this.mealTypeRepository.GetAsync(familyId, mealTypeId.Value, cancellationToken);
+            var mealType = this.mealTypeRepository.Get(familyId, mealTypeId.Value);
 
             if (mealType is null)
             {

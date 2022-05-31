@@ -1,6 +1,5 @@
 ﻿namespace SilentMike.DietMenu.Core.Application.Families.Commands;
 
-using System.Text.Json.Serialization;
 using SilentMike.DietMenu.Core.Application.Common;
 
 public sealed record ImportFamilyData : IRequest, IAuthRequest

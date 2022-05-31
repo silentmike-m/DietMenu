@@ -1,7 +1,5 @@
 ﻿namespace SilentMike.DietMenu.Core.Application.Recipes.ViewModels;
 
-using System.Text.Json.Serialization;
-
 public sealed record RecipeIngredient
 {
     [JsonPropertyName("id")] public Guid Id { get; init; } = Guid.Empty;
