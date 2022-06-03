@@ -16,7 +16,7 @@ internal static class DependencyInjection
 
         services.AddMassTransit(configure =>
         {
-            configure.AddConsumer<CreatedFamilyMessageConsumer>();
+            configure.AddConsumer<CoreDataMessageConsumer>();
 
             configure.UsingRabbitMq((context, cfg) =>
             {
