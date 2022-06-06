@@ -1,10 +1,6 @@
 ﻿namespace SilentMike.DietMenu.Core.UnitTests;
 
-using System.Linq;
 using System.Reflection;
-using FluentAssertions;
-using MediatR;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 [TestClass]
 public sealed class MediatRTests

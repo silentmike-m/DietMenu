@@ -1,10 +1,6 @@
 ﻿namespace SilentMike.DietMenu.Core.Infrastructure.Families.QueryHandlers;
 
-using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using SilentMike.DietMenu.Core.Application.Families.Models;
 using SilentMike.DietMenu.Core.Application.Families.Queries;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework;

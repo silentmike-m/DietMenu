@@ -1,13 +1,6 @@
 ﻿namespace SilentMike.DietMenu.Core.UnitTests.Core;
 
-using System;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SilentMike.DietMenu.Core.Application.Common.Constants;
 using SilentMike.DietMenu.Core.Application.Core.Models;
 using SilentMike.DietMenu.Core.Application.Core.Queries;

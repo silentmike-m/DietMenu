@@ -1,12 +1,6 @@
 ﻿namespace SilentMike.DietMenu.Core.UnitTests.EntityFramework;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
-using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SilentMike.DietMenu.Core.Application.Common;
 using SilentMike.DietMenu.Core.Application.Recipes.ViewModels;
 using SilentMike.DietMenu.Core.Domain.Entities;

@@ -11,15 +11,15 @@ internal sealed class MealTypeConfiguration : IEntityTypeConfiguration<MealTypeE
     public void Configure(EntityTypeBuilder<MealTypeEntity> builder)
     {
         builder
-            .HasIndex(i => new { i.FamilyId, i.InternalName })
+            .HasIndex(type => new { type.FamilyId, type.InternalName })
             .IsUnique();
 
         builder
-            .HasIndex(i => new { i.FamilyId, i.Name })
+            .HasIndex(type => new { type.FamilyId, type.Name })
             .IsUnique();
 
 
-        builder.HasOne(i => i.FamilyEntity)
+        builder.HasOne(type => type.FamilyEntity)
             .WithMany()
             .IsRequired()
             .HasForeignKey("FamilyId");

@@ -9,23 +9,18 @@ internal sealed class CoreRepository : ICoreRepository
 
     public CoreRepository(DietMenuDbContext context) => (this.context) = (context);
 
-    public async Task SaveIngredientsAsync(IEnumerable<CoreIngredientEntity> ingredients, CancellationToken cancellationToken = default)
-    {
-        await this.context.Save(ingredients, cancellationToken);
-    }
+    public void SaveIngredients(IEnumerable<CoreIngredientEntity> ingredients)
+        => this.context.Upsert(ingredients);
 
-    public async Task SaveIngredientTypesAsync(IEnumerable<CoreIngredientTypeEntity> ingredientTypes, CancellationToken cancellationToken = default)
-    {
-        await this.context.Save(ingredientTypes, cancellationToken);
-    }
+    public void SaveIngredientTypes(IEnumerable<CoreIngredientTypeEntity> ingredientTypes)
+        => this.context.Upsert(ingredientTypes);
 
-    public async Task SaveMealTypesAsync(IEnumerable<CoreMealTypeEntity> mealTypes, CancellationToken cancellationToken = default)
-    {
-        await this.context.Save(mealTypes, cancellationToken);
-    }
+    public void SaveMealTypes(IEnumerable<CoreMealTypeEntity> mealTypes)
+        => this.context.Upsert(mealTypes);
 
-    public async Task SaveCoreAsync(CoreEntity core, CancellationToken cancellationToken = default)
-    {
-        await this.context.Save(core, cancellationToken);
-    }
+    public void SaveCore(CoreEntity core)
+        => this.context.Upsert(core);
+
+    public void SaveChanges()
+        => this.context.SaveChanges();
 }

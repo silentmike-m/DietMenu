@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Logging;
-using SilentMike.DietMenu.Core.Application.Common;
 using SilentMike.DietMenu.Core.Application.Common.Constants;
 using SilentMike.DietMenu.Core.Application.Exceptions;
+using SilentMike.DietMenu.Core.Application.ViewModels;
 using ApplicationException = SilentMike.DietMenu.Core.Application.Common.ApplicationException;
 
 [ExcludeFromCodeCoverage]

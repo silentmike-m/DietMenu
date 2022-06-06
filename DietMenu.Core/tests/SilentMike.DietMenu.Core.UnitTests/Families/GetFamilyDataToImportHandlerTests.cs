@@ -1,11 +1,5 @@
 ﻿namespace SilentMike.DietMenu.Core.UnitTests.Families;
 
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using FluentAssertions;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SilentMike.DietMenu.Core.Application.Families.Queries;
 using SilentMike.DietMenu.Core.Domain.Entities;
 using SilentMike.DietMenu.Core.Infrastructure.Families.QueryHandlers;

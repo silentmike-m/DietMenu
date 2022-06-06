@@ -1,6 +1,5 @@
 ﻿namespace SilentMike.DietMenu.Core.Application.Common;
 
-using System;
 using System.Runtime.Serialization;
 
 [Serializable]

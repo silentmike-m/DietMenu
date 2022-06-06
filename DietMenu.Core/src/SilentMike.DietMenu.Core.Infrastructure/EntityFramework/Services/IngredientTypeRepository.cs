@@ -1,6 +1,5 @@
 ﻿namespace SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Services;
 
-using Microsoft.EntityFrameworkCore;
 using SilentMike.DietMenu.Core.Domain.Entities;
 using SilentMike.DietMenu.Core.Domain.Repositories;
 
@@ -10,9 +9,8 @@ internal sealed class IngredientTypeRepository : IIngredientTypeRepository
 
     public IngredientTypeRepository(DietMenuDbContext context) => (this.context) = (context);
 
-    public async Task<IngredientTypeEntity?> GetAsync(Guid familyId, Guid ingredientTypeId, CancellationToken cancellationToken = default)
-    {
-        return await this.context.IngredientTypes
-            .SingleOrDefaultAsync(i => i.Id == ingredientTypeId, cancellationToken);
-    }
+    public IngredientTypeEntity? Get(Guid familyId, Guid ingredientTypeId)
+        => this.context.IngredientTypes
+            .Where(ingredientType => ingredientType.FamilyId == familyId)
+            .SingleOrDefault(ingredientType => ingredientType.Id == ingredientTypeId);
 }

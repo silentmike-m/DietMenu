@@ -2,7 +2,6 @@
 
 using global::MassTransit;
 using GreenPipes;
-using Microsoft.Extensions.Logging;
 
 internal sealed class RetryFilter<T> : IFilter<ConsumeContext<T>>
     where T : class

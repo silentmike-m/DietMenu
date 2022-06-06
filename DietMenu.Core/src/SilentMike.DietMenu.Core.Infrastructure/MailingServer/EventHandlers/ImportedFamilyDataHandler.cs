@@ -3,8 +3,6 @@
 using System.Net.Http.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SilentMike.DietMenu.Core.Application.Families.Events;
 using SilentMike.DietMenu.Core.Infrastructure.IdentityServer4;

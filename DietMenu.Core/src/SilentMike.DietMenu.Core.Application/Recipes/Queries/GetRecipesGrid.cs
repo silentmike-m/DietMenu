@@ -1,8 +1,5 @@
 ﻿namespace SilentMike.DietMenu.Core.Application.Recipes.Queries;
 
-using System;
-using System.Text.Json.Serialization;
-using MediatR;
 using SilentMike.DietMenu.Core.Application.Common;
 using SilentMike.DietMenu.Core.Application.Recipes.ViewModels;
 

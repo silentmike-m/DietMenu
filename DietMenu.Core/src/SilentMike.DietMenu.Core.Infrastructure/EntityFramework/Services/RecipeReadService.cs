@@ -11,6 +11,13 @@ using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Interfaces;
 
 internal sealed class RecipeReadService : IRecipeReadService
 {
+    private const string CARBOHYDRATES_ORDER_BY = "carbohydrates";
+    private const string ENERGY_ORDER_BY = "energy";
+    private const string FAT_ORDER_BY = "fat";
+    private const string NAME_ORDER_BY = "name";
+    private const string MEAL_TYPE_ORDER_BY = "meal_type_name";
+    private const string PROTEIN_ORDER_BY = "protein";
+
     private readonly DietMenuDbContext context;
     private readonly IMapper mapper;
 
@@ -80,12 +87,12 @@ internal sealed class RecipeReadService : IRecipeReadService
     {
         return orderBy.ToLower() switch
         {
-            "carbohydrates" => entity => entity.Carbohydrates,
-            "energy" => entity => entity.Energy,
-            "fat" => entity => entity.Fat,
-            "name" => entity => entity.Name,
-            "meal_type_name" => entity => entity.MealType.Name,
-            "protein" => entity => entity.Protein,
+            CARBOHYDRATES_ORDER_BY => entity => entity.Carbohydrates,
+            ENERGY_ORDER_BY => entity => entity.Energy,
+            FAT_ORDER_BY => entity => entity.Fat,
+            NAME_ORDER_BY => entity => entity.Name,
+            MEAL_TYPE_ORDER_BY => entity => entity.MealType.Name,
+            PROTEIN_ORDER_BY => entity => entity.Protein,
             _ => entity => entity.Name,
         };
     }

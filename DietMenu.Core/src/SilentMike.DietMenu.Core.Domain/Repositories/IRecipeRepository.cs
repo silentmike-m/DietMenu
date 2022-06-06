@@ -2,8 +2,8 @@
 
 using SilentMike.DietMenu.Core.Domain.Entities;
 
-public interface IRecipeRepository
+public interface IRecipeRepository : IRepository
 {
-    Task<RecipeEntity?> GetAsync(Guid familyId, Guid recipeId, CancellationToken cancellationToken = default);
-    Task SaveAsync(RecipeEntity recipe, CancellationToken cancellationToken = default);
+    RecipeEntity? Get(Guid familyId, Guid recipeId);
+    void Save(RecipeEntity recipe);
 }

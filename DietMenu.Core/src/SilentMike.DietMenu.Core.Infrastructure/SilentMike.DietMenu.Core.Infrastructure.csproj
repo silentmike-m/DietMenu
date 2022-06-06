@@ -6,6 +6,11 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+  	<Using Include="MediatR" />
+  	<Using Include="Microsoft.Extensions.Logging" />
+  </ItemGroup>
+
     <PropertyGroup>
         <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
     </PropertyGroup>

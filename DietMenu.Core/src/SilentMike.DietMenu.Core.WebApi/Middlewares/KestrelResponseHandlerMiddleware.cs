@@ -4,16 +4,15 @@ namespace SilentMike.DietMenu.Core.WebApi.Middlewares;
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Mime;
 using System.Text;
-using System.Text.Json;
 using Microsoft.IO;
-using SilentMike.DietMenu.Core.Application.Common;
+using SilentMike.DietMenu.Core.Application.ViewModels;
 using SilentMike.DietMenu.Core.WebApi.Extensions;
+using SilentMike.DietMenu.Core.WebApi.Helpers;
 
 [ExcludeFromCodeCoverage]
 internal sealed class KestrelResponseHandlerMiddleware
 {
     private const string APPLICATION_JSON = "application/json; charset=utf-8";
-    private const string OK_STATUS_CODE = "OK";
 
     private readonly RequestDelegate next;
 
@@ -32,198 +31,148 @@ internal sealed class KestrelResponseHandlerMiddleware
 
         await next(httpContext);
 
-        var isRedirect = httpContext.Response.StatusCode == 302;
+        var shouldResponseBeForwarded = ShouldResponseBeForwarded(httpContext);
 
-        if (isRedirect)
+        if (shouldResponseBeForwarded)
         {
+            responseStream.Position = 0;
+            await responseStream.CopyToAsync(originalResponseBodyStream, CancellationToken.None);
             return;
         }
 
         responseStream.Position = 0;
+
         using var currentResponseStreamReader = new StreamReader(responseStream);
 
         var currentResponse = await currentResponseStreamReader.ReadToEndAsync();
 
-        var newResponseObject = CreateNewResponse(httpContext.Response.StatusCode);
+        var hasResponseAlreadyBeenHandled = await HasResponseAlreadyBeenHandled(currentResponse, httpContext.Response.Headers, httpContext.Response.ContentType);
 
-        var isResponseContentTypeJson = httpContext.Response.ContentType?
-            .Contains("json", StringComparison.InvariantCultureIgnoreCase) ?? false;
+        if (hasResponseAlreadyBeenHandled)
+        {
+            httpContext.Response.Headers.Remove(BaseResponseHelpers.RESPONSE_HAS_BEEN_HANDLED);
+            responseStream.Position = 0;
+            await responseStream.CopyToAsync(originalResponseBodyStream, CancellationToken.None);
+            return;
+        }
 
-        var isResponseContentTypeTextPlain = httpContext.Response.ContentType?
-            .Contains(MediaTypeNames.Text.Plain, StringComparison.InvariantCultureIgnoreCase) ?? false;
+        var formattedResponse = FormatResponse(currentResponse, httpContext.Response.ContentType);
+        await HandleOtherResponseAsync(formattedResponse, httpContext, originalResponseBodyStream, responseStream, CancellationToken.None);
+    }
 
-        var isResponseContentTypeOctetStream = httpContext.Response.ContentType?
-            .Contains(MediaTypeNames.Application.Octet, StringComparison.InvariantCultureIgnoreCase) ?? false;
+    private static bool ShouldResponseBeForwarded(HttpContext httpContext)
+    {
+        var isRedirect = httpContext.Response.StatusCode == 302;
 
-        var isSwaggerPage = httpContext.Request.Path.Value?
-            .Contains("swagger", StringComparison.InvariantCultureIgnoreCase) ?? false;
+        if (isRedirect)
+        {
+            return true;
+        }
 
         var isSwitchingProtocolsRequest = httpContext.Response.StatusCode == 101;
 
         if (isSwitchingProtocolsRequest)
         {
-            responseStream.Position = 0;
-            await responseStream.CopyToAsync(originalResponseBodyStream);
-            return;
+            return true;
         }
 
-        var isResponseErrorDescription = false;
+        var isSwaggerPage = httpContext.Request.Path.Value?
+            .Contains("swagger", StringComparison.InvariantCultureIgnoreCase);
+        isSwaggerPage ??= false;
 
-        if (isResponseContentTypeJson)
+        if (isSwaggerPage.Value)
         {
-            isResponseErrorDescription = IsResponseErrorDescription(currentResponse);
-        }
-
-        if (isResponseContentTypeJson
-            && !string.IsNullOrWhiteSpace(currentResponse)
-            && !isSwaggerPage
-            && !isResponseErrorDescription)
-        {
-            newResponseObject.Response = currentResponse.ToObject<object>();
-            await HandleJsonResponse(newResponseObject, httpContext, responseStream);
-        }
-        else if (isResponseContentTypeTextPlain
-                 && !string.IsNullOrWhiteSpace(currentResponse))
-        {
-            newResponseObject.Response = currentResponse;
-            await HandleJsonResponse(newResponseObject, httpContext, responseStream);
-        }
-        else if (httpContext.Response.ContentType is null)
-        {
-            if (!string.IsNullOrWhiteSpace(currentResponse))
-            {
-                newResponseObject.Response = currentResponse;
-            }
-
-            await HandleJsonResponse(newResponseObject, httpContext, responseStream);
-        }
-        else if (isResponseContentTypeOctetStream)
-        {
-            //ignore
-        }
-        else
-        {
-            await HandleOtherResponse(currentResponse, httpContext, responseStream);
+            return true;
         }
 
-        HandleEveryResponse(httpContext);
+        var isContentTypeFilled = (string?)httpContext.Response.ContentType is { };
+        var isResponseContentTypeJson = httpContext.Response.ContentType?
+            .Contains("json", StringComparison.InvariantCultureIgnoreCase);
+        isResponseContentTypeJson ??= false;
+
+        var isResponseContentTypeTextPlain = httpContext.Response.ContentType?
+            .Contains(MediaTypeNames.Text.Plain, StringComparison.InvariantCultureIgnoreCase);
+        isResponseContentTypeTextPlain ??= false;
+
+        var isContentTypeSetAndItsNotJsonNorTextPlain = isContentTypeFilled
+                                                        && !isResponseContentTypeJson.Value
+                                                        && !isResponseContentTypeTextPlain.Value
+                                                        ;
+
+        if (isContentTypeSetAndItsNotJsonNorTextPlain)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    private static Task<bool> HasResponseAlreadyBeenHandled(string? currentResponse, IHeaderDictionary headerDictionary, string? contentType)
+    {
+        var isResponseContentTypeJson = contentType?
+            .Contains("json", StringComparison.InvariantCultureIgnoreCase);
+        isResponseContentTypeJson ??= false;
+
+        if (!isResponseContentTypeJson.Value)
+        {
+            return Task.FromResult(false);
+        }
+
+        var existResponseHasBeenHandledHeader = headerDictionary.ContainsKey(BaseResponseHelpers.RESPONSE_HAS_BEEN_HANDLED);
+
+        BaseResponse<object>? baseResponse = null;
+        var isDeserialized = currentResponse?.TryDeserialize(out baseResponse);
+        isDeserialized ??= false;
+
+        if (isDeserialized.Value)
+        {
+            var result = baseResponse is not null
+                         && existResponseHasBeenHandledHeader
+                ;
+            return Task.FromResult(result);
+        }
+
+        return Task.FromResult(false);
+    }
+
+    private static object? FormatResponse(string currentResponse, string? contentType)
+    {
+        var isResponseContentTypeJson = contentType?
+            .Contains("json", StringComparison.InvariantCultureIgnoreCase);
+        isResponseContentTypeJson ??= false;
+
+        if (isResponseContentTypeJson.Value && !string.IsNullOrWhiteSpace(currentResponse))
+        {
+            return currentResponse.ToObject<object>();
+        }
+
+        return currentResponse;
+    }
+
+    private static async Task HandleOtherResponseAsync(object? currentResponse, HttpContext httpContext, Stream originalResponseBodyStream, Stream responseStream, CancellationToken cancellationToken = default)
+    {
+        var baseResponse = httpContext.Response.StatusCode.MapToBaseResponse(currentResponse);
+        await WriteBaseResponseToResponseStreamAsync(baseResponse, httpContext, responseStream, cancellationToken);
+        httpContext.Response.StatusCode = 200;
         responseStream.Position = 0;
-        await responseStream.CopyToAsync(originalResponseBodyStream);
+        await responseStream.CopyToAsync(originalResponseBodyStream, cancellationToken);
     }
 
-    private static BaseResponse<object> CreateNewResponse(int statusCode)
+    private static async Task WriteBaseResponseToResponseStreamAsync(BaseResponse<object>? baseResponse, HttpContext httpContext, Stream responseStream, CancellationToken cancellationToken = default)
     {
-        return statusCode switch
-        {
-            200 => new BaseResponse<object>
-            {
-                Code = OK_STATUS_CODE,
-            },
-            204 => new BaseResponse<object>
-            {
-                Code = OK_STATUS_CODE,
-            },
-            400 => new BaseResponse<object>
-            {
-                Code = "bad_request",
-                Error = "Incorrect URL or content format",
-            },
-            401 => new BaseResponse<object>
-            {
-                Code = "unauthorized",
-                Error = "Request has not been properly authorized",
-            },
-            404 => new BaseResponse<object>
-            {
-                Code = "not_found",
-                Error = "Requested path has not been found",
-            },
-            500 => new BaseResponse<object>
-            {
-                Code = "internal_server_error",
-                Error = "An unhandled exception was thrown by the application",
-            },
-            _ => new BaseResponse<object>
-            {
-                Code = statusCode.ToString(),
-            },
-        };
-    }
-
-    private static bool IsResponseErrorDescription(string response)
-    {
-        var jsonDocument = JsonDocument.Parse(response);
-        var jsonRootElement = jsonDocument.RootElement;
-
-        var codePropertyExists = jsonRootElement.TryGetProperty("code", out var codeJsonElement);
-
-        if (!codePropertyExists)
-        {
-            return false;
-        }
-
-        if (codeJsonElement.ValueKind != JsonValueKind.String)
-        {
-            return false;
-        }
-
-        var codeValue = codeJsonElement.GetString();
-
-        if (codeValue == OK_STATUS_CODE)
-        {
-            return false;
-        }
-
-        var errorPropertyExists = jsonRootElement.TryGetProperty("error", out var errorJsonElement);
-
-        if (!errorPropertyExists)
-        {
-            return false;
-        }
-
-        if (errorJsonElement.ValueKind != JsonValueKind.String)
-        {
-            return false;
-        }
-
-
-        return true;
-    }
-
-    private static async Task HandleJsonResponse(BaseResponse<object>? response, HttpContext httpContext, MemoryStream responseStream)
-    {
-        if (response is null)
+        if (baseResponse is null)
         {
             return;
         }
 
-        var newResponseJsonString = response.ToIndentedIgnoreNullJson();
+        var newResponseJsonString = baseResponse.ToIndentedIgnoreNullJson();
         var responseBuffer = Encoding.UTF8.GetBytes(newResponseJsonString);
 
         httpContext.Response.ContentType = APPLICATION_JSON;
         httpContext.Response.ContentLength = responseBuffer.LongLength;
 
         responseStream.Position = 0;
-        await responseStream.WriteAsync(responseBuffer);
-    }
-
-    private static async Task HandleOtherResponse(string? response, HttpContext httpContext, MemoryStream responseStream)
-    {
-        if (response is null)
-        {
-            return;
-        }
-
-        var responseBuffer = Encoding.UTF8.GetBytes(response);
-
-        httpContext.Response.ContentLength = responseBuffer.LongLength;
-
-        responseStream.Position = 0;
-        await responseStream.WriteAsync(responseBuffer);
-    }
-
-    private static void HandleEveryResponse(HttpContext httpContext)
-    {
-        httpContext.Response.StatusCode = 200;
+        responseStream.SetLength(0);
+        await responseStream.WriteAsync(responseBuffer, cancellationToken);
     }
 }

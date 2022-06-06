@@ -2,8 +2,9 @@
 
 using SilentMike.DietMenu.Core.Domain.Entities;
 
-public interface IFamilyRepository
+public interface IFamilyRepository : IRepository
 {
-    Task<FamilyEntity?> GetAsync(Guid id, CancellationToken cancellationToken = default);
-    Task SaveAsync(FamilyEntity family, CancellationToken cancellationToken = default);
+    bool Exists(Guid id);
+    FamilyEntity? Get(Guid id);
+    void Save(FamilyEntity family);
 }

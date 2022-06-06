@@ -2,12 +2,10 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
-using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Logging;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Interfaces;
 using SilentMike.DietMenu.Core.Infrastructure.Hangfire;
