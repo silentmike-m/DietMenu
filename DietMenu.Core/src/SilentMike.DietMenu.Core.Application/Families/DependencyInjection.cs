@@ -2,7 +2,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
-using SilentMike.DietMenu.Core.Application.Families.Behaviours;
+using SilentMike.DietMenu.Core.Application.Families.Behaviors;
 using SilentMike.DietMenu.Core.Application.Families.Interfaces;
 using SilentMike.DietMenu.Core.Application.Families.Processors;
 

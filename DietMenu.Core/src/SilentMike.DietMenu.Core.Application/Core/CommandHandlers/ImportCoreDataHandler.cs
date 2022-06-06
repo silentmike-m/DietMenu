@@ -43,6 +43,8 @@ internal sealed class ImportCoreDataHandler : IRequestHandler<ImportCoreData>
                 this.coreRepository.SaveIngredients(dataToImport.Ingredients);
                 this.coreRepository.SaveMealTypes(dataToImport.MealTypes);
                 this.coreRepository.SaveCore(dataToImport.Core);
+
+                this.coreRepository.SaveChanges();
             }
 
             var notification = new ImportedCoreData

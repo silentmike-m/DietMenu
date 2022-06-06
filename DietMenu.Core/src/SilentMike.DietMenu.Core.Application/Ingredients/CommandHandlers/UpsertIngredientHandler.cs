@@ -2,7 +2,6 @@
 
 using FluentValidation.Results;
 using SilentMike.DietMenu.Core.Application.Exceptions;
-using SilentMike.DietMenu.Core.Application.Exceptions.Families;
 using SilentMike.DietMenu.Core.Application.Exceptions.IngredientTypes;
 using SilentMike.DietMenu.Core.Application.Extensions;
 using SilentMike.DietMenu.Core.Application.Ingredients.Commands;
@@ -12,14 +11,12 @@ using SilentMike.DietMenu.Core.Domain.Repositories;
 
 internal sealed class UpsertIngredientHandler : IRequestHandler<UpsertIngredient>
 {
-    private readonly IFamilyRepository familyRepository;
     private readonly IIngredientRepository ingredientRepository;
     private readonly ILogger<UpsertIngredientHandler> logger;
     private readonly IIngredientTypeRepository typeRepository;
 
-    public UpsertIngredientHandler(IFamilyRepository familyRepository, IIngredientRepository ingredientRepository, ILogger<UpsertIngredientHandler> logger, IIngredientTypeRepository typeRepository)
+    public UpsertIngredientHandler(IIngredientRepository ingredientRepository, ILogger<UpsertIngredientHandler> logger, IIngredientTypeRepository typeRepository)
     {
-        this.familyRepository = familyRepository;
         this.ingredientRepository = ingredientRepository;
         this.logger = logger;
         this.typeRepository = typeRepository;
@@ -35,13 +32,6 @@ internal sealed class UpsertIngredientHandler : IRequestHandler<UpsertIngredient
 
         this.logger.LogInformation("Try to upsert ingredient");
 
-        var family = this.familyRepository.Get(request.FamilyId);
-
-        if (family is null)
-        {
-            throw new FamilyNotFoundException(request.FamilyId);
-        }
-
         var ingredient = this.ingredientRepository.Get(request.FamilyId, request.Ingredient.Id);
 
         if (ingredient is null)
@@ -54,6 +44,8 @@ internal sealed class UpsertIngredientHandler : IRequestHandler<UpsertIngredient
         }
 
         this.ingredientRepository.Save(ingredient);
+
+        this.ingredientRepository.SaveChanges();
 
         return await Task.FromResult(Unit.Value);
     }

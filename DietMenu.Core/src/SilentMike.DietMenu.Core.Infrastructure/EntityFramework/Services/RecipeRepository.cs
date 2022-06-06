@@ -25,7 +25,6 @@ internal sealed class RecipeRepository : IRecipeRepository
         {
             case EntityState.Added or EntityState.Detached:
                 this.context.Add(recipe);
-                this.context.SaveChanges();
                 break;
             case EntityState.Modified:
                 this.context.Update(recipe);
@@ -60,9 +59,10 @@ internal sealed class RecipeRepository : IRecipeRepository
                     }
                 }
 
-                this.context.SaveChanges();
-
                 break;
         }
     }
+
+    public void SaveChanges()
+        => this.context.SaveChanges();
 }

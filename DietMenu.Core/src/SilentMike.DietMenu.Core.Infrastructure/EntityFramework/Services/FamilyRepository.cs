@@ -9,13 +9,15 @@ internal sealed class FamilyRepository : IFamilyRepository
 
     public FamilyRepository(DietMenuDbContext context) => (this.context) = (context);
 
+    public bool Exists(Guid id)
+        => this.context.Families.Any(family => family.Id == id);
+
     public FamilyEntity? Get(Guid id)
         => this.context.Families.SingleOrDefault(family => family.Id == id);
 
     public void Save(FamilyEntity family)
-    {
-        this.context.Upsert(family);
+        => this.context.Upsert(family);
 
-        this.context.SaveChanges();
-    }
+    public void SaveChanges()
+        => this.context.SaveChanges();
 }

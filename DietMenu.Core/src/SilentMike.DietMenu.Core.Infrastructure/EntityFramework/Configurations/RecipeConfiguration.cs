@@ -10,13 +10,13 @@ internal sealed class RecipeConfiguration : IEntityTypeConfiguration<RecipeEntit
 {
     public void Configure(EntityTypeBuilder<RecipeEntity> builder)
     {
-        builder.HasOne(i => i.FamilyEntity)
+        builder.HasOne(recipe => recipe.FamilyEntity)
             .WithMany()
             .IsRequired()
             .HasForeignKey("FamilyId")
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasOne(i => i.MealType)
+        builder.HasOne(recipe => recipe.MealType)
             .WithMany()
             .IsRequired()
             .HasForeignKey("MealTypeId")

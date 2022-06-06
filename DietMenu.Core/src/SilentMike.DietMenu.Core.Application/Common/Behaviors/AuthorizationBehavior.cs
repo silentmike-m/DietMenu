@@ -1,16 +1,14 @@
-﻿namespace SilentMike.DietMenu.Core.Application.Common.Behaviours;
+﻿namespace SilentMike.DietMenu.Core.Application.Common.Behaviors;
 
 using SilentMike.DietMenu.Core.Application.Exceptions;
 
-internal sealed class AuthorizationBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+internal sealed class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>, IAuthRequest
 {
-    private readonly ICurrentRequestService currentUserService;
+    private readonly IAuthService currentUserService;
 
-    public AuthorizationBehaviour(ICurrentRequestService currentUserService)
-    {
-        this.currentUserService = currentUserService;
-    }
+    public AuthorizationBehavior(IAuthService currentUserService)
+        => this.currentUserService = currentUserService;
 
     public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
     {

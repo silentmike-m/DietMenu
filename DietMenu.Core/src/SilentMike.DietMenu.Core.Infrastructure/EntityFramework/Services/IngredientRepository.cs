@@ -17,9 +17,8 @@ internal sealed class IngredientRepository : IIngredientRepository
             .SingleOrDefault(ingredient => ingredient.Id == ingredientId);
 
     public void Save(IngredientEntity ingredient)
-    {
-        this.context.Upsert(ingredient);
+        => this.context.Upsert(ingredient);
 
-        this.context.SaveChanges();
-    }
+    public void SaveChanges()
+        => this.context.SaveChanges();
 }

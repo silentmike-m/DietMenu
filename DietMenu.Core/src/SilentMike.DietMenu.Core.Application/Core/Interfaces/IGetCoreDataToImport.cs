@@ -2,5 +2,5 @@
 
 internal interface IGetCoreDataToImport
 {
-    byte[] IngredientsPayload { get; init; }
+    byte[] IngredientsPayload { get; }
 }

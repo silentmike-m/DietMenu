@@ -2,7 +2,6 @@
 
 using SilentMike.DietMenu.Core.Application.Common.Constants;
 using SilentMike.DietMenu.Core.Application.Exceptions;
-using SilentMike.DietMenu.Core.Application.Exceptions.Families;
 using SilentMike.DietMenu.Core.Application.Exceptions.Ingredients;
 using SilentMike.DietMenu.Core.Application.Exceptions.MealTypes;
 using SilentMike.DietMenu.Core.Application.Recipes.CommandHandlers;
@@ -22,7 +21,6 @@ public sealed class UpsertRecipesHandlerTests : IDisposable
     private readonly Guid recipeIngredientId = Guid.NewGuid();
 
     private readonly DietMenuDbContextFactory factory;
-    private readonly FamilyRepository familyRepository;
     private readonly IngredientRepository ingredientRepository;
     private readonly NullLogger<UpsertRecipeHandler> logger;
     private readonly MealTypeRepository mealTypeRepository;
@@ -65,34 +63,10 @@ public sealed class UpsertRecipesHandlerTests : IDisposable
 
         this.factory = new DietMenuDbContextFactory(family, ingredientType, ingredient, mealType, recipe);
 
-        this.familyRepository = new FamilyRepository(this.factory.Context);
         this.ingredientRepository = new IngredientRepository(this.factory.Context);
         this.logger = new NullLogger<UpsertRecipeHandler>();
         this.mealTypeRepository = new MealTypeRepository(this.factory.Context);
         this.recipeRepository = new RecipeRepository(this.factory.Context);
-    }
-
-    [TestMethod]
-    public async Task ShouldThrowFamilyNotFoundWhenInvalidIdOnUpsertRecipes()
-    {
-        //GIVEN
-        var command = new UpsertRecipe
-        {
-            FamilyId = Guid.NewGuid(),
-        };
-
-        var commandHandler = new UpsertRecipeHandler(this.familyRepository, this.ingredientRepository, this.logger, this.mealTypeRepository, this.recipeRepository);
-
-        //WHEN
-        Func<Task<Unit>> action = async () => await commandHandler.Handle(command, CancellationToken.None);
-
-        //THEN
-        await action.Should()
-                .ThrowAsync<FamilyNotFoundException>()
-                .Where(i =>
-                    i.Code == ErrorCodes.FAMILY_NOT_FOUND
-                    && i.Id == command.FamilyId)
-            ;
     }
 
     [TestMethod]
@@ -113,7 +87,7 @@ public sealed class UpsertRecipesHandlerTests : IDisposable
             },
         };
 
-        var commandHandler = new UpsertRecipeHandler(this.familyRepository, this.ingredientRepository, this.logger, this.mealTypeRepository, this.recipeRepository);
+        var commandHandler = new UpsertRecipeHandler(this.ingredientRepository, this.logger, this.mealTypeRepository, this.recipeRepository);
 
         //WHEN
         Func<Task<Unit>> action = async () => await commandHandler.Handle(command, CancellationToken.None);
@@ -146,7 +120,7 @@ public sealed class UpsertRecipesHandlerTests : IDisposable
             },
         };
 
-        var commandHandler = new UpsertRecipeHandler(this.familyRepository, this.ingredientRepository, this.logger, this.mealTypeRepository, this.recipeRepository);
+        var commandHandler = new UpsertRecipeHandler(this.ingredientRepository, this.logger, this.mealTypeRepository, this.recipeRepository);
 
         //WHEN
         Func<Task<Unit>> action = async () => await commandHandler.Handle(command, CancellationToken.None);
@@ -196,7 +170,7 @@ public sealed class UpsertRecipesHandlerTests : IDisposable
             Recipe = recipeToUpsert,
         };
 
-        var commandHandler = new UpsertRecipeHandler(this.familyRepository, this.ingredientRepository, this.logger, this.mealTypeRepository, this.recipeRepository);
+        var commandHandler = new UpsertRecipeHandler(this.ingredientRepository, this.logger, this.mealTypeRepository, this.recipeRepository);
 
         //WHEN
         Func<Task<Unit>> action = async () => await commandHandler.Handle(command, CancellationToken.None);
@@ -231,7 +205,7 @@ public sealed class UpsertRecipesHandlerTests : IDisposable
             Recipe = recipeToUpsert,
         };
 
-        var commandHandler = new UpsertRecipeHandler(this.familyRepository, this.ingredientRepository, this.logger, this.mealTypeRepository, this.recipeRepository);
+        var commandHandler = new UpsertRecipeHandler(this.ingredientRepository, this.logger, this.mealTypeRepository, this.recipeRepository);
 
         //WHEN
         Func<Task<Unit>> action = async () => await commandHandler.Handle(command, CancellationToken.None);
@@ -277,7 +251,7 @@ public sealed class UpsertRecipesHandlerTests : IDisposable
             Recipe = recipeToUpsert,
         };
 
-        var commandHandler = new UpsertRecipeHandler(this.familyRepository, this.ingredientRepository, this.logger, this.mealTypeRepository, this.recipeRepository);
+        var commandHandler = new UpsertRecipeHandler(this.ingredientRepository, this.logger, this.mealTypeRepository, this.recipeRepository);
 
         //WHEN
         Func<Task<Unit>> action = async () => await commandHandler.Handle(command, CancellationToken.None);
@@ -323,7 +297,7 @@ public sealed class UpsertRecipesHandlerTests : IDisposable
             Recipe = recipeToUpsert,
         };
 
-        var commandHandler = new UpsertRecipeHandler(this.familyRepository, this.ingredientRepository, this.logger, this.mealTypeRepository, this.recipeRepository);
+        var commandHandler = new UpsertRecipeHandler(this.ingredientRepository, this.logger, this.mealTypeRepository, this.recipeRepository);
 
         //WHEN
         Func<Task<Unit>> action = async () => await commandHandler.Handle(command, CancellationToken.None);
@@ -370,7 +344,7 @@ public sealed class UpsertRecipesHandlerTests : IDisposable
             Recipe = recipeToUpsert,
         };
 
-        var commandHandler = new UpsertRecipeHandler(this.familyRepository, this.ingredientRepository, this.logger, this.mealTypeRepository, this.recipeRepository);
+        var commandHandler = new UpsertRecipeHandler(this.ingredientRepository, this.logger, this.mealTypeRepository, this.recipeRepository);
 
         //WHEN
         await commandHandler.Handle(command, CancellationToken.None);
@@ -451,7 +425,7 @@ public sealed class UpsertRecipesHandlerTests : IDisposable
             Recipe = recipeToUpsert,
         };
 
-        var commandHandler = new UpsertRecipeHandler(this.familyRepository, this.ingredientRepository, this.logger, this.mealTypeRepository, this.recipeRepository);
+        var commandHandler = new UpsertRecipeHandler(this.ingredientRepository, this.logger, this.mealTypeRepository, this.recipeRepository);
 
         //WHEN
         await commandHandler.Handle(command, CancellationToken.None);

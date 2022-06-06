@@ -1,13 +1,13 @@
 ﻿namespace SilentMike.DietMenu.Core.UnitTests.Application;
 
 using SilentMike.DietMenu.Core.Application.Common;
-using SilentMike.DietMenu.Core.Application.Common.Behaviours;
+using SilentMike.DietMenu.Core.Application.Common.Behaviors;
 using SilentMike.DietMenu.Core.Application.Common.Constants;
 using SilentMike.DietMenu.Core.Application.Exceptions;
 using SilentMike.DietMenu.Core.Application.Ingredients.Commands;
 
 [TestClass]
-public sealed class AuthorizationBehaviourTests
+public sealed class AuthorizationBehaviorTests
 {
     [TestMethod]
     public async Task ShouldThrowUnauthorizedExceptionWhenMissingFamilyIdAndUserId()
@@ -15,11 +15,11 @@ public sealed class AuthorizationBehaviourTests
         //GIVEN
         var request = new UpsertIngredient();
 
-        var service = new Mock<ICurrentRequestService>();
+        var service = new Mock<IAuthService>();
         service.Setup(i => i.CurrentUser)
             .Returns(() => (Guid.Empty, Guid.Empty));
 
-        var behaviour = new AuthorizationBehaviour<UpsertIngredient, Unit>(service.Object);
+        var behaviour = new AuthorizationBehavior<UpsertIngredient, Unit>(service.Object);
 
         //WHEN
         Func<Task<Unit>> action = async () => await behaviour.Handle(request, CancellationToken.None, () => Task.FromResult(Unit.Value));
@@ -38,11 +38,11 @@ public sealed class AuthorizationBehaviourTests
         //GIVEN
         var request = new UpsertIngredient();
 
-        var service = new Mock<ICurrentRequestService>();
+        var service = new Mock<IAuthService>();
         service.Setup(i => i.CurrentUser)
             .Returns(() => (Guid.NewGuid(), Guid.NewGuid()));
 
-        var behaviour = new AuthorizationBehaviour<UpsertIngredient, Unit>(service.Object);
+        var behaviour = new AuthorizationBehavior<UpsertIngredient, Unit>(service.Object);
 
         //WHEN
         Func<Task<Unit>> action = async () => await behaviour.Handle(request, CancellationToken.None, () => Task.FromResult(Unit.Value));

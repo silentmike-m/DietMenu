@@ -49,7 +49,7 @@ try
     builder.Services
         .AddHttpContextAccessor();
     builder.Services
-        .AddSingleton<ICurrentRequestService, CurrentRequestService>();
+        .AddSingleton<IAuthService, AuthService>();
 
     builder.Services
         .AddControllers(options =>

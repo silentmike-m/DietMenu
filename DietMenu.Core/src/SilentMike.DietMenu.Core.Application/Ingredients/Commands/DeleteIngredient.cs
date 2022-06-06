@@ -2,7 +2,7 @@
 
 using SilentMike.DietMenu.Core.Application.Common;
 
-public sealed record DeleteIngredient : IRequest, IAuthRequest
+public sealed record DeleteIngredient : IRequest, IAuthRequest, IFamilyRequest
 {
     [JsonPropertyName("id")] public Guid Id { get; init; } = Guid.Empty;
     [JsonIgnore] public Guid FamilyId { get; set; } = Guid.Empty;

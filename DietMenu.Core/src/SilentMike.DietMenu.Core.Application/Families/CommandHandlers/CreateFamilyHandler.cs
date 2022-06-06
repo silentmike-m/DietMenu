@@ -35,6 +35,8 @@ internal sealed class CreateFamilyHandler : IRequestHandler<CreateFamily>
 
         this.repository.Save(family);
 
+        this.repository.SaveChanges();
+
         var notification = new CreatedFamily
         {
             Id = request.Id,

@@ -6,11 +6,11 @@ using SilentMike.DietMenu.Core.Application.Common;
 using SilentMike.DietMenu.Core.Infrastructure.IdentityServer4.Models;
 
 [ExcludeFromCodeCoverage]
-internal class CurrentRequestService : ICurrentRequestService
+internal class AuthService : IAuthService
 {
     private readonly IHttpContextAccessor httpContextAccessor;
 
-    public CurrentRequestService(IHttpContextAccessor httpContextAccessor)
+    public AuthService(IHttpContextAccessor httpContextAccessor)
     {
         this.httpContextAccessor = httpContextAccessor;
     }

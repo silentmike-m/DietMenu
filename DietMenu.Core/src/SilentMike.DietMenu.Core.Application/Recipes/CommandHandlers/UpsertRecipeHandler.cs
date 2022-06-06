@@ -2,7 +2,6 @@
 
 using FluentValidation.Results;
 using SilentMike.DietMenu.Core.Application.Exceptions;
-using SilentMike.DietMenu.Core.Application.Exceptions.Families;
 using SilentMike.DietMenu.Core.Application.Exceptions.Ingredients;
 using SilentMike.DietMenu.Core.Application.Exceptions.MealTypes;
 using SilentMike.DietMenu.Core.Application.Extensions;
@@ -13,15 +12,13 @@ using SilentMike.DietMenu.Core.Domain.Repositories;
 
 internal sealed class UpsertRecipeHandler : IRequestHandler<UpsertRecipe>
 {
-    private readonly IFamilyRepository familyRepository;
     private readonly IIngredientRepository ingredientRepository;
     private readonly ILogger<UpsertRecipeHandler> logger;
     private readonly IMealTypeRepository mealTypeRepository;
     private readonly IRecipeRepository recipeRepository;
 
-    public UpsertRecipeHandler(IFamilyRepository familyRepository, IIngredientRepository ingredientRepository, ILogger<UpsertRecipeHandler> logger, IMealTypeRepository mealTypeRepository, IRecipeRepository recipeRepository)
+    public UpsertRecipeHandler(IIngredientRepository ingredientRepository, ILogger<UpsertRecipeHandler> logger, IMealTypeRepository mealTypeRepository, IRecipeRepository recipeRepository)
     {
-        this.familyRepository = familyRepository;
         this.ingredientRepository = ingredientRepository;
         this.logger = logger;
         this.mealTypeRepository = mealTypeRepository;
@@ -38,13 +35,6 @@ internal sealed class UpsertRecipeHandler : IRequestHandler<UpsertRecipe>
 
         this.logger.LogInformation("Try to upsert recipe");
 
-        var family = this.familyRepository.Get(request.FamilyId);
-
-        if (family is null)
-        {
-            throw new FamilyNotFoundException(request.FamilyId);
-        }
-
         var recipe = this.recipeRepository.Get(request.FamilyId, request.Recipe.Id);
 
         if (recipe is null)
@@ -55,6 +45,8 @@ internal sealed class UpsertRecipeHandler : IRequestHandler<UpsertRecipe>
         {
             this.Update(request.FamilyId, recipe, request.Recipe);
         }
+
+        this.recipeRepository.SaveChanges();
 
         return await Task.FromResult(Unit.Value);
     }

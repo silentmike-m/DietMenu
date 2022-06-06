@@ -1,4 +1,4 @@
-﻿namespace SilentMike.DietMenu.Core.Application.Core.Behaviours;
+﻿namespace SilentMike.DietMenu.Core.Application.Core.Behaviors;
 
 using System.Diagnostics.CodeAnalysis;
 using SilentMike.DietMenu.Core.Application.Core.Interfaces;

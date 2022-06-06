@@ -2,7 +2,7 @@
 
 using SilentMike.DietMenu.Core.Domain.Entities;
 
-public interface ICoreRepository
+public interface ICoreRepository : IRepository
 {
     void SaveIngredients(IEnumerable<CoreIngredientEntity> ingredients);
     void SaveIngredientTypes(IEnumerable<CoreIngredientTypeEntity> ingredientTypes);

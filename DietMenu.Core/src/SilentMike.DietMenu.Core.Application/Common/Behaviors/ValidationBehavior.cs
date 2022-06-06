@@ -1,14 +1,14 @@
-﻿namespace SilentMike.DietMenu.Core.Application.Common.Behaviours;
+﻿namespace SilentMike.DietMenu.Core.Application.Common.Behaviors;
 
 using FluentValidation;
 using ValidationException = global::SilentMike.DietMenu.Core.Application.Exceptions.ValidationException;
 
-internal sealed class ValidationBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+internal sealed class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
 {
     private readonly IEnumerable<IValidator<TRequest>> validators;
 
-    public ValidationBehaviour(IEnumerable<IValidator<TRequest>> validators) =>
+    public ValidationBehavior(IEnumerable<IValidator<TRequest>> validators) =>
         (this.validators) = (validators);
 
     public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)

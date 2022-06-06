@@ -11,7 +11,7 @@ internal sealed class FamilyConfiguration : IEntityTypeConfiguration<FamilyEntit
 {
     public void Configure(EntityTypeBuilder<FamilyEntity> builder)
     {
-        builder.Property(u => u.Versions)
+        builder.Property(family => family.Versions)
             .HasConversion(
                 dictionary => JsonSerializer.Serialize(dictionary, new JsonSerializerOptions()),
                 text => JsonSerializer.Deserialize<Dictionary<string, string>>(text, new JsonSerializerOptions())!

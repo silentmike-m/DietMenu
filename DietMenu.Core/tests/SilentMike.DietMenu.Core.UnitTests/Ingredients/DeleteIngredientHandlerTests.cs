@@ -1,7 +1,6 @@
 ﻿namespace SilentMike.DietMenu.Core.UnitTests.Ingredients;
 
 using SilentMike.DietMenu.Core.Application.Common.Constants;
-using SilentMike.DietMenu.Core.Application.Exceptions.Families;
 using SilentMike.DietMenu.Core.Application.Exceptions.Ingredients;
 using SilentMike.DietMenu.Core.Application.Ingredients.CommandHandlers;
 using SilentMike.DietMenu.Core.Application.Ingredients.Commands;
@@ -17,7 +16,6 @@ public sealed class DeleteIngredientHandlerTests : IDisposable
     private readonly Guid systemIngredientId = Guid.NewGuid();
 
     private readonly DietMenuDbContextFactory factory;
-    private readonly FamilyRepository familyRepository;
     private readonly IngredientRepository ingredientRepository;
     private readonly NullLogger<DeleteIngredientHandler> logger;
 
@@ -49,33 +47,8 @@ public sealed class DeleteIngredientHandlerTests : IDisposable
 
         this.factory = new DietMenuDbContextFactory(family, ingredientType, ingredient, systemIngredient);
 
-        this.familyRepository = new FamilyRepository(this.factory.Context);
         this.logger = new NullLogger<DeleteIngredientHandler>();
         this.ingredientRepository = new IngredientRepository(this.factory.Context);
-    }
-
-    [TestMethod]
-    public async Task ShouldThrowFamilyNotFoundExceptionWhenInvalidIdOnDeleteIngredient()
-    {
-        //GIVEN
-        var command = new DeleteIngredient
-        {
-            Id = Guid.NewGuid(),
-            FamilyId = Guid.NewGuid(),
-        };
-
-        var commandHandler = new DeleteIngredientHandler(this.familyRepository, this.ingredientRepository, this.logger);
-
-        //WHEN
-        Func<Task<Unit>> action = async () => await commandHandler.Handle(command, CancellationToken.None);
-
-        //THEN
-        await action.Should()
-                .ThrowAsync<FamilyNotFoundException>()
-                .Where(i =>
-                    i.Code == ErrorCodes.FAMILY_NOT_FOUND
-                    && i.Id == command.FamilyId)
-            ;
     }
 
     [TestMethod]
@@ -88,7 +61,7 @@ public sealed class DeleteIngredientHandlerTests : IDisposable
             FamilyId = this.familyId,
         };
 
-        var commandHandler = new DeleteIngredientHandler(this.familyRepository, this.ingredientRepository, this.logger);
+        var commandHandler = new DeleteIngredientHandler(this.ingredientRepository, this.logger);
 
         //WHEN
         Func<Task<Unit>> action = async () => await commandHandler.Handle(command, CancellationToken.None);
@@ -112,7 +85,7 @@ public sealed class DeleteIngredientHandlerTests : IDisposable
             FamilyId = this.familyId,
         };
 
-        var commandHandler = new DeleteIngredientHandler(this.familyRepository, this.ingredientRepository, this.logger);
+        var commandHandler = new DeleteIngredientHandler(this.ingredientRepository, this.logger);
 
         //WHEN
         await commandHandler.Handle(command, CancellationToken.None);

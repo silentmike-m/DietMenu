@@ -1,7 +1,6 @@
 ﻿namespace SilentMike.DietMenu.Core.UnitTests.Recipes;
 
 using SilentMike.DietMenu.Core.Application.Common.Constants;
-using SilentMike.DietMenu.Core.Application.Exceptions.Families;
 using SilentMike.DietMenu.Core.Application.Exceptions.Recipes;
 using SilentMike.DietMenu.Core.Application.Recipes.CommandHandlers;
 using SilentMike.DietMenu.Core.Application.Recipes.Commands;
@@ -17,7 +16,6 @@ public sealed class DeleteRecipeHandlerTests : IDisposable
     private readonly Guid recipeIngredientId = Guid.NewGuid();
 
     private readonly DietMenuDbContextFactory factory;
-    private readonly FamilyRepository familyRepository;
     private readonly NullLogger<DeleteRecipeHandler> logger;
     private readonly RecipeRepository recipeRepository;
 
@@ -58,33 +56,8 @@ public sealed class DeleteRecipeHandlerTests : IDisposable
 
         this.factory = new DietMenuDbContextFactory(family, ingredientType, ingredient, mealType, recipe);
 
-        this.familyRepository = new FamilyRepository(this.factory.Context);
         this.logger = new NullLogger<DeleteRecipeHandler>();
         this.recipeRepository = new RecipeRepository(this.factory.Context);
-    }
-
-    [TestMethod]
-    public async Task ShouldThrowFamilyNotFoundWhenInvalidIdOnDeleteRecipe()
-    {
-        //GIVEN
-        var command = new DeleteRecipe
-        {
-            FamilyId = Guid.NewGuid(),
-            Id = Guid.NewGuid(),
-        };
-
-        var commandHandler = new DeleteRecipeHandler(this.familyRepository, this.logger, this.recipeRepository);
-
-        //WHEN
-        Func<Task<Unit>> action = async () => await commandHandler.Handle(command, CancellationToken.None);
-
-        //THEN
-        await action.Should()
-                .ThrowAsync<FamilyNotFoundException>()
-                .Where(i =>
-                    i.Code == ErrorCodes.FAMILY_NOT_FOUND
-                    && i.Id == command.FamilyId)
-            ;
     }
 
     [TestMethod]
@@ -97,7 +70,7 @@ public sealed class DeleteRecipeHandlerTests : IDisposable
             Id = Guid.NewGuid(),
         };
 
-        var commandHandler = new DeleteRecipeHandler(this.familyRepository, this.logger, this.recipeRepository);
+        var commandHandler = new DeleteRecipeHandler(this.logger, this.recipeRepository);
 
         //WHEN
         Func<Task<Unit>> action = async () => await commandHandler.Handle(command, CancellationToken.None);
@@ -121,7 +94,7 @@ public sealed class DeleteRecipeHandlerTests : IDisposable
             Id = this.recipeId,
         };
 
-        var commandHandler = new DeleteRecipeHandler(this.familyRepository, this.logger, this.recipeRepository);
+        var commandHandler = new DeleteRecipeHandler(this.logger, this.recipeRepository);
 
         //WHEN
         await commandHandler.Handle(command, CancellationToken.None);
