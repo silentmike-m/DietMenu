@@ -5,9 +5,9 @@ using global::AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using SilentMike.DietMenu.Core.Application.Common;
 using SilentMike.DietMenu.Core.Application.IngredientTypes.ViewModels;
-using SilentMike.DietMenu.Core.Domain.Entities;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Extensions;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Interfaces;
+using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Models;
 
 internal sealed class IngredientTypeReadService : IIngredientTypeReadService
 {
@@ -19,7 +19,7 @@ internal sealed class IngredientTypeReadService : IIngredientTypeReadService
 
     public async Task<IngredientTypes> GetIngredientTypesAsync(Guid familyId, CancellationToken cancellationToken = default)
     {
-        var types = await this.context.IngredientTypes
+        var types = await this.context.IngredientTypeRows
             .Where(type => type.FamilyId == familyId)
             .Where(i => i.IsActive)
             .ToListAsync(cancellationToken);
@@ -39,13 +39,13 @@ internal sealed class IngredientTypeReadService : IIngredientTypeReadService
         var filter = GetFilter(familyId, gridRequest.Filter);
         var orderBy = GetOrderBy();
 
-        var types = this.context.IngredientTypes
+        var types = this.context.IngredientTypeRows
             .Where(i => i.IsActive)
             .GetFiltered(filter)
             .GetOrdered(orderBy, gridRequest.IsDescending)
             .GetPaged(gridRequest.PageNumber, gridRequest.IsPaged, gridRequest.PageSize);
 
-        var count = this.context.IngredientTypes.GetItemsCount(filter);
+        var count = this.context.IngredientTypeRows.GetItemsCount(filter);
 
         var ingredientTypes = this.mapper.Map<IReadOnlyList<IngredientType>>(types);
 
@@ -58,7 +58,7 @@ internal sealed class IngredientTypeReadService : IIngredientTypeReadService
         return await Task.FromResult(result);
     }
 
-    private static Expression<Func<IngredientTypeEntity, bool>> GetFilter(Guid familyId, string filter)
+    private static Expression<Func<IngredientTypeRow, bool>> GetFilter(Guid familyId, string filter)
     {
         if (string.IsNullOrEmpty(filter))
         {
@@ -70,7 +70,7 @@ internal sealed class IngredientTypeReadService : IIngredientTypeReadService
         return entity => entity.FamilyId == familyId && entity.Name.ToLower().Contains(filter);
     }
 
-    private static Expression<Func<IngredientTypeEntity, object>> GetOrderBy()
+    private static Expression<Func<IngredientTypeRow, object>> GetOrderBy()
     {
         return entity => entity.Name;
     }

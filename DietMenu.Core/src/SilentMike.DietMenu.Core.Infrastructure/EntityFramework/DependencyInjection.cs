@@ -18,8 +18,6 @@ internal static class DependencyInjection
 
         services.AddDatabaseDeveloperPageExceptionFilter();
 
-        services.AddScoped<DietMenuDbContext>();
-
         services.AddDbContext<DietMenuDbContext>(options => options.UseSqlServer(defaultConnectionString));
 
         services.AddScoped<ICoreMigrationService, CoreMigrationService>();

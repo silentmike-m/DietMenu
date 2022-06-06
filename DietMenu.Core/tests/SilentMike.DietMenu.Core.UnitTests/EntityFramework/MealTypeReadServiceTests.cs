@@ -5,37 +5,40 @@ using SilentMike.DietMenu.Core.Application.Common;
 using SilentMike.DietMenu.Core.Application.MealTypes.ViewModels;
 using SilentMike.DietMenu.Core.Domain.Entities;
 using SilentMike.DietMenu.Core.Infrastructure.AutoMapper;
+using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Models;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Services;
-using SilentMike.DietMenu.Core.UnitTests.Services;
+using DietMenuDbContextFactory = SilentMike.DietMenu.Core.UnitTests.Services.DietMenuDbContextFactory;
 
 [TestClass]
 public sealed class MealTypeReadServiceTests : IDisposable
 {
     private readonly Guid familyId = Guid.NewGuid();
-    private readonly MealTypeEntity firstMealType;
-    private readonly MealTypeEntity secondMealType;
+    private readonly MealTypeRow firstMealType;
+    private readonly MealTypeRow secondMealType;
 
     private readonly DietMenuDbContextFactory factory;
     private readonly MealTypeReadService service;
 
     public MealTypeReadServiceTests()
     {
-        var config = new MapperConfiguration(cfg => cfg.AddProfile<MealTypeProfile>());
+        var config = new MapperConfiguration(cfg => cfg.AddProfile<MealTypeRowProfile>());
         var mapper = config.CreateMapper();
 
         var family = new FamilyEntity(this.familyId);
 
-        this.firstMealType = new(Guid.NewGuid())
+        this.firstMealType = new()
         {
             FamilyId = this.familyId,
-            InternalName = Guid.NewGuid().ToString(),
+            Id = Guid.NewGuid(),
+            IsActive = true,
             Name = "test_name_1",
             Order = 1,
         };
-        this.secondMealType = new(Guid.NewGuid())
+        this.secondMealType = new()
         {
             FamilyId = this.familyId,
-            InternalName = Guid.NewGuid().ToString(),
+            Id = Guid.NewGuid(),
+            IsActive = true,
             Name = "test_name_2",
             Order = 2,
         };

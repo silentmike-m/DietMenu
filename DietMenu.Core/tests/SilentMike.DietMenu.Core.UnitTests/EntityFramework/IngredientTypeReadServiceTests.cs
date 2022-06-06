@@ -3,8 +3,8 @@
 using AutoMapper;
 using SilentMike.DietMenu.Core.Application.Common;
 using SilentMike.DietMenu.Core.Application.IngredientTypes.ViewModels;
-using SilentMike.DietMenu.Core.Domain.Entities;
 using SilentMike.DietMenu.Core.Infrastructure.AutoMapper;
+using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Models;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Services;
 using SilentMike.DietMenu.Core.UnitTests.Services;
 
@@ -12,33 +12,33 @@ using SilentMike.DietMenu.Core.UnitTests.Services;
 public sealed class IngredientTypeReadServiceTests : IDisposable
 {
     private readonly Guid familyId = Guid.NewGuid();
-    private readonly IngredientTypeEntity firstType;
-    private readonly IngredientTypeEntity secondType;
+    private readonly IngredientTypeRow firstType;
+    private readonly IngredientTypeRow secondType;
 
     private readonly DietMenuDbContextFactory factory;
     private readonly IngredientTypeReadService service;
 
     public IngredientTypeReadServiceTests()
     {
-        var config = new MapperConfiguration(cfg => cfg.AddProfile<IngredientTypeProfile>());
+        var config = new MapperConfiguration(cfg => cfg.AddProfile<IngredientTypeRowProfile>());
         var mapper = config.CreateMapper();
 
-        var family = new FamilyEntity(this.familyId);
-
-        this.firstType = new(Guid.NewGuid())
+        this.firstType = new()
         {
             FamilyId = this.familyId,
-            InternalName = Guid.NewGuid().ToString(),
+            Id = Guid.NewGuid(),
+            IsActive = true,
             Name = "test_name_1",
         };
-        this.secondType = new(Guid.NewGuid())
+        this.secondType = new()
         {
             FamilyId = this.familyId,
-            InternalName = Guid.NewGuid().ToString(),
+            Id = Guid.NewGuid(),
+            IsActive = true,
             Name = "test_name_2",
         };
 
-        this.factory = new DietMenuDbContextFactory(family, this.firstType, this.secondType);
+        this.factory = new DietMenuDbContextFactory(this.firstType, this.secondType);
 
         this.service = new IngredientTypeReadService(this.factory.Context, mapper);
     }

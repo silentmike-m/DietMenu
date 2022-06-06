@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework;
 
@@ -11,9 +12,10 @@ using SilentMike.DietMenu.Core.Infrastructure.EntityFramework;
 namespace SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Migrations
 {
     [DbContext(typeof(DietMenuDbContext))]
-    partial class DietMenuDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220606191448_InitIngredientTypesView")]
+    partial class InitIngredientTypesView
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -317,41 +319,6 @@ namespace SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Migrations
                     b.ToTable("RecipeIngredients", "SilentMike");
                 });
 
-            modelBuilder.Entity("SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Models.IngredientRow", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("Exchanger")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<Guid>("FamilyId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("TypeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("TypeName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UnitSymbol")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("IngredientRows", "SilentMike");
-                });
-
             modelBuilder.Entity("SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Models.IngredientTypeRow", b =>
                 {
                     b.Property<Guid>("Id")
@@ -370,31 +337,7 @@ namespace SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("IngredientTypeRows", "SilentMike");
-                });
-
-            modelBuilder.Entity("SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Models.MealTypeRow", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("FamilyId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Order")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("MealTypeRows", "SilentMike");
+                    b.ToTable("IngredientTypeRow", "SilentMike");
                 });
 
             modelBuilder.Entity("SilentMike.DietMenu.Core.Domain.Entities.CoreIngredientEntity", b =>

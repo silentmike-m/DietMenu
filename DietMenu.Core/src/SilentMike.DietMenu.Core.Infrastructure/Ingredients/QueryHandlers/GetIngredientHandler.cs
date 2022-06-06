@@ -29,9 +29,8 @@ internal sealed record GetIngredientHandler : IRequestHandler<GetIngredient, Ing
 
         this.logger.LogInformation("Try to get ingredient");
 
-        var ingredient = await this.context.Ingredients
+        var ingredient = await this.context.IngredientRows
             .Where(ingredient => ingredient.FamilyId == request.FamilyId)
-            .Include(ingredient => ingredient.Type)
             .SingleOrDefaultAsync(ingredient => ingredient.Id == request.Id, cancellationToken);
 
         if (ingredient is null)

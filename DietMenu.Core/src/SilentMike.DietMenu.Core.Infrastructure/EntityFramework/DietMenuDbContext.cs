@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using SilentMike.DietMenu.Core.Domain.Entities;
+using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Models;
 
 [ExcludeFromCodeCoverage]
 internal sealed class DietMenuDbContext : DbContext
@@ -14,8 +15,11 @@ internal sealed class DietMenuDbContext : DbContext
     public DbSet<CoreMealTypeEntity> CoreMealTypes => Set<CoreMealTypeEntity>();
     public DbSet<FamilyEntity> Families => Set<FamilyEntity>();
     public DbSet<IngredientEntity> Ingredients => Set<IngredientEntity>();
+    public DbSet<IngredientRow> IngredientRows => Set<IngredientRow>();
     public DbSet<IngredientTypeEntity> IngredientTypes => Set<IngredientTypeEntity>();
+    public DbSet<IngredientTypeRow> IngredientTypeRows => Set<IngredientTypeRow>();
     public DbSet<MealTypeEntity> MealTypes => Set<MealTypeEntity>();
+    public DbSet<MealTypeRow> MealTypeRows => Set<MealTypeRow>();
     public DbSet<RecipeEntity> Recipes => Set<RecipeEntity>();
     public DbSet<RecipeIngredientEntity> RecipeIngredients => Set<RecipeIngredientEntity>();
 

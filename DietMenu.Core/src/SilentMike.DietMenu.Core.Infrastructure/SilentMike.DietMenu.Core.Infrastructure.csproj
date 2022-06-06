@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-  	<Using Include="MediatR" />
-  	<Using Include="Microsoft.Extensions.Logging" />
+    <Using Include="MediatR" />
+    <Using Include="Microsoft.Extensions.Logging" />
   </ItemGroup>
 
     <PropertyGroup>
@@ -34,6 +34,10 @@
    <PackageReference Include="MassTransit.AspNetCore" Version="7.3.0" />
    <PackageReference Include="MassTransit.RabbitMQ" Version="7.3.0" />
    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.1" />
+   <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.1">
+     <PrivateAssets>all</PrivateAssets>
+     <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+   </PackageReference>
    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.1" />
    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.1">
      <PrivateAssets>all</PrivateAssets>
@@ -57,6 +61,10 @@
     <InternalsVisibleTo Include="SilentMike.DietMenu.Core.IntegrationTests" />
     <InternalsVisibleTo Include="SilentMike.DietMenu.Core.UnitTests" />
     <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="EntityFramework\Models\" />
   </ItemGroup>
 
 </Project>

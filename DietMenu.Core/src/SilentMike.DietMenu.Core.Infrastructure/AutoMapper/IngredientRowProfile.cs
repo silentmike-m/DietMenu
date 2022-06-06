@@ -1,12 +1,12 @@
 ﻿namespace SilentMike.DietMenu.Core.Infrastructure.AutoMapper;
 
 using global::AutoMapper;
-using SourceIngredient = SilentMike.DietMenu.Core.Domain.Entities.IngredientEntity;
+using SourceIngredient = SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Models.IngredientRow;
 using TargetIngredient = SilentMike.DietMenu.Core.Application.Ingredients.ViewModels.Ingredient;
 
-public sealed class IngredientProfile : Profile
+public sealed class IngredientRowProfile : Profile
 {
-    public IngredientProfile()
+    public IngredientRowProfile()
     {
         this.CreateMap<SourceIngredient, TargetIngredient>()
             .ForMember(target => target.Id,
@@ -18,7 +18,7 @@ public sealed class IngredientProfile : Profile
             .ForMember(target => target.TypeId,
                 opt => opt.MapFrom(source => source.TypeId))
             .ForMember(target => target.TypeName,
-                opt => opt.MapFrom(source => source.Type.Name))
+                opt => opt.MapFrom(source => source.TypeName))
             .ForMember(target => target.UnitSymbol,
                 opt => opt.MapFrom(source => source.UnitSymbol))
             ;

@@ -1,12 +1,12 @@
 ﻿namespace SilentMike.DietMenu.Core.Infrastructure.AutoMapper;
 
 using global::AutoMapper;
-using SourceMealType = SilentMike.DietMenu.Core.Domain.Entities.MealTypeEntity;
+using SourceMealType = SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Models.MealTypeRow;
 using TargetMealType = SilentMike.DietMenu.Core.Application.MealTypes.ViewModels.MealType;
 
-internal sealed class MealTypeProfile : Profile
+internal sealed class MealTypeRowProfile : Profile
 {
-    public MealTypeProfile()
+    public MealTypeRowProfile()
     {
         this.CreateMap<SourceMealType, TargetMealType>()
             .ForMember(target => target.Id,

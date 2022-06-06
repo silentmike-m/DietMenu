@@ -1,18 +1,12 @@
 ﻿namespace SilentMike.DietMenu.Core.UnitTests.Ingredients;
 
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using AutoMapper;
-using FluentAssertions;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SilentMike.DietMenu.Core.Application.Common.Constants;
 using SilentMike.DietMenu.Core.Application.Exceptions.Ingredients;
 using SilentMike.DietMenu.Core.Application.Ingredients.Queries;
 using SilentMike.DietMenu.Core.Application.Ingredients.ViewModels;
-using SilentMike.DietMenu.Core.Domain.Entities;
 using SilentMike.DietMenu.Core.Infrastructure.AutoMapper;
+using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Models;
 using SilentMike.DietMenu.Core.Infrastructure.Ingredients.QueryHandlers;
 using SilentMike.DietMenu.Core.UnitTests.Services;
 
@@ -20,7 +14,7 @@ using SilentMike.DietMenu.Core.UnitTests.Services;
 public sealed class GetIngredientHandlerTests : IDisposable
 {
     private readonly Guid familyId = Guid.NewGuid();
-    private readonly IngredientEntity ingredient;
+    private readonly IngredientRow ingredient;
 
     private readonly DietMenuDbContextFactory factory;
     private readonly NullLogger<GetIngredientHandler> logger = new();
@@ -28,30 +22,21 @@ public sealed class GetIngredientHandlerTests : IDisposable
 
     public GetIngredientHandlerTests()
     {
-        var config = new MapperConfiguration(cfg => cfg.AddProfile<IngredientProfile>());
+        var config = new MapperConfiguration(cfg => cfg.AddProfile<IngredientRowProfile>());
         this.mapper = config.CreateMapper();
 
-        var family = new FamilyEntity(this.familyId);
-
-        var ingredientType = new IngredientTypeEntity(Guid.NewGuid())
-        {
-            FamilyId = this.familyId,
-            InternalName = "type one",
-            Name = "type one",
-        };
-
-        this.ingredient = new IngredientEntity(Guid.NewGuid())
+        this.ingredient = new()
         {
             Exchanger = 0.5m,
             FamilyId = this.familyId,
-            InternalName = "ingredient one",
+            Id = Guid.NewGuid(),
             Name = "ingredient one",
-            Type = ingredientType,
-            TypeId = ingredientType.Id,
+            TypeId = Guid.NewGuid(),
+            TypeName = "type one",
             UnitSymbol = "szt.",
         };
 
-        this.factory = new DietMenuDbContextFactory(family, ingredientType, ingredient);
+        this.factory = new DietMenuDbContextFactory(ingredient);
     }
 
     [TestMethod]

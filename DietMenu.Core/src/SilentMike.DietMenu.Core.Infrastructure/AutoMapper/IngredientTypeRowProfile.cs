@@ -1,12 +1,12 @@
 ﻿namespace SilentMike.DietMenu.Core.Infrastructure.AutoMapper;
 
 using global::AutoMapper;
-using SourceIngredientType = SilentMike.DietMenu.Core.Domain.Entities.IngredientTypeEntity;
+using SourceIngredientType = SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Models.IngredientTypeRow;
 using TargetIngredientType = SilentMike.DietMenu.Core.Application.IngredientTypes.ViewModels.IngredientType;
 
-internal sealed class IngredientTypeProfile : Profile
+internal sealed class IngredientTypeRowProfile : Profile
 {
-    public IngredientTypeProfile()
+    public IngredientTypeRowProfile()
     {
         this.CreateMap<SourceIngredientType, TargetIngredientType>()
             .ForMember(target => target.Id,

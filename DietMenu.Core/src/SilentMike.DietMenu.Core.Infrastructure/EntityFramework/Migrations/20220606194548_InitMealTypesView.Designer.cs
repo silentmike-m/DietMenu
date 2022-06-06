@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework;
 
@@ -11,9 +12,10 @@ using SilentMike.DietMenu.Core.Infrastructure.EntityFramework;
 namespace SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Migrations
 {
     [DbContext(typeof(DietMenuDbContext))]
-    partial class DietMenuDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220606194548_InitMealTypesView")]
+    partial class InitMealTypesView
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
