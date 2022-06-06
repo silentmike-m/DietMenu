@@ -78,7 +78,7 @@ internal sealed class GetCoreIngredientsToImportPostProcessor<TRequest, TRespons
             else
             {
                 var coreIngredients = response.Ingredients
-                    .Where(i => i.TypeId == ingredientType.Id)
+                    .Where(ingredient => ingredient.TypeId == ingredientType.Id)
                     .ToList();
 
                 var ingredientsToImport = MapIngredients(excelData, ingredientType, response);
@@ -130,7 +130,7 @@ internal sealed class GetCoreIngredientsToImportPostProcessor<TRequest, TRespons
                 }
 
                 var duplicatedInternalNames = excelData
-                    .Where(i => string.Equals(i.InternalName, ingredientToImport.InternalName, StringComparison.InvariantCultureIgnoreCase));
+                    .Where(ingredient => string.Equals(ingredient.InternalName, ingredientToImport.InternalName, StringComparison.InvariantCultureIgnoreCase));
 
                 var isInternalNameDuplicated = duplicatedInternalNames.Count() > 1;
 

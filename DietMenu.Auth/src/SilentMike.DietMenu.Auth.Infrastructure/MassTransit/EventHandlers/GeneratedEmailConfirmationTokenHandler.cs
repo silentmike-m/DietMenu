@@ -9,8 +9,10 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using SilentMike.DietMenu.Auth.Application.Common;
 using SilentMike.DietMenu.Auth.Application.Users.Events;
+using SilentMike.DietMenu.Auth.Infrastructure.Extensions;
 using SilentMike.DietMenu.Auth.Infrastructure.MassTransit.Models;
-using SilentMike.DietMenu.Shared.MassTransit.Identity;
+using SilentMike.DietMenu.Shared.Email.Interfaces;
+using SilentMike.DietMenu.Shared.Email.Models;
 
 internal sealed class GeneratedEmailConfirmationTokenHandler : INotificationHandler<GeneratedEmailConfirmationToken>
 {
@@ -22,12 +24,7 @@ internal sealed class GeneratedEmailConfirmationTokenHandler : INotificationHand
     private readonly IPublishEndpoint publishEndpoint;
     private readonly IUrlHelperFactory urlHelperFactory;
 
-    public GeneratedEmailConfirmationTokenHandler(
-        IActionContextAccessor actionContextAccessor,
-        ICurrentRequestService currentRequestService,
-        ILogger<GeneratedEmailConfirmationTokenHandler> logger,
-        IPublishEndpoint publishEndpoint,
-        IUrlHelperFactory urlHelperFactory)
+    public GeneratedEmailConfirmationTokenHandler(IActionContextAccessor actionContextAccessor, ICurrentRequestService currentRequestService, ILogger<GeneratedEmailConfirmationTokenHandler> logger, IPublishEndpoint publishEndpoint, IUrlHelperFactory urlHelperFactory)
     {
         this.actionContextAccessor = actionContextAccessor;
         this.currentRequestService = currentRequestService;
@@ -52,14 +49,25 @@ internal sealed class GeneratedEmailConfirmationTokenHandler : INotificationHand
                               protocol: schema)
                           ?? string.Empty;
 
-        var request = new SendVerifyUserMessageRequest
+        var payload = new VerifyUserEmailPayload
         {
             Email = notification.Email,
             Url = callbackUrl,
         };
 
-        await this.publishEndpoint.Publish<ISendVerifyUserMessageRequest>(
-            request,
+        var payloadString = payload.ToJson();
+
+        var payloadType = payload.GetType().FullName
+                          ?? string.Empty;
+
+        var message = new EmailDataMessage
+        {
+            Payload = payloadString,
+            PayloadType = payloadType,
+        };
+
+        await this.publishEndpoint.Publish<IEmailDataMessage>(
+            message,
             context => context.TimeToLive = TimeSpan.FromMinutes(DEFAULT_MESSAGE_EXPIRATION_IN_MINUTES),
             cancellationToken);
 

@@ -1,11 +1,11 @@
 ﻿namespace SilentMike.DietMenu.Core.Infrastructure.Exceptions.EPPlus;
 
-using System;
 using System.Runtime.Serialization;
 using SilentMike.DietMenu.Core.Infrastructure.Common.Constants;
+using ApplicationException = SilentMike.DietMenu.Core.Application.Common.ApplicationException;
 
 [Serializable]
-public sealed class WorksheetNotFoundException : SilentMike.DietMenu.Core.Application.Common.ApplicationException
+public sealed class WorksheetNotFoundException : ApplicationException
 {
     public override string Code => ErrorCodes.WORKSHEET_NOT_FOUND;
 

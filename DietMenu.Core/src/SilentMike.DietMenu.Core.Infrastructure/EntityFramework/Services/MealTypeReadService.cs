@@ -10,6 +10,9 @@ using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Interfaces;
 
 internal sealed class MealTypeReadService : IMealTypeReadService
 {
+    private const string NAME_ORDER_BY = "name";
+    private const string ORDER_ORDER_BY = "order";
+
     private readonly DietMenuDbContext context;
     private readonly IMapper mapper;
 
@@ -55,8 +58,8 @@ internal sealed class MealTypeReadService : IMealTypeReadService
     {
         return orderBy.ToLower() switch
         {
-            "name" => entity => entity.Name,
-            "order" => entity => entity.Order,
+            NAME_ORDER_BY => entity => entity.Name,
+            ORDER_ORDER_BY => entity => entity.Order,
             _ => entity => entity.Order,
         };
     }

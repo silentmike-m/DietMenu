@@ -1,7 +1,6 @@
 ﻿namespace SilentMike.DietMenu.Core.Infrastructure.Hangfire.EventHandlers;
 
 using global::Hangfire;
-using MediatR;
 using SilentMike.DietMenu.Core.Application.Families.Events;
 using SilentMike.DietMenu.Core.Infrastructure.Hangfire.Jobs;
 

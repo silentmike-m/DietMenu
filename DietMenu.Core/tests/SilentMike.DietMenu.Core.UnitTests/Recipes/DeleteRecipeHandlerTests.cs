@@ -1,21 +1,9 @@
 ﻿namespace SilentMike.DietMenu.Core.UnitTests.Recipes;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using FluentAssertions;
-using MediatR;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using SilentMike.DietMenu.Core.Application.Common.Constants;
-using SilentMike.DietMenu.Core.Application.Exceptions.Families;
 using SilentMike.DietMenu.Core.Application.Exceptions.Recipes;
 using SilentMike.DietMenu.Core.Application.Recipes.CommandHandlers;
 using SilentMike.DietMenu.Core.Application.Recipes.Commands;
-using SilentMike.DietMenu.Core.Application.Recipes.Events;
 using SilentMike.DietMenu.Core.Domain.Entities;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Services;
 using SilentMike.DietMenu.Core.UnitTests.Services;
@@ -28,9 +16,7 @@ public sealed class DeleteRecipeHandlerTests : IDisposable
     private readonly Guid recipeIngredientId = Guid.NewGuid();
 
     private readonly DietMenuDbContextFactory factory;
-    private readonly FamilyRepository familyRepository;
     private readonly NullLogger<DeleteRecipeHandler> logger;
-    private readonly Mock<IMediator> mediator;
     private readonly RecipeRepository recipeRepository;
 
     public DeleteRecipeHandlerTests()
@@ -70,34 +56,8 @@ public sealed class DeleteRecipeHandlerTests : IDisposable
 
         this.factory = new DietMenuDbContextFactory(family, ingredientType, ingredient, mealType, recipe);
 
-        this.familyRepository = new FamilyRepository(this.factory.Context);
         this.logger = new NullLogger<DeleteRecipeHandler>();
-        this.mediator = new Mock<IMediator>();
         this.recipeRepository = new RecipeRepository(this.factory.Context);
-    }
-
-    [TestMethod]
-    public async Task ShouldThrowFamilyNotFoundWhenInvalidIdOnDeleteRecipe()
-    {
-        //GIVEN
-        var command = new DeleteRecipe
-        {
-            FamilyId = Guid.NewGuid(),
-            Id = Guid.NewGuid(),
-        };
-
-        var commandHandler = new DeleteRecipeHandler(this.familyRepository, this.logger, this.mediator.Object, this.recipeRepository);
-
-        //WHEN
-        Func<Task<Unit>> action = async () => await commandHandler.Handle(command, CancellationToken.None);
-
-        //THEN
-        await action.Should()
-                .ThrowAsync<FamilyNotFoundException>()
-                .Where(i =>
-                    i.Code == ErrorCodes.FAMILY_NOT_FOUND
-                    && i.Id == command.FamilyId)
-            ;
     }
 
     [TestMethod]
@@ -110,7 +70,7 @@ public sealed class DeleteRecipeHandlerTests : IDisposable
             Id = Guid.NewGuid(),
         };
 
-        var commandHandler = new DeleteRecipeHandler(this.familyRepository, this.logger, this.mediator.Object, this.recipeRepository);
+        var commandHandler = new DeleteRecipeHandler(this.logger, this.recipeRepository);
 
         //WHEN
         Func<Task<Unit>> action = async () => await commandHandler.Handle(command, CancellationToken.None);
@@ -134,14 +94,12 @@ public sealed class DeleteRecipeHandlerTests : IDisposable
             Id = this.recipeId,
         };
 
-        var commandHandler = new DeleteRecipeHandler(this.familyRepository, this.logger, this.mediator.Object, this.recipeRepository);
+        var commandHandler = new DeleteRecipeHandler(this.logger, this.recipeRepository);
 
         //WHEN
         await commandHandler.Handle(command, CancellationToken.None);
 
         //THEN
-        this.mediator.Verify(i => i.Publish(It.IsAny<DeletedRecipe>(), It.IsAny<CancellationToken>()), Times.Once);
-
         var recipe = this.factory.Context.Recipes.SingleOrDefault(i => i.Id == command.Id);
         recipe.Should()
             .NotBeNull()

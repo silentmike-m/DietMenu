@@ -1,7 +1,5 @@
 ﻿namespace SilentMike.DietMenu.Core.Application.Ingredients.ValueModels;
 
-using System.Text.Json.Serialization;
-
 public sealed record IngredientToUpsert
 {
     [JsonPropertyName("id")] public Guid Id { get; init; } = Guid.Empty;

@@ -1,15 +1,5 @@
 ﻿namespace SilentMike.DietMenu.Core.UnitTests.Core;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using FluentAssertions;
-using MediatR;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using SilentMike.DietMenu.Core.Application.Core.CommandHandlers;
 using SilentMike.DietMenu.Core.Application.Core.Commands;
 using SilentMike.DietMenu.Core.Application.Core.Events;

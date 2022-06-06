@@ -1,6 +1,5 @@
 ﻿namespace SilentMike.DietMenu.Core.Infrastructure.EPPlus.QueryHandlers;
 
-using MediatR;
 using OfficeOpenXml;
 using SilentMike.DietMenu.Core.Application.Ingredients.Models;
 using SilentMike.DietMenu.Core.Application.Ingredients.Queries;

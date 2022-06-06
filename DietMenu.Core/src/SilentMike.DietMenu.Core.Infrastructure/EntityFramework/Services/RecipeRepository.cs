@@ -10,50 +10,59 @@ internal sealed class RecipeRepository : IRecipeRepository
 
     public RecipeRepository(DietMenuDbContext context) => (this.context) = (context);
 
-    public async Task<RecipeEntity?> GetAsync(Guid familyId, Guid recipeId, CancellationToken cancellationToken = default)
-    {
-        return await this.context.Recipes
-            .Include(i => i.Ingredients)
-            .SingleOrDefaultAsync(i => i.Id == recipeId, cancellationToken);
-    }
+    public RecipeEntity? Get(Guid familyId, Guid recipeId)
+        => this.context.Recipes
+            .Include(recipe => recipe.Ingredients)
+            .Where(recipe => recipe.FamilyId == familyId)
+            .SingleOrDefault(recipe => recipe.Id == recipeId);
 
-    public async Task SaveAsync(RecipeEntity recipe, CancellationToken cancellationToken = default)
+
+    public void Save(RecipeEntity recipe)
     {
         var track = this.context.Entry(recipe);
 
         switch (track.State)
         {
             case EntityState.Added or EntityState.Detached:
-                await this.context.AddAsync(recipe, cancellationToken);
-                await this.context.SaveChangesAsync(cancellationToken);
+                this.context.Add(recipe);
                 break;
             case EntityState.Modified:
                 this.context.Update(recipe);
 
                 var existingIngredients = this.context.RecipeIngredients
-                    .Where(i => i.RecipeId == recipe.Id)
+                    .Where(ingredient => ingredient.RecipeId == recipe.Id)
                     .ToList();
 
-                var toAdd = recipe.Ingredients
-                    .Where(i => existingIngredients.All(j => j.Id != i.Id));
+                foreach (var existingIngredient in existingIngredients)
+                {
+                    var recipeIngredient = recipe.Ingredients
+                        .SingleOrDefault(selectedIngredient => selectedIngredient.Id == existingIngredient.Id);
 
-                var toDelete = existingIngredients
-                    .Where(i => recipe.Ingredients.All(j => j.Id != i.Id));
+                    if (recipeIngredient is null)
+                    {
+                        this.context.RecipeIngredients.Remove(existingIngredient);
+                    }
+                }
 
-                var toUpdate = recipe.Ingredients
-                    .Where(i => existingIngredients.Any(j => j.Id == i.Id));
+                foreach (var recipeIngredient in recipe.Ingredients)
+                {
+                    var existingIngredient = existingIngredients
+                        .SingleOrDefault(selectedIngredient => selectedIngredient.Id == recipeIngredient.Id);
 
-                await this.context.AddRangeAsync(toAdd, cancellationToken);
-
-                this.context.RemoveRange(toDelete);
-
-                this.context.UpdateRange(toUpdate);
-
-                await this.context.SaveChangesAsync(cancellationToken);
+                    if (existingIngredient is null)
+                    {
+                        this.context.RecipeIngredients.Add(recipeIngredient);
+                    }
+                    else
+                    {
+                        this.context.RecipeIngredients.Update(recipeIngredient);
+                    }
+                }
 
                 break;
         }
-
-        await this.context.Save(recipe, cancellationToken);
     }
+
+    public void SaveChanges()
+        => this.context.SaveChanges();
 }

@@ -11,7 +11,7 @@ internal sealed class CoreConfiguration : IEntityTypeConfiguration<CoreEntity>
 {
     public void Configure(EntityTypeBuilder<CoreEntity> builder)
     {
-        builder.Property(u => u.Versions)
+        builder.Property(core => core.Versions)
             .HasConversion(
                 dictionary => JsonSerializer.Serialize(dictionary, new JsonSerializerOptions()),
                 text => JsonSerializer.Deserialize<Dictionary<string, string>>(text, new JsonSerializerOptions())!

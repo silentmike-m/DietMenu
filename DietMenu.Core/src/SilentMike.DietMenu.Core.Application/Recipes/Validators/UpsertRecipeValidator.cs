@@ -1,7 +1,6 @@
 ﻿namespace SilentMike.DietMenu.Core.Application.Recipes.Validators;
 
 using FluentValidation;
-using SilentMike.DietMenu.Core.Application.Common.Constants;
 using SilentMike.DietMenu.Core.Application.Recipes.Commands;
 
 internal sealed class UpsertRecipeValidator : AbstractValidator<UpsertRecipe>

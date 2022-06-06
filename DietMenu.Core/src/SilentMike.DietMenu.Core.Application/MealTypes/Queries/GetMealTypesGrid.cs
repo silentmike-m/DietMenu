@@ -1,6 +1,5 @@
 ﻿namespace SilentMike.DietMenu.Core.Application.MealTypes.Queries;
 
-using System.Text.Json.Serialization;
 using SilentMike.DietMenu.Core.Application.Common;
 using SilentMike.DietMenu.Core.Application.MealTypes.ViewModels;
 

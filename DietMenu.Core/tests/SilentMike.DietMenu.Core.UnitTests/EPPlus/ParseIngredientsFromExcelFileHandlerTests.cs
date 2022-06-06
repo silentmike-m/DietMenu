@@ -1,7 +1,5 @@
 ﻿namespace SilentMike.DietMenu.Core.UnitTests.EPPlus;
-using System.IO;
-using System.Threading;
-using FluentAssertions;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SilentMike.DietMenu.Core.Application.Ingredients.Queries;
 using SilentMike.DietMenu.Core.Infrastructure.EPPlus.QueryHandlers;

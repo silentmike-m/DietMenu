@@ -11,19 +11,19 @@ internal sealed class IngredientConfiguration : IEntityTypeConfiguration<Ingredi
     public void Configure(EntityTypeBuilder<IngredientEntity> builder)
     {
         builder
-            .HasIndex(i => new { i.FamilyId, i.InternalName })
+            .HasIndex(ingredient => new { ingredient.FamilyId, ingredient.InternalName })
             .IsUnique();
 
         builder
-            .HasIndex(i => new { i.FamilyId, i.Name })
+            .HasIndex(ingredient => new { ingredient.FamilyId, ingredient.Name })
             .IsUnique();
 
-        builder.HasOne(i => i.FamilyEntity)
+        builder.HasOne(ingredient => ingredient.FamilyEntity)
             .WithMany()
             .IsRequired()
             .HasForeignKey("FamilyId");
 
-        builder.HasOne(i => i.Type)
+        builder.HasOne(ingredient => ingredient.Type)
             .WithMany()
             .HasForeignKey(i => i.TypeId)
             .IsRequired()

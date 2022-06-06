@@ -6,8 +6,6 @@ public static class ErrorCodes
     public static readonly string CORE_DATA_IMPORT_EMPTY_PAYLOAD = "CORE_DATA_IMPORT_EMPTY_PAYLOAD";
     public static readonly string CORE_NOT_FOUND = "CORE_NOT_FOUND";
 
-    public static readonly string DELETE_SYSTEM_VALUE = "DELETE_SYSTEM_VALUE";
-
     public static readonly string FAMILY_ALREADY_EXISTS = "FAMILY_ALREADY_EXISTS";
     public static readonly string FAMILY_DATA_IMPORT = "FAMILY_DATA_IMPORT";
     public static readonly string FAMILY_NOT_FOUND = "FAMILY_NOT_FOUND";

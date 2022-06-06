@@ -3,8 +3,10 @@
 using global::MassTransit;
 using Microsoft.Extensions.Logging;
 using SilentMike.DietMenu.Auth.Application.Users.Events;
+using SilentMike.DietMenu.Auth.Infrastructure.Extensions;
 using SilentMike.DietMenu.Auth.Infrastructure.MassTransit.Models;
-using SilentMike.DietMenu.Shared.MassTransit.Core;
+using SilentMike.DietMenu.Shared.Core.Interfaces;
+using SilentMike.DietMenu.Shared.Core.Models;
 
 internal sealed class CreatedFamilyHandler : INotificationHandler<CreatedFamily>
 {
@@ -18,12 +20,23 @@ internal sealed class CreatedFamilyHandler : INotificationHandler<CreatedFamily>
     {
         this.logger.LogInformation("Sending created family message");
 
-        var message = new CreatedFamilyMessage
+        var payload = new CreatedFamilyPayload
         {
-            Id = notification.Id,
+            FamilyId = notification.Id,
         };
 
-        await this.publishEndpoint.Publish<ICreatedFamilyMessage>(message, context => context.TimeToLive = TimeSpan.FromMinutes(5), cancellationToken);
+        var payloadString = payload.ToJson();
+
+        var payloadType = payload.GetType().FullName
+                          ?? string.Empty;
+
+        var message = new CoreDataMessage
+        {
+            Payload = payloadString,
+            PayloadType = payloadType,
+        };
+
+        await this.publishEndpoint.Publish<ICoreDataMessage>(message, context => context.TimeToLive = TimeSpan.FromMinutes(5), cancellationToken);
 
         await Task.CompletedTask;
     }

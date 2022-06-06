@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
-using SilentMike.DietMenu.Core.Application.Common.Behaviours;
+using SilentMike.DietMenu.Core.Application.Common.Behaviors;
 using SilentMike.DietMenu.Core.Application.Core;
 using SilentMike.DietMenu.Core.Application.Families;
 
@@ -15,10 +15,10 @@ public static class DependencyInjection
     {
         services.AddMediatR(Assembly.GetExecutingAssembly());
 
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthorizationBehaviour<,>));
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthorizationBehavior<,>));
 
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
         services.AddCoreMigrationProcess();
         services.AddFamilyMigrationProcess();

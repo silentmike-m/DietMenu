@@ -2,10 +2,10 @@
 
 using SilentMike.DietMenu.Core.Domain.Entities;
 
-public interface ICoreRepository
+public interface ICoreRepository : IRepository
 {
-    Task SaveIngredientsAsync(IEnumerable<CoreIngredientEntity> ingredients, CancellationToken cancellationToken = default);
-    Task SaveIngredientTypesAsync(IEnumerable<CoreIngredientTypeEntity> ingredientTypes, CancellationToken cancellationToken = default);
-    Task SaveMealTypesAsync(IEnumerable<CoreMealTypeEntity> mealTypes, CancellationToken cancellationToken = default);
-    Task SaveCoreAsync(CoreEntity core, CancellationToken cancellationToken = default);
+    void SaveIngredients(IEnumerable<CoreIngredientEntity> ingredients);
+    void SaveIngredientTypes(IEnumerable<CoreIngredientTypeEntity> ingredientTypes);
+    void SaveMealTypes(IEnumerable<CoreMealTypeEntity> mealTypes);
+    void SaveCore(CoreEntity core);
 }

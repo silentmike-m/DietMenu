@@ -1,6 +1,5 @@
 ﻿namespace SilentMike.DietMenu.Core.UnitTests.Ingredients;
-using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using SilentMike.DietMenu.Core.Application.Common.Constants;
 using SilentMike.DietMenu.Core.Application.Ingredients.Commands;
 using SilentMike.DietMenu.Core.Application.Ingredients.Validators;

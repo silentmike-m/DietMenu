@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	<TargetFramework>net6.0</TargetFramework>
+	<ImplicitUsings>enable</ImplicitUsings>
+	<Nullable>enable</Nullable>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\SilentMike.DietMenu.Mailing.Application\SilentMike.DietMenu.Mailing.Application.csproj" />
+		<ProjectReference Include="..\SilentMike.DietMenu.Shared\SilentMike.DietMenu.Shared.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="SilentMike.DietMenu.Mailing.UnitTests" />
+		<InternalsVisibleTo Include="SilentMike.DietMenu.Mailing.IntegrationTests" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="AspNetCore.HealthChecks.Rabbitmq" Version="6.0.1" />
+		<PackageReference Include="MailKit" Version="3.1.0" />
+	  <PackageReference Include="MassTransit.AspNetCore" Version="7.3.0" />
+	  <PackageReference Include="MassTransit.RabbitMQ" Version="7.3.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Extensions\" />
+	</ItemGroup>
+
+</Project>
