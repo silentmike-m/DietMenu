@@ -7,6 +7,8 @@ volumes:
     external: true 
   rabbitmqdata_dietMenu:
     external: true 
+  seqdata:
+    external: true
 services:
   rabbitmq:    
     image: rabbitmq:3.9.1
@@ -21,6 +23,21 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672" 
+  seq:
+    image: datalust/seq:latest
+    environment:
+      ACCEPT_EULA: "Y"
+      SEQ_FIRSTRUN_ADMINUSERNAME: "${DEFAULT_USERNAME:-admin}"
+      SEQ_FIRSTRUN_ADMINPASSWORDHASH: FL6x1NNpca5LonfiH1pumrjVZdF2yoPW4DWPJ03VyqwnWmmErw==
+    ports:
+      - 9000:80
+      - 5341:5341 
+    networks:
+      - dietmenu-dev
+    volumes:
+      - seqdata:/data
+    restart: unless-stopped
+    mem_limit: 256m
   smtp4dev:
     image: rnwood/smtp4dev
     ports:

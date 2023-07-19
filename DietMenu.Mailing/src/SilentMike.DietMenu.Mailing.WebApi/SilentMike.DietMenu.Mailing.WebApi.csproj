@@ -27,6 +27,12 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Content Update="appsettings.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup>
         <InternalsVisibleTo Include="SilentMike.DietMenu.Mailing.IntegrationTests"/>
     </ItemGroup>
 

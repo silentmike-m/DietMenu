@@ -58,12 +58,6 @@ try
 
     app.UseCors("Policy");
 
-    app.Use(async (context, next) =>
-    {
-        context.Request.PathBase = new PathString("/takeoff");
-        await next();
-    });
-
     app.UseInfrastructure();
 
     app.UseSerilogRequestLogging(options =>
