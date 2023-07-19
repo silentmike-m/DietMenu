@@ -18,7 +18,7 @@ internal static class DependencyInjection
 {
     public static void AddHealthChecks(this IServiceCollection services, IConfiguration configuration)
     {
-        var rabbitMqOptions = configuration.GetSection(RabbitMqOptions.SectionName).Get<RabbitMqOptions>();
+        var rabbitMqOptions = configuration.GetSection(RabbitMqOptions.SECTION_NAME).Get<RabbitMqOptions>();
 
         services.AddHealthChecks()
             .AddRabbitMQ(_ => new ConnectionFactory
@@ -62,6 +62,7 @@ internal static class DependencyInjection
                 HealthCheckDurationInMilliseconds = componentReport.Duration.Milliseconds,
                 Status = componentReport.Status.ToString(),
             };
+
             componentHealthChecks.Add(componentHealthCheck);
         }
 
@@ -77,6 +78,7 @@ internal static class DependencyInjection
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
             WriteIndented = true,
         };
+
         await context.Response.WriteAsync(JsonSerializer.Serialize(healthCheck, jsonOptions));
     }
 }

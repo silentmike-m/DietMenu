@@ -14,13 +14,9 @@ public sealed class IngredientTypesController : ControllerBase
 
     [HttpPost(Name = "GetIngredientTypes")]
     public async Task<IngredientTypes> GetIngredientTypes([FromBody] GetIngredientTypes request)
-    {
-        return await this.mediator.Send(request, CancellationToken.None);
-    }
+        => await this.mediator.Send(request, CancellationToken.None);
 
     [HttpPost(Name = "GetIngredientTypesGrid")]
     public async Task<IngredientTypesGrid> GetIngredientTypesGrid([FromBody] GetIngredientTypesGrid request)
-    {
-        return await this.mediator.Send(request, CancellationToken.None);
-    }
+     => await this.mediator.Send(request, CancellationToken.None);
 }

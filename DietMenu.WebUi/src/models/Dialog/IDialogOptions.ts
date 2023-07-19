@@ -1,4 +1,6 @@
+import { DialogComponentNames } from "./DialogComponentNames";
+
 export interface IDialogOptions {
-    component: string,
+    component: DialogComponentNames,
     options: any,
 }

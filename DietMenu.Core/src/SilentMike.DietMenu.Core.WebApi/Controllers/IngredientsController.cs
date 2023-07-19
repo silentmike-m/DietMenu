@@ -13,14 +13,28 @@ public sealed class IngredientsController : ControllerBase
 
     public IngredientsController(IMediator mediator) => this.mediator = mediator;
 
-    [HttpPost(Name = "GetIngredientsGrid")]
-    public async Task<IngredientsGrid> GetIngredientsGrid([FromBody] GetIngredientsGrid request)
+    [HttpPost(Name = "DeleteIngredient")]
+    public async Task<ActionResult> DeleteIngredient([FromBody] DeleteIngredient request)
     {
-        return await this.mediator.Send(request, CancellationToken.None);
+        _ = await this.mediator.Send(request, CancellationToken.None);
+
+        return await Task.FromResult(Ok());
     }
 
-    [HttpPost(Name = "UpsertIngredients")]
-    public async Task<ActionResult> UpsertIngredients([FromBody] UpsertIngredient request)
+    [HttpPost(Name = "GetIngredient")]
+    public async Task<Ingredient> GetIngredient([FromBody] GetIngredient request)
+        => await this.mediator.Send(request, CancellationToken.None);
+
+    [HttpPost(Name = "GetIngredientsGrid")]
+    public async Task<IngredientsGrid> GetIngredientsGrid([FromBody] GetIngredientsGrid request)
+        => await this.mediator.Send(request, CancellationToken.None);
+
+    [HttpPost(Name = "GetReplacementsGrid")]
+    public async Task<ReplacementsGrid> GetReplacementsGrid([FromBody] GetReplacementsGrid request)
+        => await this.mediator.Send(request, CancellationToken.None);
+
+    [HttpPost(Name = "UpsertIngredient")]
+    public async Task<ActionResult> UpsertIngredient([FromBody] UpsertIngredient request)
     {
         _ = await this.mediator.Send(request, CancellationToken.None);
 

@@ -3,7 +3,6 @@
 using System.Diagnostics.CodeAnalysis;
 using FluentValidation;
 using global::MassTransit;
-using GreenPipes;
 using ValidationException = SilentMike.DietMenu.Mailing.Application.Exceptions.ValidationException;
 
 [ExcludeFromCodeCoverage]
@@ -13,7 +12,12 @@ internal sealed class ValidationFilter<T> : IFilter<ConsumeContext<T>>
     private readonly IEnumerable<IValidator<T>> validators;
 
     public ValidationFilter(IEnumerable<IValidator<T>> validators) =>
-        (this.validators) = (validators);
+        this.validators = validators;
+
+    public void Probe(ProbeContext context)
+    {
+        // Method intentionally left empty.
+    }
 
     public async Task Send(ConsumeContext<T> context, IPipe<ConsumeContext<T>> next)
     {
@@ -36,10 +40,5 @@ internal sealed class ValidationFilter<T> : IFilter<ConsumeContext<T>>
         }
 
         await next.Send(context);
-    }
-
-    public void Probe(ProbeContext context)
-    {
-        // Method intentionally left empty.
     }
 }

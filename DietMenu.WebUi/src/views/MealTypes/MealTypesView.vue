@@ -2,13 +2,7 @@
   <div class="card border-primary shadow">
     <div class="card-header">Rodzaje składników</div>
     <div class="card-body">
-      <GridComponent
-        :columns="gridColumns"
-        :getGridData="getGridData"
-        :onElementAdd="addMealType"
-        :onElementEdit="deleteMealType"
-        :onElementDelete="editMealType"
-      />
+      <GridComponent :columns="gridColumns" :getGridData="getGridData" />
     </div>
   </div>
 </template>
@@ -20,6 +14,7 @@ import { GridRequest } from "@/models/Grid/GridRequest";
 import { GridResponse } from "@/models/Grid/GridResponse";
 import MealTypeService from "@/services/MealTypeService";
 import { GridColumnType } from "@/models/Grid/GridColumnType";
+import { GetMealTypesGrid } from "@/models/MealType/MealTypeRequests";
 
 export default {
   components: {
@@ -43,7 +38,10 @@ export default {
 
     const { getMealTypesGrid } = MealTypeService();
 
-    const getGridData = (request: GridRequest): Promise<GridResponse> => {
+    const getGridData = (gridRequest: GridRequest): Promise<GridResponse> => {
+      const request = new GetMealTypesGrid();
+      request.grid_request = gridRequest;
+
       return getMealTypesGrid(request);
     };
 

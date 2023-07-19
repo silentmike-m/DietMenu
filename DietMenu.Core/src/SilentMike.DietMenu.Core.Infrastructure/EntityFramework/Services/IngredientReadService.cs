@@ -2,12 +2,11 @@
 
 using System.Linq.Expressions;
 using global::AutoMapper;
-using Microsoft.EntityFrameworkCore;
 using SilentMike.DietMenu.Core.Application.Common;
 using SilentMike.DietMenu.Core.Application.Ingredients.ViewModels;
-using SilentMike.DietMenu.Core.Domain.Entities;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Extensions;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Interfaces;
+using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Models;
 
 internal sealed class IngredientReadService : IIngredientReadService
 {
@@ -28,8 +27,8 @@ internal sealed class IngredientReadService : IIngredientReadService
         var typeFilter = GetTypeFilter(typeId);
         var orderBy = GetOrderBy(gridRequest.OrderBy);
 
-        var query = this.context.Ingredients
-            .Include(i => i.Type)
+        var query = this.context.IngredientRows
+            .Where(i => i.IsActive)
             .GetFiltered(filter)
             .GetFiltered(typeFilter);
 
@@ -50,7 +49,47 @@ internal sealed class IngredientReadService : IIngredientReadService
         return await Task.FromResult(result);
     }
 
-    private static Expression<Func<IngredientEntity, bool>> GetFilter(Guid familyId, string filter)
+    public async Task<ReplacementsGrid> GetReplacementsGridAsync(
+        Guid familyId,
+        GridRequest gridRequest,
+        decimal exchanger,
+        decimal quantity,
+        Guid typeid,
+        CancellationToken cancellationToken = default)
+    {
+        var ingredients = await this.GetIngredientsGridAsync(familyId, gridRequest, typeid, cancellationToken);
+
+        var replacements = new List<Replacement>();
+
+        foreach (var ingredient in ingredients.Elements)
+        {
+            var replacementQuantity = exchanger == 0
+                ? 0
+                : Math.Round(quantity / exchanger * ingredient.Exchanger, 0);
+
+            var replacement = new Replacement
+            {
+                Exchanger = ingredient.Exchanger,
+                Id = ingredient.Id,
+                Name = ingredient.Name,
+                Quantity = replacementQuantity,
+                UnitSymbol = ingredient.UnitSymbol,
+            };
+
+
+            replacements.Add(replacement);
+        }
+
+        var result = new ReplacementsGrid
+        {
+            Count = ingredients.Count,
+            Elements = replacements.AsReadOnly(),
+        };
+
+        return result;
+    }
+
+    private static Expression<Func<IngredientRow, bool>> GetFilter(Guid familyId, string filter)
     {
         if (string.IsNullOrEmpty(filter))
         {
@@ -61,9 +100,10 @@ internal sealed class IngredientReadService : IIngredientReadService
 
         return entity => entity.FamilyId == familyId
                          && entity.Name.ToLower().Contains(filter)
-                         || entity.Type.Name.ToLower().Contains(filter);
+                         || entity.TypeName.ToLower().Contains(filter);
     }
-    private static Expression<Func<IngredientEntity, bool>> GetTypeFilter(Guid? typeId)
+
+    private static Expression<Func<IngredientRow, bool>> GetTypeFilter(Guid? typeId)
     {
         if (typeId is null)
         {
@@ -73,13 +113,13 @@ internal sealed class IngredientReadService : IIngredientReadService
         return entity => entity.TypeId == typeId;
     }
 
-    private static Expression<Func<IngredientEntity, object>> GetOrderBy(string orderBy)
+    private static Expression<Func<IngredientRow, object>> GetOrderBy(string orderBy)
     {
         return orderBy.ToLower() switch
         {
             EXCHANGER_ORDER_BY => entity => entity.Exchanger,
             NAME_ORDER_BY => entity => entity.Name,
-            TYPE_ORDER_BY => entity => entity.Type.Name,
+            TYPE_ORDER_BY => entity => entity.TypeName,
             UNIT_ORDER_BY => entity => entity.UnitSymbol,
             _ => entity => entity.Name,
         };

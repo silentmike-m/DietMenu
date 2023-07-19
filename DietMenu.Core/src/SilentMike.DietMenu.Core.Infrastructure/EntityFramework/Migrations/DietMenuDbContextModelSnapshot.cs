@@ -10,9 +10,6 @@ using SilentMike.DietMenu.Core.Infrastructure.EntityFramework;
 
 namespace SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Migrations
 {
-    using System.Diagnostics.CodeAnalysis;
-
-    [ExcludeFromCodeCoverage]
     [DbContext(typeof(DietMenuDbContext))]
     partial class DietMenuDbContextModelSnapshot : ModelSnapshot
     {
@@ -318,6 +315,86 @@ namespace SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Migrations
                     b.HasIndex("RecipeId");
 
                     b.ToTable("RecipeIngredients", "SilentMike");
+                });
+
+            modelBuilder.Entity("SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Models.IngredientRow", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Exchanger")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("FamilyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("TypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("TypeName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UnitSymbol")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("IngredientRows", "SilentMike");
+                });
+
+            modelBuilder.Entity("SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Models.IngredientTypeRow", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FamilyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("IngredientTypeRows", "SilentMike");
+                });
+
+            modelBuilder.Entity("SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Models.MealTypeRow", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FamilyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MealTypeRows", "SilentMike");
                 });
 
             modelBuilder.Entity("SilentMike.DietMenu.Core.Domain.Entities.CoreIngredientEntity", b =>

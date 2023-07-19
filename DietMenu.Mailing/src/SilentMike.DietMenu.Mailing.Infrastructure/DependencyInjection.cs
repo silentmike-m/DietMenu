@@ -2,7 +2,6 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
-using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using SilentMike.DietMenu.Mailing.Infrastructure.HealthChecks;
 using SilentMike.DietMenu.Mailing.Infrastructure.MassTransit;
 using SilentMike.DietMenu.Mailing.Infrastructure.Smtp;
+using SilentMike.DietMenu.Mailing.Infrastructure.Swagger;
 
 [ExcludeFromCodeCoverage]
 public static class DependencyInjection
@@ -18,11 +18,13 @@ public static class DependencyInjection
     {
         services.AddHealthChecks(configuration);
 
-        services.AddMediatR(Assembly.GetExecutingAssembly());
+        services.AddMediatR(config => config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
         services.AddMassTransit(configuration);
 
         services.AddSmtp(configuration);
+
+        services.AddSilentMikeSwagger();
     }
 
     public static void UseInfrastructure(this IApplicationBuilder app)
@@ -35,6 +37,8 @@ public static class DependencyInjection
         try
         {
             app.UseHealthChecks();
+
+            app.UseSilentMikeSwagger();
         }
         catch (Exception exception)
         {

@@ -1,77 +1,79 @@
 name: dietmenu
 network: dietmenu-dev
 services:
-  - name: proxy
-    project: DietMenu.Proxy/src/SilentMike.DietMenu.Proxy.WebApi/SilentMike.DietMenu.Proxy.WebApi.csproj
-    env:
-      - name: CONFIG_IDENTITYSERVER4__AUDIENCE
-        value: https://localhost:8080
-      - name: CONFIG_IDENTITYSERVER4__AUTHORITY
-        value: https://localhost:30000
-      - name: CONFIG_IDENTITYSERVER4__CLIENTID
-        value: bff
-      - name: CONFIG_IDENTITYSERVER4__CLIENTSECRET
-        value: secret   
-    bindings:
-    - protocol: https
-      port: 8080   
-  - name: identity
-    project: DietMenu.Auth/src/SilentMike.DietMenu.Auth.Web/SilentMike.DietMenu.Auth.Web.csproj
-    env:
-      - name: ASPNETCORE_URLS
-        value: https://localhost:30000 
-      - name: CONFIG_CONNECTIONSTRINGS__DEFAULTCONNECTION
-        value: Server=localhost,1433;Database=dietmenu-aspnet-identity;User Id=sa;Password=P@ssw0rd;MultipleActiveResultSets=true
-      - name: CONFIG_IDENTITY__REGISTERCODE
-        value: P@ssw0rd
-      - name: CONFIG_IDENTITY__SYSTEMUSEREMAIL
-        value: system@domain.com
-      - name: CONFIG_IDENTITY__SYSTEMUSERPASSWORD
-        value: P@ssw0rd
-      - name: CONFIG_RABBITMQ__HOSTNAME
-        value: localhost   
-      - name: CONFIG_RABBITMQ__SERVER
-        value: rabbitmq://localhost
-      - name: CONFIG_RABBITMQ__USER
-        value: user
-      - name: CONFIG_RABBITMQ__PASSWORD
-        value: P@ssw0rd         
-    bindings:
-    - protocol: https 
-      port: 30000   
-  - name: api
-    project: DietMenu.Core/src/SilentMike.DietMenu.Core.WebApi/SilentMike.DietMenu.Core.WebApi.csproj
-    env:
-      - name: CONFIG_CONNECTIONSTRINGS__DEFAULTCONNECTION
-        value: Server=localhost,1433;Database=silentmike_dietmenu;User Id=sa;Password=P@ssw0rd;MultipleActiveResultSets=true
-      - name: CONFIG_CONNECTIONSTRINGS__HANGFIRECONNECTION
-        value: Server=localhost,1433;Database=silentmike_hangfire;User Id=sa;Password=P@ssw0rd;MultipleActiveResultSets=true;  
-      - name: CONFIG_IDENTITYSERVER4__AUDIENCE
-        value: https://localhost:8080/api
-      - name: CONFIG_IDENTITYSERVER4__AUTHORITY
-        value: https://localhost:30000
-      - name: CONFIG_MailingServer__BaseAddress
-        value: http://localhost:30003
-      - name: CONFIG_MAILINGSERVER__RETRYCOUNT
-        value: 3
-      - name: CONFIG_MAILINGSERVER__RETRYSLEEPDURATIONINMILLISECONDS
-        value: 5000
-      - name: CONFIG_MailingServer__TimeoutInMilliSeconds
-        value: 30000      
-      - name: CONFIG_RABBITMQ__HOSTNAME
-        value: localhost   
-      - name: CONFIG_RABBITMQ__SERVER
-        value: rabbitmq://localhost
-      - name: CONFIG_RABBITMQ__USER
-        value: user
-      - name: CONFIG_RABBITMQ__PASSWORD
-        value: P@ssw0rd          
-    bindings:
-    - port: 30002
-      protocol: http
+  # - name: proxy
+    # project: DietMenu.Proxy/src/SilentMike.DietMenu.Proxy.WebApi/SilentMike.DietMenu.Proxy.WebApi.csproj
+    # env:
+      # - name: CONFIG_IDENTITYSERVER4__AUDIENCE
+        # value: https://localhost:8080
+      # - name: CONFIG_IDENTITYSERVER4__AUTHORITY
+        # value: https://localhost:30000
+      # - name: CONFIG_IDENTITYSERVER4__CLIENTID
+        # value: bff
+      # - name: CONFIG_IDENTITYSERVER4__CLIENTSECRET
+        # value: secret   
+    # bindings:
+    # - protocol: https
+      # port: 8080   
+  # - name: identity
+    # project: DietMenu.Auth/src/SilentMike.DietMenu.Auth.Web/SilentMike.DietMenu.Auth.Web.csproj
+    # env:
+      # - name: ASPNETCORE_URLS
+        # value: https://localhost:30000 
+      # - name: CONFIG_CONNECTIONSTRINGS__DEFAULTCONNECTION
+        # value: Server=localhost,1433;Database=dietmenu-aspnet-identity;User Id=sa;Password=P@ssw0rd;MultipleActiveResultSets=true
+      # - name: CONFIG_IDENTITY__REGISTERCODE
+        # value: P@ssw0rd
+      # - name: CONFIG_IDENTITY__SYSTEMUSEREMAIL
+        # value: system@domain.com
+      # - name: CONFIG_IDENTITY__SYSTEMUSERPASSWORD
+        # value: P@ssw0rd
+      # - name: CONFIG_RABBITMQ__HOSTNAME
+        # value: localhost   
+      # - name: CONFIG_RABBITMQ__SERVER
+        # value: rabbitmq://localhost
+      # - name: CONFIG_RABBITMQ__USER
+        # value: user
+      # - name: CONFIG_RABBITMQ__PASSWORD
+        # value: P@ssw0rd         
+    # bindings:
+    # - protocol: https 
+      # port: 30000   
+  # - name: api
+    # project: DietMenu.Core/src/SilentMike.DietMenu.Core.WebApi/SilentMike.DietMenu.Core.WebApi.csproj
+    # env:
+      # - name: CONFIG_CONNECTIONSTRINGS__DEFAULTCONNECTION
+        # value: Server=localhost,1433;Database=silentmike_dietmenu;User Id=sa;Password=P@ssw0rd;MultipleActiveResultSets=true
+      # - name: CONFIG_CONNECTIONSTRINGS__HANGFIRECONNECTION
+        # value: Server=localhost,1433;Database=silentmike_hangfire;User Id=sa;Password=P@ssw0rd;MultipleActiveResultSets=true;  
+      # - name: CONFIG_IDENTITYSERVER4__AUDIENCE
+        # value: https://localhost:8080/api
+      # - name: CONFIG_IDENTITYSERVER4__AUTHORITY
+        # value: https://localhost:30000
+      # - name: CONFIG_MailingServer__BaseAddress
+        # value: http://localhost:30003
+      # - name: CONFIG_MAILINGSERVER__RETRYCOUNT
+        # value: 3
+      # - name: CONFIG_MAILINGSERVER__RETRYSLEEPDURATIONINMILLISECONDS
+        # value: 5000
+      # - name: CONFIG_MailingServer__TimeoutInMilliSeconds
+        # value: 30000      
+      # - name: CONFIG_RABBITMQ__HOSTNAME
+        # value: localhost   
+      # - name: CONFIG_RABBITMQ__SERVER
+        # value: rabbitmq://localhost
+      # - name: CONFIG_RABBITMQ__USER
+        # value: user
+      # - name: CONFIG_RABBITMQ__PASSWORD
+        # value: P@ssw0rd          
+    # bindings:
+    # - port: 30002
+      # protocol: http
   - name: mailing
     project: DietMenu.Mailing/src/SilentMike.DietMenu.Mailing.WebApi/SilentMike.DietMenu.Mailing.WebApi.csproj
     env:
+      - name: CONFIG_CORS__ALLOWEDORIGINS__2
+        value: http://localhost:30003 
       - name: CONFIG_RABBITMQ__HOSTNAME
         value: localhost   
       - name: CONFIG_RABBITMQ__SERVER
@@ -91,7 +93,11 @@ services:
       - name: CONFIG_SMTP__USER
         value: admin  
       - name: CONFIG_SMTP__PASSWORD
-        value: P@ssw0rd     
+        value: P@ssw0rd    
+      - name: CONFIG_SERILOG__WRITETO__1__NAME
+        value: Seq
+      - name: CONFIG_SERILOG__WRITETO__1__ARGS__SERVERURL
+        value: http://localhost:5341       
     bindings:
     - port: 30003
       protocol: http        

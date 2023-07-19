@@ -1,6 +1,7 @@
 ﻿namespace SilentMike.DietMenu.Mailing.Infrastructure.MassTransit;
 
 using System.Diagnostics.CodeAnalysis;
+using System.Security.Authentication;
 using global::MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,28 +14,33 @@ internal static class DependencyInjection
 {
     public static void AddMassTransit(this IServiceCollection services, IConfiguration configuration)
     {
-        var rabbitMqOptions = configuration.GetSection(RabbitMqOptions.SectionName).Get<RabbitMqOptions>();
+        var rabbitMqSettings = configuration.GetSection(RabbitMqOptions.SECTION_NAME).Get<RabbitMqOptions>();
 
         services.AddMassTransit(configure =>
         {
             configure.AddConsumer<EmailDataMessageConsumer>();
 
-            configure.AddRequestClient<IIdentityDataRequest>();
+            configure.AddRequestClient<IGetFamilyUserEmailRequest>();
 
             configure.UsingRabbitMq((context, cfg) =>
             {
                 cfg.UseConsumeFilter(typeof(ExceptionLoggerFilter<>), context);
                 cfg.UseConsumeFilter(typeof(ValidationFilter<>), context);
                 cfg.UseConsumeFilter(typeof(RetryFilter<>), context);
-                cfg.Host(rabbitMqOptions.Server, host =>
+
+                cfg.Host(rabbitMqSettings.HostName, rabbitMqSettings.Port, rabbitMqSettings.VirtualHost, host =>
                 {
-                    host.Username(rabbitMqOptions.User);
-                    host.Password(rabbitMqOptions.Password);
+                    host.Password(rabbitMqSettings.Password);
+                    host.Username(rabbitMqSettings.User);
+
+                    if (rabbitMqSettings.UseSsl)
+                    {
+                        host.UseSsl(ssl => ssl.Protocol = SslProtocols.Tls12);
+                    }
                 });
 
                 cfg.ConfigureEndpoints(context);
             });
         });
-        services.AddMassTransitHostedService();
     }
 }

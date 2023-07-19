@@ -1,12 +1,12 @@
 import RestService from "./RestService";
-import { GridRequest } from "@/models/Grid/GridRequest";
 import { GridResponse } from "@/models/Grid/GridResponse";
+import { GetMealTypesGrid } from "@/models/MealType/MealTypeRequests";
 
 export default function MealTypeService() {
     const { post } = RestService();
 
-    async function getMealTypesGrid(gridRequest: GridRequest): Promise<GridResponse> {
-        return await post<GridResponse>("/api/MealTypes/GetMealTypesGrid", { grid_request: gridRequest });
+    async function getMealTypesGrid(request: GetMealTypesGrid): Promise<GridResponse> {
+        return await post<GridResponse>("/api/MealTypes/GetMealTypesGrid", request);
     }
 
     return {

@@ -10,7 +10,7 @@ using SilentMike.DietMenu.Mailing.Application.Identity.Validators;
 public sealed class SendResetPasswordEmailValidatorTests
 {
     [TestMethod]
-    public void ShouldPassValidation()
+    public void Should_Pass_Validation()
     {
         //GIVEN
         var command = new SendResetPasswordEmail
@@ -26,40 +26,14 @@ public sealed class SendResetPasswordEmailValidatorTests
         //THEN
         result.Errors.Should()
             .BeEmpty();
+
         result.IsValid.Should()
             .BeTrue()
             ;
     }
 
     [TestMethod]
-    public void ShouldThrowValidationExceptionWhenParametersAreEmpty()
-    {
-        //GIVEN
-        var command = new SendResetPasswordEmail
-        {
-            Email = string.Empty,
-        };
-
-        var validator = new SendResetPasswordEmailValidator();
-
-        //WHEN
-        var result = validator.Validate(command);
-
-        //THEN
-        result.Errors.Should()
-            .HaveCount(2)
-            .And
-            .Contain(i => i.ErrorCode == ValidationErrorCodes.SEND_RESET_PASSWORD_INCORRECT_EMAIL_FORMAT
-                          && i.ErrorMessage == ValidationErrorCodes.SEND_RESET_PASSWORD_INCORRECT_EMAIL_FORMAT_MESSAGE)
-            ;
-
-        result.IsValid.Should()
-            .BeFalse()
-            ;
-    }
-
-    [TestMethod]
-    public void ShouldPassValidationExceptionWhenEmailIsIncorrectFormat()
+    public void Should_throw_Validation_Exception_When_Email_Is_Incorrect_Format()
     {
         //GIVEN
         var command = new SendResetPasswordEmail
@@ -76,8 +50,37 @@ public sealed class SendResetPasswordEmailValidatorTests
         result.Errors.Should()
             .HaveCount(1)
             .And
-            .Contain(i => i.ErrorCode == ValidationErrorCodes.SEND_RESET_PASSWORD_INCORRECT_EMAIL_FORMAT
-                          && i.ErrorMessage == ValidationErrorCodes.SEND_RESET_PASSWORD_INCORRECT_EMAIL_FORMAT_MESSAGE)
+            .Contain(failure =>
+                failure.ErrorCode == ValidationErrorCodes.SEND_RESET_PASSWORD_INCORRECT_EMAIL_FORMAT
+                && failure.ErrorMessage == ValidationErrorCodes.SEND_RESET_PASSWORD_INCORRECT_EMAIL_FORMAT_MESSAGE)
+            ;
+
+        result.IsValid.Should()
+            .BeFalse()
+            ;
+    }
+
+    [TestMethod]
+    public void Should_Throw_Validation_Exception_When_Parameters_Are_Empty()
+    {
+        //GIVEN
+        var command = new SendResetPasswordEmail
+        {
+            Email = string.Empty,
+        };
+
+        var validator = new SendResetPasswordEmailValidator();
+
+        //WHEN
+        var result = validator.Validate(command);
+
+        //THEN
+        result.Errors.Should()
+            .HaveCount(2)
+            .And
+            .Contain(failure =>
+                failure.ErrorCode == ValidationErrorCodes.SEND_RESET_PASSWORD_INCORRECT_EMAIL_FORMAT
+                && failure.ErrorMessage == ValidationErrorCodes.SEND_RESET_PASSWORD_INCORRECT_EMAIL_FORMAT_MESSAGE)
             ;
 
         result.IsValid.Should()

@@ -1,29 +1,39 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-	<TargetFramework>net6.0</TargetFramework>
-	<Nullable>enable</Nullable>
-	<ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Company>Silent Mike</Company>
+        <Product>DietMenu-Mailing-Service</Product>
+    </PropertyGroup>
 
-	<ItemGroup>
-		<Using Include="MediatR" />
-	</ItemGroup>
+    <ItemGroup>
+        <Using Include="MediatR"/>
+        <Using Include="SilentMike.DietMenu.Mailing.Application.Common.Constants"/>
+        <Using Include="SilentMike.DietMenu.Mailing.Application.Shared"/>
+    </ItemGroup>
 
-  <ItemGroup>
-	  <PackageReference Include="Serilog.AspNetCore" Version="4.1.0" />
-	  <PackageReference Include="Serilog.Expressions" Version="3.2.1" />
-	  <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1" />
-	  <PackageReference Include="Serilog.Sinks.Seq" Version="5.1.1" />
-	  <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Serilog.AspNetCore" Version="7.0.0"/>
+        <PackageReference Include="Serilog.Expressions" Version="3.4.1"/>
+        <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0"/>
+        <PackageReference Include="Serilog.Sinks.Seq" Version="5.2.2"/>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
+    </ItemGroup>
 
-  <ItemGroup>
-	<ProjectReference Include="..\SilentMike.DietMenu.Mailing.Infrastructure\SilentMike.DietMenu.Mailing.Infrastructure.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\SilentMike.DietMenu.Mailing.Infrastructure\SilentMike.DietMenu.Mailing.Infrastructure.csproj"/>
+    </ItemGroup>
 
-	<ItemGroup>
-		<InternalsVisibleTo Include="SilentMike.DietMenu.Mailing.IntegrationTests" />
-	</ItemGroup>
+    <ItemGroup>
+        <Content Update="appsettings.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="SilentMike.DietMenu.Mailing.IntegrationTests"/>
+    </ItemGroup>
 
 </Project>

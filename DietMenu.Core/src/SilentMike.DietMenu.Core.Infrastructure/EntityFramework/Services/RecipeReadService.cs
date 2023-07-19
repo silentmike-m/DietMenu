@@ -31,6 +31,7 @@ internal sealed class RecipeReadService : IRecipeReadService
         var orderBy = GetOrderBy(gridRequest.OrderBy);
 
         var query = this.context.Recipes
+            .Where(i => i.IsActive)
             .Include(i => i.MealType)
             .Include(i => i.Ingredients)
             .ThenInclude(i => i.Ingredient)

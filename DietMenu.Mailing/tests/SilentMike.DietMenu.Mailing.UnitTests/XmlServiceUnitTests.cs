@@ -1,6 +1,5 @@
 ﻿namespace SilentMike.DietMenu.Mailing.UnitTests;
 
-using System;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SilentMike.DietMenu.Mailing.Application.Exceptions;
@@ -10,19 +9,19 @@ using SilentMike.DietMenu.Mailing.Application.Services;
 public sealed class XmlServiceUnitTests
 {
     [TestMethod]
-    public void ShouldThrowResourceNotFoundWhenInvalidResourceName()
+    public async Task Should_Throw_Resource_Not_Found_When_Invalid_Resource_Name()
     {
         //GIVEN
-        var resourceName = "Test";
+        const string resourceName = "Test";
         var service = new XmlService();
 
         //WHEN
-        Func<string> action = () => service.GetXsltString(resourceName);
+        var action = async () => await service.GetXsltStringAsync(resourceName, CancellationToken.None);
 
         //THEN
-        action.Should()
-            .ThrowExactly<ResourceNotFoundException>()
-            .WithMessage($"*{resourceName}*")
+        await action.Should()
+                .ThrowExactlyAsync<ResourceNotFoundException>()
+                .WithMessage($"*{resourceName}*")
             ;
     }
 }

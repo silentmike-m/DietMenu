@@ -4,9 +4,9 @@ using System.Linq.Expressions;
 using global::AutoMapper;
 using SilentMike.DietMenu.Core.Application.Common;
 using SilentMike.DietMenu.Core.Application.MealTypes.ViewModels;
-using SilentMike.DietMenu.Core.Domain.Entities;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Extensions;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Interfaces;
+using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Models;
 
 internal sealed class MealTypeReadService : IMealTypeReadService
 {
@@ -24,12 +24,13 @@ internal sealed class MealTypeReadService : IMealTypeReadService
         var filter = GetFilter(familyId, gridRequest.Filter);
         var orderBy = GetOrderBy(gridRequest.OrderBy);
 
-        var types = this.context.MealTypes
+        var types = this.context.MealTypeRows
+            .Where(i => i.IsActive)
             .GetFiltered(filter)
             .GetOrdered(orderBy, gridRequest.IsDescending)
             .GetPaged(gridRequest.PageNumber, gridRequest.IsPaged, gridRequest.PageSize);
 
-        var count = this.context.MealTypes.GetItemsCount(filter);
+        var count = this.context.MealTypeRows.GetItemsCount(filter);
 
         var mealTypes = this.mapper.Map<IReadOnlyList<MealType>>(types);
 
@@ -42,7 +43,7 @@ internal sealed class MealTypeReadService : IMealTypeReadService
         return await Task.FromResult(result);
     }
 
-    private static Expression<Func<MealTypeEntity, bool>> GetFilter(Guid familyId, string filter)
+    private static Expression<Func<MealTypeRow, bool>> GetFilter(Guid familyId, string filter)
     {
         if (string.IsNullOrEmpty(filter))
         {
@@ -54,7 +55,7 @@ internal sealed class MealTypeReadService : IMealTypeReadService
         return entity => entity.FamilyId == familyId && entity.Name.ToLower().Contains(filter);
     }
 
-    private static Expression<Func<MealTypeEntity, object>> GetOrderBy(string orderBy)
+    private static Expression<Func<MealTypeRow, object>> GetOrderBy(string orderBy)
     {
         return orderBy.ToLower() switch
         {

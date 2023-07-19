@@ -2,8 +2,10 @@
   <div class="card border-primary shadow">
     <div class="card-header">Rodzaje składników</div>
     <div class="card-body">
-      <div>
+      <div class="mb-5">
+        <label for="ingredientTypeSelection">Rodzaj</label>
         <select
+          id="ingredientTypeSelection"
           class="form-select"
           aria-label="Rodzaj"
           v-model="ingredientTypeId"
@@ -31,9 +33,9 @@
         :canSort="true"
         :columns="gridColumns"
         :getGridData="getGridData"
-        :onElementAdd="addMealType"
-        :onElementEdit="deleteMealType"
-        :onElementDelete="editMealType"
+        :onElementAdd="addRow"
+        :onElementDelete="deleteRow"
+        :onElementEdit="editRow"
         ref="grid"
       />
     </div>
@@ -49,7 +51,15 @@ import IngredientService from "@/services/IngredientService";
 import IngredientTypeService from "@/services/IngredientTypeService";
 import { GridColumnType } from "@/models/Grid/GridColumnType";
 import { onMounted, ref, Ref } from "@vue/runtime-core";
-import { IngredientType } from "@/models/IngredientType";
+import { Ingredient } from "@/models/Ingredient/Ingredient";
+import { IngredientType } from "@/models/IngredientType/IngredientType";
+import DialogService from "@/services/DialogService";
+import { useRouter } from "vue-router";
+import {
+  DeleteIngredient,
+  GetIngredientsGrid,
+} from "@/models/Ingredient/IngredientRequests";
+import { GetIngredientTypes } from "@/models/IngredientType/IngredientTypeRequests";
 
 export default {
   components: {
@@ -87,17 +97,51 @@ export default {
     const ingredientTypeId: Ref<string | null> = ref(null);
     const ingredientTypes: Ref<IngredientType[]> = ref([]);
 
-    const { getIngredientsGrid } = IngredientService();
+    const { closeDialog, showYesNoDialog } = DialogService();
+    const { deleteIngredient, getIngredientsGrid } = IngredientService();
     const { getIngredientTypes } = IngredientTypeService();
+    const router = useRouter();
 
     onMounted(() => {
-      getIngredientTypes().then(
+      getIngredientTypes(new GetIngredientTypes()).then(
         (response) => (ingredientTypes.value = response)
       );
     });
 
-    const getGridData = (request: GridRequest): Promise<GridResponse> => {
-      return getIngredientsGrid(request, ingredientTypeId.value);
+    const addRow = (): void => {
+      router.push({ path: "/ingredients/new" });
+    };
+
+    const deleteRow = (ingredient: Ingredient) => {
+      const question = ingredient.is_system
+        ? `Czy na pewno chcesz usunąć systemowy składnik '${ingredient.name}'?`
+        : `Czy na pewno chcesz usunąć składnik '${ingredient.name}'?`;
+
+      showYesNoDialog({
+        title: "Usunięcie składnika",
+        question: question,
+        confirmAction: () => {
+          const request = new DeleteIngredient();
+          request.id = ingredient.id;
+
+          deleteIngredient(request).then(() => refreshGrid());
+
+          closeDialog();
+        },
+        cancelAction: () => closeDialog(),
+      });
+    };
+
+    const editRow = (ingredient: Ingredient) => {
+      router.push({ path: `/ingredients/${ingredient.id}` });
+    };
+
+    const getGridData = (gridRequest: GridRequest): Promise<GridResponse> => {
+      const request = new GetIngredientsGrid();
+      request.grid_request = gridRequest;
+      request.type_id = ingredientTypeId.value;
+
+      return getIngredientsGrid(request);
     };
 
     const refreshGrid = () => {
@@ -109,6 +153,9 @@ export default {
       gridColumns,
       ingredientTypeId,
       ingredientTypes,
+      addRow,
+      deleteRow,
+      editRow,
       getGridData,
       refreshGrid,
     };
