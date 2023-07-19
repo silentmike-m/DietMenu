@@ -1,25 +1,26 @@
 ﻿namespace SilentMike.DietMenu.Mailing.Infrastructure.Smtp.CommandHandlers;
 
-using MailKit.Net.Smtp;
-using MediatR;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MimeKit;
 using SilentMike.DietMenu.Mailing.Application.Emails.Commands;
+using SilentMike.DietMenu.Mailing.Application.Emails.Models;
 using SilentMike.DietMenu.Mailing.Application.Extensions;
+using SilentMike.DietMenu.Mailing.Infrastructure.Smtp.Interfaces;
 
 internal sealed class SendEmailHandler : IRequestHandler<SendEmail>
 {
     private readonly ILogger<SendEmailHandler> logger;
+    private readonly IMailService mailService;
     private readonly SmtpOptions options;
 
-    public SendEmailHandler(ILogger<SendEmailHandler> logger, IOptions<SmtpOptions> options)
+    public SendEmailHandler(ILogger<SendEmailHandler> logger, IMailService mailService, IOptions<SmtpOptions> options)
     {
         this.logger = logger;
+        this.mailService = mailService;
         this.options = options.Value;
     }
 
-    public async Task<Unit> Handle(SendEmail request, CancellationToken cancellationToken)
+    public async Task Handle(SendEmail request, CancellationToken cancellationToken)
     {
         using var loggerScope = this.logger.BeginPropertyScope(
             ("Email", request.Email.Receiver),
@@ -28,21 +29,30 @@ internal sealed class SendEmailHandler : IRequestHandler<SendEmail>
 
         this.logger.LogInformation("Try to send smtp email");
 
-        var fromAddress = MailboxAddress.Parse(ParserOptions.Default, options.From);
-        var toAddress = MailboxAddress.Parse(ParserOptions.Default, request.Email.Receiver);
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var fromAddress = MailboxAddress.Parse(ParserOptions.Default, this.options.From);
+
+        using var message = CreateMessage(request.Email, fromAddress);
+        await this.mailService.SendEmailAsync(message, cancellationToken);
+    }
+
+    private static MimeMessage CreateMessage(Email email, InternetAddress fromAddress)
+    {
+        var toAddress = MailboxAddress.Parse(ParserOptions.Default, email.Receiver);
 
         var message = new MimeMessage();
         message.From.Add(fromAddress);
         message.To.Add(toAddress);
-        message.Subject = request.Email.Subject;
+        message.Subject = email.Subject;
 
         var bodyBuilder = new BodyBuilder
         {
-            HtmlBody = request.Email.HtmlMessage,
-            TextBody = request.Email.TextMessage,
+            HtmlBody = email.HtmlMessage,
+            TextBody = email.TextMessage,
         };
 
-        foreach (var linkedResource in request.Email.LinkedResources)
+        foreach (var linkedResource in email.LinkedResources)
         {
             var emailLinkedResource = bodyBuilder.LinkedResources.Add(linkedResource.FileName, linkedResource.Data);
             emailLinkedResource.ContentId = linkedResource.ContentId;
@@ -50,12 +60,6 @@ internal sealed class SendEmailHandler : IRequestHandler<SendEmail>
 
         message.Body = bodyBuilder.ToMessageBody();
 
-        using var client = new SmtpClient();
-        await client.ConnectAsync(options.Host, options.Port, options.UseSsl, cancellationToken);
-        await client.AuthenticateAsync(options.User, options.Password, cancellationToken);
-        await client.SendAsync(message, cancellationToken);
-        await client.DisconnectAsync(true, cancellationToken);
-
-        return await Task.FromResult(Unit.Value);
+        return message;
     }
 }

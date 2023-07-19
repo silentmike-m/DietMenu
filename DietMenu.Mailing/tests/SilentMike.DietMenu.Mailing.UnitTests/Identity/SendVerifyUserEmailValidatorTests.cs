@@ -10,7 +10,7 @@ using SilentMike.DietMenu.Mailing.Application.Identity.Validators;
 public sealed class SendVerifyUserEmailValidatorTests
 {
     [TestMethod]
-    public void ShouldPassValidation()
+    public void Should_Pass_Validation()
     {
         //GIVEN
         var command = new SendVerifyUserEmail
@@ -26,13 +26,14 @@ public sealed class SendVerifyUserEmailValidatorTests
         //THEN
         result.Errors.Should()
             .BeEmpty();
+
         result.IsValid.Should()
             .BeTrue()
             ;
     }
 
     [TestMethod]
-    public void ShouldThrowValidationExceptionWhenParametersAreEmpty()
+    public void Should_Throw_Validation_Exception_When_Parameters_Are_Empty()
     {
         //GIVEN
         var command = new SendVerifyUserEmail
@@ -49,8 +50,9 @@ public sealed class SendVerifyUserEmailValidatorTests
         result.Errors.Should()
             .HaveCount(2)
             .And
-            .Contain(i => i.ErrorCode == ValidationErrorCodes.SEND_VERIFY_USER_INCORRECT_EMAIL_FORMAT
-                          && i.ErrorMessage == ValidationErrorCodes.SEND_VERIFY_USER_INCORRECT_EMAIL_FORMAT_MESSAGE)
+            .Contain(failure =>
+                failure.ErrorCode == ValidationErrorCodes.SEND_VERIFY_USER_INCORRECT_EMAIL_FORMAT
+                && failure.ErrorMessage == ValidationErrorCodes.SEND_VERIFY_USER_INCORRECT_EMAIL_FORMAT_MESSAGE)
             ;
 
         result.IsValid.Should()
@@ -59,7 +61,7 @@ public sealed class SendVerifyUserEmailValidatorTests
     }
 
     [TestMethod]
-    public void ShouldPassValidationExceptionWhenEmailIsIncorrectFormat()
+    public void ShouldP_Throw_Validation_Exception_When_Email_Is_Incorrect_Format()
     {
         //GIVEN
         var command = new SendVerifyUserEmail
@@ -76,8 +78,9 @@ public sealed class SendVerifyUserEmailValidatorTests
         result.Errors.Should()
             .HaveCount(1)
             .And
-            .Contain(i => i.ErrorCode == ValidationErrorCodes.SEND_VERIFY_USER_INCORRECT_EMAIL_FORMAT
-                          && i.ErrorMessage == ValidationErrorCodes.SEND_VERIFY_USER_INCORRECT_EMAIL_FORMAT_MESSAGE)
+            .Contain(failure =>
+                failure.ErrorCode == ValidationErrorCodes.SEND_VERIFY_USER_INCORRECT_EMAIL_FORMAT
+                && failure.ErrorMessage == ValidationErrorCodes.SEND_VERIFY_USER_INCORRECT_EMAIL_FORMAT_MESSAGE)
             ;
 
         result.IsValid.Should()

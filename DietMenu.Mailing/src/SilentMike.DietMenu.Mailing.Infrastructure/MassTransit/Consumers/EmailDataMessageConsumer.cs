@@ -11,9 +11,9 @@ using SilentMike.DietMenu.Shared.Email.Models;
 internal sealed class EmailDataMessageConsumer : IConsumer<IEmailDataMessage>
 {
     private readonly ILogger<EmailDataMessageConsumer> logger;
-    private readonly IMediator mediator;
+    private readonly ISender mediator;
 
-    public EmailDataMessageConsumer(ILogger<EmailDataMessageConsumer> logger, IMediator mediator)
+    public EmailDataMessageConsumer(ILogger<EmailDataMessageConsumer> logger, ISender mediator)
         => (this.logger, this.mediator) = (logger, mediator);
 
     public async Task Consume(ConsumeContext<IEmailDataMessage> context)

@@ -2,12 +2,12 @@
 
 using System.Runtime.Serialization;
 using FluentValidation.Results;
-using ApplicationException = SilentMike.DietMenu.Mailing.Application.Common.ApplicationException;
+using SilentMike.DietMenu.Mailing.Application.Common;
 
 [Serializable]
 public sealed class ValidationException : ApplicationException
 {
-    public override string Code => "validation_failed";
+    public override string Code => ErrorCodes.VALIDATION_FAILED;
     public IDictionary<string, string[]> Errors { get; } = new Dictionary<string, string[]>();
 
     public ValidationException(IEnumerable<ValidationFailure> failures)
@@ -20,7 +20,7 @@ public sealed class ValidationException : ApplicationException
                 failureGroup => failureGroup.ToArray()
             );
 
-        Errors = errors;
+        this.Errors = errors;
     }
 
     private ValidationException(SerializationInfo info, StreamingContext context)

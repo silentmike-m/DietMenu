@@ -2,7 +2,6 @@
 
 using System.Diagnostics.CodeAnalysis;
 using global::MassTransit;
-using GreenPipes;
 using Microsoft.Extensions.Logging;
 using SilentMike.DietMenu.Mailing.Application.Extensions;
 
@@ -13,8 +12,12 @@ internal sealed class ExceptionLoggerFilter<T> : IFilter<ConsumeContext<T>>
     private readonly ILogger<ExceptionLoggerFilter<T>> logger;
 
     public ExceptionLoggerFilter(ILogger<ExceptionLoggerFilter<T>> logger)
-        => (this.logger) = (logger);
+        => this.logger = logger;
 
+    public void Probe(ProbeContext context)
+    {
+        // Method intentionally left empty.
+    }
 
     public async Task Send(ConsumeContext<T> context, IPipe<ConsumeContext<T>> next)
     {
@@ -26,10 +29,5 @@ internal sealed class ExceptionLoggerFilter<T> : IFilter<ConsumeContext<T>>
         );
 
         await next.Send(context);
-    }
-
-    public void Probe(ProbeContext context)
-    {
-        // Method intentionally left empty.
     }
 }

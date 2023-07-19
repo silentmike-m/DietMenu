@@ -12,6 +12,7 @@ internal static class XmlSerializerExtensions
 
         using var stringWriter = new Utf8StringWriter();
         self.Serialize(stringWriter, o, ns);
+
         return stringWriter.ToString();
     }
 }

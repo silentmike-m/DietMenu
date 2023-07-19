@@ -1,18 +1,17 @@
 ﻿namespace SilentMike.DietMenu.Mailing.Application.Common.Behaviours;
 
 using FluentValidation;
-using MediatR;
 using ValidationException = SilentMike.DietMenu.Mailing.Application.Exceptions.ValidationException;
 
-internal sealed class ValidationBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+internal sealed class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
 {
     private readonly IEnumerable<IValidator<TRequest>> validators;
 
-    public ValidationBehaviour(IEnumerable<IValidator<TRequest>> validators) =>
-        (this.validators) = (validators);
+    public ValidationBehavior(IEnumerable<IValidator<TRequest>> validators) =>
+        this.validators = validators;
 
-    public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
         if (this.validators.Any())
         {

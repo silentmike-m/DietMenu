@@ -2,7 +2,6 @@
 
 using System.Diagnostics.CodeAnalysis;
 using global::MassTransit;
-using GreenPipes;
 using Microsoft.Extensions.Logging;
 
 [ExcludeFromCodeCoverage]
@@ -14,7 +13,12 @@ internal sealed class RetryFilter<T> : IFilter<ConsumeContext<T>>
     private readonly ILogger<RetryFilter<T>> logger;
 
     public RetryFilter(ILogger<RetryFilter<T>> logger)
-        => (this.logger) = (logger);
+        => this.logger = logger;
+
+    public void Probe(ProbeContext context)
+    {
+        // Method intentionally left empty.
+    }
 
     public async Task Send(ConsumeContext<T> context, IPipe<ConsumeContext<T>> next)
     {
@@ -35,10 +39,5 @@ internal sealed class RetryFilter<T> : IFilter<ConsumeContext<T>>
                 throw;
             }
         }
-    }
-
-    public void Probe(ProbeContext context)
-    {
-        // Method intentionally left empty.
     }
 }
