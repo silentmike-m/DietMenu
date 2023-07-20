@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using SilentMike.DietMenu.Auth.Infrastructure.AutoMapper;
 using SilentMike.DietMenu.Auth.Infrastructure.HealthCheck;
 using SilentMike.DietMenu.Auth.Infrastructure.Identity;
 using SilentMike.DietMenu.Auth.Infrastructure.Identity.Data;
@@ -20,7 +21,7 @@ public static class DependencyInjection
     {
         services.AddHealthChecks(configuration);
 
-        services.AddMediatR(Assembly.GetExecutingAssembly());
+        services.AddMediatR(config => config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
         services.AddIdentity(configuration);
 
@@ -29,6 +30,8 @@ public static class DependencyInjection
         services.AddMassTransit(configuration);
 
         services.AddDietMenuSwagger();
+
+        services.AddAutoMapper();
     }
 
     public static void UseInfrastructure(this IApplicationBuilder app, IConfiguration configuration)
@@ -40,7 +43,7 @@ public static class DependencyInjection
         try
         {
             var context = scope.ServiceProvider.GetRequiredService<DietMenuDbContext>();
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<DietMenuUser>>();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
 
             app.UseHealthChecks();
 

@@ -5,40 +5,45 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SilentMike.DietMenu.Auth.Domain.Services;
 using SilentMike.DietMenu.Auth.Infrastructure.Identity.Data;
 using SilentMike.DietMenu.Auth.Infrastructure.Identity.Models;
+using SilentMike.DietMenu.Auth.Infrastructure.Identity.Services;
 
 internal static class DependencyInjection
 {
     public static void AddIdentity(this IServiceCollection services, IConfiguration configuration)
     {
-        services.Configure<IdentityOptions>(configuration.GetSection(IdentityOptions.SectionName));
+        services.Configure<IdentityOptions>(configuration.GetSection(IdentityOptions.SECTION_NAME));
 
         var connectionString = configuration.GetConnectionString("DefaultConnection");
 
-        services.AddDbContext<DietMenuDbContext>(options => options.UseSqlServer(connectionString));
+        var identityOptions = configuration.GetSection(IdentityOptions.SECTION_NAME).Get<IdentityOptions>();
+        identityOptions ??= new IdentityOptions();
+
+        services.AddDbContext<IDietMenuDbContext, DietMenuDbContext>(options => options.UseSqlServer(connectionString));
 
         services.AddDatabaseDeveloperPageExceptionFilter();
 
-        services.AddDefaultIdentity<DietMenuUser>(options => options.SignIn.RequireConfirmedAccount = true)
+        services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = identityOptions.RequireConfirmedAccount)
             .AddEntityFrameworkStores<DietMenuDbContext>()
             .AddDefaultTokenProviders();
+
+        services.AddScoped<IFamilyRepository, FamilyRepository>();
+        services.AddScoped<IUserService, UserService>();
     }
 
-    public static void UseIdentity(
-        this IApplicationBuilder _,
-        IConfiguration configuration,
-        DietMenuDbContext context,
-        UserManager<DietMenuUser> userManager)
+    public static void UseIdentity(this IApplicationBuilder _, IConfiguration configuration, DietMenuDbContext context, UserManager<User> userManager)
     {
         context.Database.Migrate();
 
-        var identityOptions = configuration.GetSection(IdentityOptions.SectionName).Get<IdentityOptions>();
+        var identityOptions = configuration.GetSection(IdentityOptions.SECTION_NAME).Get<IdentityOptions>();
+        identityOptions ??= new IdentityOptions();
 
         AddSystemUser(identityOptions, userManager);
     }
 
-    private static void AddSystemUser(IdentityOptions options, UserManager<DietMenuUser> userManager)
+    private static void AddSystemUser(IdentityOptions options, UserManager<User> userManager)
     {
         var user = userManager.FindByNameAsync(options.SystemUserEmail).Result;
 
@@ -49,19 +54,19 @@ internal static class DependencyInjection
 
         var userId = Guid.NewGuid();
 
-        var family = new DietMenuFamily
+        var family = new Family
         {
             Id = userId,
             Name = "System",
         };
 
-        user = new DietMenuUser
+        user = new User
         {
             Id = userId.ToString(),
             Email = options.SystemUserEmail,
             EmailConfirmed = true,
             Family = family,
-            FamilyId = family.Id,
+            FamilyKey = family.Key,
             FirstName = "Saruman",
             LastName = "White",
             UserName = options.SystemUserEmail,

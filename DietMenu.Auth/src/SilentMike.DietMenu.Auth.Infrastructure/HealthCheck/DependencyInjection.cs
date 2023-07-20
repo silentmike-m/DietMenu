@@ -20,17 +20,17 @@ public static class DependencyInjection
     public static void AddHealthChecks(this IServiceCollection services, IConfiguration configuration)
     {
         var identityConnectionString = configuration.GetConnectionString("DefaultConnection");
-        var rabbitMqOptions = configuration.GetSection(RabbitMqOptions.SectionName).Get<RabbitMqOptions>();
+        var rabbitMqOptions = configuration.GetSection(RabbitMqOptions.SECTION_NAME).Get<RabbitMqOptions>();
 
         services.AddHealthChecks()
             .AddDbContextCheck<DietMenuDbContext>(name: "Identity")
-            .AddRabbitMQ(connectionFactoryFactory: _ => new ConnectionFactory
+            .AddRabbitMQ(_ => new ConnectionFactory
             {
                 HostName = rabbitMqOptions.HostName,
                 Password = rabbitMqOptions.Password,
                 UserName = rabbitMqOptions.User,
-            }, name: "RabbitMQ")
-            .AddSqlServer(connectionString: identityConnectionString, name: "SQL Identity")
+            }, "RabbitMQ")
+            .AddSqlServer(identityConnectionString, name: "SQL Identity")
             ;
     }
 
@@ -66,6 +66,7 @@ public static class DependencyInjection
                 HealthCheckDurationInMilliseconds = componentReport.Duration.Milliseconds,
                 Status = componentReport.Status.ToString(),
             };
+
             componentHealthChecks.Add(componentHealthCheck);
         }
 
@@ -81,6 +82,7 @@ public static class DependencyInjection
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
             WriteIndented = true,
         };
+
         await context.Response.WriteAsync(JsonSerializer.Serialize(healthCheck, jsonOptions));
     }
 }

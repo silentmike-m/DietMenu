@@ -18,10 +18,10 @@ namespace SilentMike.DietMenu.Auth.Infrastructure.Identity.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("SilentMike")
-                .HasAnnotation("ProductVersion", "6.0.1")
+                .HasAnnotation("ProductVersion", "7.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -56,7 +56,7 @@ namespace SilentMike.DietMenu.Auth.Infrastructure.Identity.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("nvarchar(max)");
@@ -81,7 +81,7 @@ namespace SilentMike.DietMenu.Auth.Infrastructure.Identity.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("nvarchar(max)");
@@ -103,12 +103,10 @@ namespace SilentMike.DietMenu.Auth.Infrastructure.Identity.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderKey")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -145,12 +143,10 @@ namespace SilentMike.DietMenu.Auth.Infrastructure.Identity.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -160,22 +156,30 @@ namespace SilentMike.DietMenu.Auth.Infrastructure.Identity.Migrations
                     b.ToTable("AspNetUserTokens", "SilentMike");
                 });
 
-            modelBuilder.Entity("SilentMike.DietMenu.Auth.Infrastructure.Identity.Models.DietMenuFamily", b =>
+            modelBuilder.Entity("SilentMike.DietMenu.Auth.Infrastructure.Identity.Models.Family", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Key")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Key"));
+
+                    b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("Key");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
 
                     b.ToTable("Families", "SilentMike");
                 });
 
-            modelBuilder.Entity("SilentMike.DietMenu.Auth.Infrastructure.Identity.Models.DietMenuUser", b =>
+            modelBuilder.Entity("SilentMike.DietMenu.Auth.Infrastructure.Identity.Models.User", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -194,15 +198,15 @@ namespace SilentMike.DietMenu.Auth.Infrastructure.Identity.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("FamilyId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("FamilyKey")
+                        .HasColumnType("int");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsSystem")
-                        .HasColumnType("bit");
+                    b.Property<int>("Key")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("LastLogin")
                         .HasColumnType("datetime2");
@@ -246,7 +250,10 @@ namespace SilentMike.DietMenu.Auth.Infrastructure.Identity.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FamilyId");
+                    b.HasIndex("FamilyKey");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -270,7 +277,7 @@ namespace SilentMike.DietMenu.Auth.Infrastructure.Identity.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("SilentMike.DietMenu.Auth.Infrastructure.Identity.Models.DietMenuUser", null)
+                    b.HasOne("SilentMike.DietMenu.Auth.Infrastructure.Identity.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -279,7 +286,7 @@ namespace SilentMike.DietMenu.Auth.Infrastructure.Identity.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("SilentMike.DietMenu.Auth.Infrastructure.Identity.Models.DietMenuUser", null)
+                    b.HasOne("SilentMike.DietMenu.Auth.Infrastructure.Identity.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -294,7 +301,7 @@ namespace SilentMike.DietMenu.Auth.Infrastructure.Identity.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SilentMike.DietMenu.Auth.Infrastructure.Identity.Models.DietMenuUser", null)
+                    b.HasOne("SilentMike.DietMenu.Auth.Infrastructure.Identity.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -303,18 +310,18 @@ namespace SilentMike.DietMenu.Auth.Infrastructure.Identity.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("SilentMike.DietMenu.Auth.Infrastructure.Identity.Models.DietMenuUser", null)
+                    b.HasOne("SilentMike.DietMenu.Auth.Infrastructure.Identity.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("SilentMike.DietMenu.Auth.Infrastructure.Identity.Models.DietMenuUser", b =>
+            modelBuilder.Entity("SilentMike.DietMenu.Auth.Infrastructure.Identity.Models.User", b =>
                 {
-                    b.HasOne("SilentMike.DietMenu.Auth.Infrastructure.Identity.Models.DietMenuFamily", "Family")
+                    b.HasOne("SilentMike.DietMenu.Auth.Infrastructure.Identity.Models.Family", "Family")
                         .WithMany()
-                        .HasForeignKey("FamilyId")
+                        .HasForeignKey("FamilyKey")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

@@ -1,16 +1,14 @@
 ﻿namespace SilentMike.DietMenu.Auth.Web.Filters;
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Mime;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Formatters;
-using Microsoft.Extensions.Logging;
 using SilentMike.DietMenu.Auth.Application.Common;
 using SilentMike.DietMenu.Auth.Application.Common.Constants;
 using SilentMike.DietMenu.Auth.Application.Exceptions;
-using ApplicationException = SilentMike.DietMenu.Auth.Application.Common.ApplicationException;
+using SilentMike.DietMenu.Auth.Application.ViewModels;
 
 [ExcludeFromCodeCoverage]
 internal sealed class ApiExceptionFilterAttribute : ExceptionFilterAttribute
@@ -25,6 +23,20 @@ internal sealed class ApiExceptionFilterAttribute : ExceptionFilterAttribute
         this.HandleException(context);
 
         base.OnException(context);
+    }
+
+    private void HandleException(ExceptionContext context)
+    {
+        this.logger.LogError(context.Exception, "{Message}", context.Exception.Message);
+
+        var exceptionHandler = context.Exception switch
+        {
+            ValidationException => HandleValidationException,
+            ApplicationException => HandleApplicationException,
+            _ => new Action<ExceptionContext>(HandleUnknownException),
+        };
+
+        exceptionHandler.Invoke(context);
     }
 
     private static void HandleApplicationException(ExceptionContext context)
@@ -43,26 +55,13 @@ internal sealed class ApiExceptionFilterAttribute : ExceptionFilterAttribute
         context.Result = new ObjectResult(response)
         {
             ContentTypes = new MediaTypeCollection
-                {
-                    MediaTypeNames.Application.Json,
-                },
+            {
+                MediaTypeNames.Application.Json,
+            },
             StatusCode = 500,
         };
+
         context.ExceptionHandled = true;
-    }
-
-    private void HandleException(ExceptionContext context)
-    {
-        this.logger.LogError(context.Exception, "{Message}", context.Exception.Message);
-
-        var exceptionHandler = context.Exception switch
-        {
-            ValidationException => HandleValidationException,
-            ApplicationException => HandleApplicationException,
-            _ => new Action<ExceptionContext>(HandleUnknownException),
-        };
-
-        exceptionHandler.Invoke(context);
     }
 
     private static void HandleUnknownException(ExceptionContext context)
@@ -76,11 +75,12 @@ internal sealed class ApiExceptionFilterAttribute : ExceptionFilterAttribute
         context.Result = new ObjectResult(response)
         {
             ContentTypes = new MediaTypeCollection
-                {
-                    MediaTypeNames.Application.Json,
-                },
+            {
+                MediaTypeNames.Application.Json,
+            },
             StatusCode = 500,
         };
+
         context.ExceptionHandled = true;
     }
 
@@ -101,11 +101,12 @@ internal sealed class ApiExceptionFilterAttribute : ExceptionFilterAttribute
         context.Result = new ObjectResult(response)
         {
             ContentTypes = new MediaTypeCollection
-                {
-                    MediaTypeNames.Application.Json,
-                },
+            {
+                MediaTypeNames.Application.Json,
+            },
             StatusCode = 500,
         };
+
         context.ExceptionHandled = true;
     }
 }

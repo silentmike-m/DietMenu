@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SilentMike.DietMenu.Auth.We
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SilentMike.DietMenu.Shared", "..\src\SilentMike.DietMenu.Shared\SilentMike.DietMenu.Shared.csproj", "{A8B5B3C7-4F2E-46BA-B598-62A567114BE5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SilentMike.DietMenu.Auth.Domain", "SilentMike.DietMenu.Auth.Domain\SilentMike.DietMenu.Auth.Domain.csproj", "{8B609BF6-979A-46B8-ACFD-ADE26FA732C1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{A8B5B3C7-4F2E-46BA-B598-62A567114BE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A8B5B3C7-4F2E-46BA-B598-62A567114BE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A8B5B3C7-4F2E-46BA-B598-62A567114BE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B609BF6-979A-46B8-ACFD-ADE26FA732C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B609BF6-979A-46B8-ACFD-ADE26FA732C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B609BF6-979A-46B8-ACFD-ADE26FA732C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B609BF6-979A-46B8-ACFD-ADE26FA732C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

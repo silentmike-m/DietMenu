@@ -4,7 +4,7 @@ using FluentValidation;
 using ValidationException = SilentMike.DietMenu.Mailing.Application.Exceptions.ValidationException;
 
 internal sealed class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : IRequest<TResponse>
+    where TRequest : IBaseRequest
 {
     private readonly IEnumerable<IValidator<TRequest>> validators;
 

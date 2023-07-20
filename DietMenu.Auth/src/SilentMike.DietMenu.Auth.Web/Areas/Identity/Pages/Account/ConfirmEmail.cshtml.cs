@@ -1,14 +1,9 @@
 namespace SilentMike.DietMenu.Auth.Web.Areas.Identity.Pages.Account;
 
-using System;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using SilentMike.DietMenu.Auth.Application.Users.Commands;
 
 public class ConfirmEmailModel : PageModel
 {
@@ -38,19 +33,20 @@ public class ConfirmEmailModel : PageModel
         {
             var token = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
 
-            var request = new ConfirmUser
-            {
-                Id = userId,
-                Token = token,
-            };
-
-            await this.mediator.Send(request, CancellationToken.None);
+            // var request = new ConfirmUser
+            // {
+            //     Id = userId,
+            //     Token = token,
+            // };
+            //
+            // await this.mediator.Send(request, CancellationToken.None);
 
             return this.RedirectToPage("./Login");
         }
         catch (Exception exception)
         {
             this.ModelState.AddModelError(string.Empty, exception.Message);
+
             return this.Page();
         }
     }
