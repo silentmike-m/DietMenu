@@ -15,7 +15,7 @@ public sealed class UserEntityTests
         //GIVEN
         const string newName = "new Name";
 
-        var user = new UserEntity("user@domain.com", Guid.NewGuid(), Guid.NewGuid());
+        var user = new UserEntity("user@domain.com", Guid.NewGuid(), newName, "last name", Guid.NewGuid());
 
         //WHEN
         user.SetFirstName(newName);
@@ -32,7 +32,7 @@ public sealed class UserEntityTests
         //GIVEN
         const string newName = "new Name";
 
-        var user = new UserEntity("user@domain.com", Guid.NewGuid(), Guid.NewGuid());
+        var user = new UserEntity("user@domain.com", Guid.NewGuid(), "first name", newName, Guid.NewGuid());
 
         //WHEN
         user.SetLastName(newName);
@@ -48,17 +48,16 @@ public sealed class UserEntityTests
     {
         //GIVEN
         const string newName = "";
-
-        var user = new UserEntity("user@domain.com", Guid.NewGuid(), Guid.NewGuid());
+        var id = Guid.NewGuid();
 
         //WHEN
-        var action = () => user.SetFirstName(newName);
+        var action = () => new UserEntity("user@domain.com", Guid.NewGuid(), newName, "last name", id);
 
         //THEN
         action.Should()
             .Throw<UserEmptyFirstNameException>()
             .Where(exception => exception.Code == ErrorCodes.USER_EMPTY_FIRST_NAME)
-            .Where(exception => exception.Id == user.Id)
+            .Where(exception => exception.Id == id)
             ;
     }
 
@@ -67,17 +66,16 @@ public sealed class UserEntityTests
     {
         //GIVEN
         const string newName = "   ";
-
-        var user = new UserEntity("user@domain.com", Guid.NewGuid(), Guid.NewGuid());
+        var id = Guid.NewGuid();
 
         //WHEN
-        var action = () => user.SetFirstName(newName);
+        var action = () => new UserEntity("user@domain.com", Guid.NewGuid(), newName, "last name", id);
 
         //THEN
         action.Should()
             .Throw<UserEmptyFirstNameException>()
             .Where(exception => exception.Code == ErrorCodes.USER_EMPTY_FIRST_NAME)
-            .Where(exception => exception.Id == user.Id)
+            .Where(exception => exception.Id == id)
             ;
     }
 
@@ -86,17 +84,16 @@ public sealed class UserEntityTests
     {
         //GIVEN
         const string newName = "";
-
-        var user = new UserEntity("user@domain.com", Guid.NewGuid(), Guid.NewGuid());
+        var id = Guid.NewGuid();
 
         //WHEN
-        var action = () => user.SetLastName(newName);
+        var action = () => new UserEntity("user@domain.com", Guid.NewGuid(), "first name", newName, id);
 
         //THEN
         action.Should()
             .Throw<UserEmptyLastNameException>()
             .Where(exception => exception.Code == ErrorCodes.USER_EMPTY_LAST_NAME)
-            .Where(exception => exception.Id == user.Id)
+            .Where(exception => exception.Id == id)
             ;
     }
 
@@ -105,17 +102,16 @@ public sealed class UserEntityTests
     {
         //GIVEN
         const string newName = "   ";
-
-        var user = new UserEntity("user@domain.com", Guid.NewGuid(), Guid.NewGuid());
+        var id = Guid.NewGuid();
 
         //WHEN
-        var action = () => user.SetLastName(newName);
+        var action = () => new UserEntity("user@domain.com", Guid.NewGuid(), "first name", newName, id);
 
         //THEN
         action.Should()
             .Throw<UserEmptyLastNameException>()
             .Where(exception => exception.Code == ErrorCodes.USER_EMPTY_LAST_NAME)
-            .Where(exception => exception.Id == user.Id)
+            .Where(exception => exception.Id == id)
             ;
     }
 }

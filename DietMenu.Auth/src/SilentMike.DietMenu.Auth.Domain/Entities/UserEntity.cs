@@ -7,17 +7,20 @@ public sealed class UserEntity
 {
     public string Email { get; private set; }
     public Guid FamilyId { get; private set; }
-    public string FirstName { get; internal set; } = null!;
+    public string FirstName { get; private set; } = null!;
     public Guid Id { get; private set; }
-    public string LastName { get; internal set; } = null!;
+    public string LastName { get; private set; } = null!;
     public UserRole Role { get; private set; }
 
-    public UserEntity(string email, Guid familyId, Guid id, UserRole role = UserRole.User)
+    public UserEntity(string email, Guid familyId, string firstName, string lastName, Guid id, UserRole role = UserRole.User)
     {
         this.Email = email;
         this.FamilyId = familyId;
         this.Id = id;
         this.Role = role;
+
+        this.SetFirstName(firstName);
+        this.SetLastName(lastName);
     }
 
     public void SetFirstName(string firstName)

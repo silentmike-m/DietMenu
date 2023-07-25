@@ -10,12 +10,12 @@ using SilentMike.DietMenu.Auth.Infrastructure.Identity.Models;
 internal sealed class FamilyRepository : IFamilyRepository
 {
     private readonly IDietMenuDbContext context;
-    private readonly IMapper Mapper;
+    private readonly IMapper mapper;
 
     public FamilyRepository(IDietMenuDbContext context, IMapper mapper)
     {
         this.context = context;
-        this.Mapper = mapper;
+        this.mapper = mapper;
     }
 
     public async Task<FamilyEntity?> GetAsync(Guid id, CancellationToken cancellationToken = default)
@@ -27,7 +27,7 @@ internal sealed class FamilyRepository : IFamilyRepository
             return null;
         }
 
-        var result = this.Mapper.Map<FamilyEntity>(family);
+        var result = this.mapper.Map<FamilyEntity>(family);
 
         return result;
     }

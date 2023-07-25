@@ -19,8 +19,8 @@ using SilentMike.DietMenu.Auth.Infrastructure.Exceptions.Users;
 [TestClass]
 public sealed class CreateUserHandlerTests
 {
-    private static readonly FamilyEntity EXISTING_FAMILY = new(Guid.NewGuid());
-    private static readonly UserEntity EXISTING_USER = new("user@domain.com", Guid.NewGuid(), Guid.NewGuid());
+    private static readonly FamilyEntity EXISTING_FAMILY = new(Guid.NewGuid(), "existing family");
+    private static readonly UserEntity EXISTING_USER = new("user@domain.com", Guid.NewGuid(), "first name", "last name", Guid.NewGuid());
 
     private readonly Mock<IFamilyRepository> familyRepository = new();
     private readonly NullLogger<CreateUserHandler> logger = new();
@@ -90,11 +90,7 @@ public sealed class CreateUserHandlerTests
             .Be(userToCreate.Password)
             ;
 
-        var expectedUser = new UserEntity(userToCreate.Email, userToCreate.FamilyId, userToCreate.Id)
-        {
-            FirstName = userToCreate.FirstName,
-            LastName = userToCreate.LastName,
-        };
+        var expectedUser = new UserEntity(userToCreate.Email, userToCreate.FamilyId, userToCreate.FirstName, userToCreate.LastName, userToCreate.Id);
 
         createdUser.Should()
             .NotBeNull()

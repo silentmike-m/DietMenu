@@ -34,10 +34,7 @@ public sealed class FamilyProfilesTests
         var result = this.mapper.Map<FamilyEntity>(DTO_FAMILY);
 
         //THEN
-        var expectedResult = new FamilyEntity(DTO_FAMILY.Id)
-        {
-            Name = DTO_FAMILY.Name,
-        };
+        var expectedResult = new FamilyEntity(DTO_FAMILY.Id, DTO_FAMILY.Name);
 
         result.Should()
             .BeEquivalentTo(expectedResult)

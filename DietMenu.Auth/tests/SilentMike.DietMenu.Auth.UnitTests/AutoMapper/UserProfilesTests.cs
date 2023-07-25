@@ -43,11 +43,7 @@ public sealed class UserProfilesTests
         var result = this.mapper.Map<UserEntity>(DTO_USER);
 
         //THEN
-        var expectedResult = new UserEntity(DTO_USER.Email, DTO_USER.Family.Id, new Guid(DTO_USER.Id), DTO_USER.Role)
-        {
-            FirstName = DTO_USER.FirstName,
-            LastName = DTO_USER.LastName,
-        };
+        var expectedResult = new UserEntity(DTO_USER.Email, DTO_USER.Family.Id, DTO_USER.FirstName, DTO_USER.LastName, new Guid(DTO_USER.Id), DTO_USER.Role);
 
         result.Should()
             .BeEquivalentTo(expectedResult)

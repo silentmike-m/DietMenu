@@ -53,9 +53,7 @@ internal sealed class CreateUserHandler : IRequestHandler<CreateUser>
             throw new UserAlreadyExistsException(request.User.Email);
         }
 
-        user = new UserEntity(request.User.Email, request.User.FamilyId, request.User.Id);
-        user.SetFirstName(request.User.FirstName);
-        user.SetLastName(request.User.LastName);
+        user = new UserEntity(request.User.Email, request.User.FamilyId, request.User.FirstName, request.User.LastName, request.User.Id);
 
         await this.userService.CreateUserAsync(request.User.Password, user, cancellationToken);
 

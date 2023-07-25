@@ -28,6 +28,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\tests\SilentMike.DietMenu.Auth.Domain\SilentMike.DietMenu.Auth.Domain.csproj" />
+        <ProjectReference Include="..\SilentMike.DietMenu.Auth.Domain\SilentMike.DietMenu.Auth.Domain.csproj" />
     </ItemGroup>
 </Project>

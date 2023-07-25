@@ -5,10 +5,13 @@ using SilentMike.DietMenu.Auth.Domain.Exceptions;
 public sealed class FamilyEntity
 {
     public Guid Id { get; private set; }
-    public string Name { get; internal set; } = string.Empty;
+    public string Name { get; private set; } = string.Empty;
 
-    public FamilyEntity(Guid id)
-        => this.Id = id;
+    public FamilyEntity(Guid id, string name)
+    {
+        this.Id = id;
+        this.SetName(name);
+    }
 
     public void SetName(string name)
     {

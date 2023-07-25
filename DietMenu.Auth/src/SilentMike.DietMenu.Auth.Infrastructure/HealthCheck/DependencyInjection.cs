@@ -20,7 +20,9 @@ public static class DependencyInjection
     public static void AddHealthChecks(this IServiceCollection services, IConfiguration configuration)
     {
         var identityConnectionString = configuration.GetConnectionString("DefaultConnection");
+
         var rabbitMqOptions = configuration.GetSection(RabbitMqOptions.SECTION_NAME).Get<RabbitMqOptions>();
+        rabbitMqOptions ??= new RabbitMqOptions();
 
         services.AddHealthChecks()
             .AddDbContextCheck<DietMenuDbContext>(name: "Identity")

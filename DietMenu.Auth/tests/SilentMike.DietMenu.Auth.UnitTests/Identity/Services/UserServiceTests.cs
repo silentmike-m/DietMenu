@@ -42,11 +42,7 @@ public sealed class UserServiceTests : FakeDietMenuDbContext
 
         const string password = "P@ssw0rd";
 
-        var userToCreate = new UserEntity("user@domain.com", EXISTING_FAMILY.Id, Guid.NewGuid())
-        {
-            FirstName = "John",
-            LastName = "Wick",
-        };
+        var userToCreate = new UserEntity("user@domain.com", EXISTING_FAMILY.Id, "John", "Wick", Guid.NewGuid());
 
         var identityResult = IdentityResult.Success;
 
@@ -186,11 +182,7 @@ public sealed class UserServiceTests : FakeDietMenuDbContext
         var result = await service.GetByEmailAsync(user.Email, CancellationToken.None);
 
         //THEN
-        var expectedResult = new UserEntity(user.Email, user.Family.Id, new Guid(user.Id), user.Role)
-        {
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-        };
+        var expectedResult = new UserEntity(user.Email, user.Family.Id, user.FirstName, user.LastName, new Guid(user.Id), user.Role);
 
         result.Should()
             .NotBeNull()
@@ -231,11 +223,7 @@ public sealed class UserServiceTests : FakeDietMenuDbContext
         var result = await service.GetByIdAsync(userId, CancellationToken.None);
 
         //THEN
-        var expectedResult = new UserEntity(user.Email, user.Family.Id, new Guid(user.Id), user.Role)
-        {
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-        };
+        var expectedResult = new UserEntity(user.Email, user.Family.Id, user.FirstName, user.LastName, new Guid(user.Id), user.Role);
 
         result.Should()
             .NotBeNull()
@@ -258,11 +246,7 @@ public sealed class UserServiceTests : FakeDietMenuDbContext
 
         const string password = "P@ssw0rd";
 
-        var userToCreate = new UserEntity("user@domain.com", EXISTING_FAMILY.Id, Guid.NewGuid())
-        {
-            FirstName = "John",
-            LastName = "Wick",
-        };
+        var userToCreate = new UserEntity("user@domain.com", EXISTING_FAMILY.Id, "John", "Wick", Guid.NewGuid());
 
         var userManager = new FakeUserManagerBuilder()
             .With(userManager => userManager

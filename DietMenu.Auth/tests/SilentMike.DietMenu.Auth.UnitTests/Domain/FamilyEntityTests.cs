@@ -15,7 +15,7 @@ public sealed class FamilyEntityTests
         //GIVEN
         const string newName = "new Name";
 
-        var family = new FamilyEntity(Guid.NewGuid());
+        var family = new FamilyEntity(Guid.NewGuid(), "name");
 
         //WHEN
         family.SetName(newName);
@@ -30,16 +30,16 @@ public sealed class FamilyEntityTests
     public void Should_Throw_Family_Empty_Name_Exception_When_Name_Is_Empty_String()
     {
         //GIVEN
-        var family = new FamilyEntity(Guid.NewGuid());
+        var id = Guid.NewGuid();
 
         //WHEN
-        var action = () => family.SetName("");
+        var action = () => new FamilyEntity(id, "");
 
         //THEN
         action.Should()
             .Throw<FamilyEmptyNameException>()
             .Where(exception => exception.Code == ErrorCodes.FAMILY_EMPTY_NAME)
-            .Where(exception => exception.Id == family.Id)
+            .Where(exception => exception.Id == id)
             ;
     }
 
@@ -47,16 +47,16 @@ public sealed class FamilyEntityTests
     public void Should_Throw_Family_Empty_Name_Exception_When_Name_Is_White_Spaces()
     {
         //GIVEN
-        var family = new FamilyEntity(Guid.NewGuid());
+        var id = Guid.NewGuid();
 
         //WHEN
-        var action = () => family.SetName("   ");
+        var action = () => new FamilyEntity(id, "    ");
 
         //THEN
         action.Should()
             .Throw<FamilyEmptyNameException>()
             .Where(exception => exception.Code == ErrorCodes.FAMILY_EMPTY_NAME)
-            .Where(exception => exception.Id == family.Id)
+            .Where(exception => exception.Id == id)
             ;
     }
 }
