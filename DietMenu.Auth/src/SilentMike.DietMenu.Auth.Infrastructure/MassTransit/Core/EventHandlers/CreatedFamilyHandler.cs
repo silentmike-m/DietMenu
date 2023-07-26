@@ -1,10 +1,10 @@
-﻿namespace SilentMike.DietMenu.Auth.Infrastructure.MassTransit.Families.EventHandlers;
+﻿namespace SilentMike.DietMenu.Auth.Infrastructure.MassTransit.Core.EventHandlers;
 
 using global::MassTransit;
 using Microsoft.Extensions.Logging;
 using SilentMike.DietMenu.Auth.Application.Common;
 using SilentMike.DietMenu.Auth.Application.Families.Events;
-using SilentMike.DietMenu.Auth.Infrastructure.MassTransit.Families.Models;
+using SilentMike.DietMenu.Auth.Infrastructure.MassTransit.Core.Models;
 using SilentMike.DietMenu.Shared.Core.Interfaces;
 
 internal sealed class CreatedFamilyHandler : INotificationHandler<CreatedFamily>

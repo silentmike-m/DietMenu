@@ -29,9 +29,8 @@ public sealed class FamilyRepositoryTests : FakeDietMenuDbContext
     private readonly IMapper mapper;
 
     public FamilyRepositoryTests()
+        : base(EXISTING_FAMILY, EXISTING_FAMILY_TO_UPDATE)
     {
-        this.Create(EXISTING_FAMILY, EXISTING_FAMILY_TO_UPDATE);
-
         var config = new MapperConfiguration(config => config.AddMaps(Assembly.GetAssembly(typeof(DependencyInjection))));
         this.mapper = config.CreateMapper();
     }

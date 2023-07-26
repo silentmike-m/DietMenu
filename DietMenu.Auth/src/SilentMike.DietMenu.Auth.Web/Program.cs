@@ -7,6 +7,7 @@ using Serilog;
 using SilentMike.DietMenu.Auth.Application;
 using SilentMike.DietMenu.Auth.Application.Common;
 using SilentMike.DietMenu.Auth.Infrastructure;
+using SilentMike.DietMenu.Auth.Infrastructure.Identity.Interfaces;
 using SilentMike.DietMenu.Auth.Web;
 using SilentMike.DietMenu.Auth.Web.Common.Constants;
 using SilentMike.DietMenu.Auth.Web.Filters;
@@ -36,6 +37,7 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<IActionContextAccessor, ActionContextAccessor>();
 builder.Services.AddScoped<ICurrentRequestService, CurrentRequestService>();
+builder.Services.AddScoped<IIdentityPageUrlService, IdentityPageUrlService>();
 
 builder.Services
     .AddAuthentication();

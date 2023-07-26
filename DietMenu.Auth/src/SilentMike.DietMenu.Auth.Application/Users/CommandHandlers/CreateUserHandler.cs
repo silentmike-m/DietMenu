@@ -59,7 +59,6 @@ internal sealed class CreateUserHandler : IRequestHandler<CreateUser>
 
         var notification = new CreatedUser
         {
-            Email = user.Email,
             Id = user.Id,
         };
 

@@ -102,7 +102,6 @@ public sealed class CreateUserHandlerTests
 
         var expectedNotification = new CreatedUser
         {
-            Email = userToCreate.Email,
             Id = userToCreate.Id,
         };
 

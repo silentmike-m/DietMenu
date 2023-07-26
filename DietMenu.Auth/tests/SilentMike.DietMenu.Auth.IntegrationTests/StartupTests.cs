@@ -6,30 +6,29 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SilentMike.DietMenu.Auth.Infrastructure.HealthCheck.Models;
+using SilentMike.DietMenu.Auth.IntegrationTests.Helpers;
 
 #if DEBUG
 [TestClass]
 public sealed class StartupTests
 {
+    private const string HEALTH_CHECK_URL = "/health";
+    private const string SWAGGER_URL = "/swagger/v1/swagger.json";
+
     private readonly WebApplicationFactory<Program> factory;
 
     public StartupTests()
-        => this.factory = new WebApplicationFactory<Program>();
-
-    public void Dispose()
-    {
-        this.factory.Dispose();
-    }
+        => this.factory = new WebApplicationFactory<Program>()
+            .WithFakeDbContext();
 
     [TestMethod]
-    public async Task ShouldReturnHealthCheck()
+    public async Task Should_Return_Health_Check()
     {
         //GIVEN
         var client = this.factory.CreateClient();
-        const string url = "/health";
 
         //WHEN
-        var response = await client.GetAsync(url);
+        var response = await client.GetAsync(HEALTH_CHECK_URL);
 
         //THEN
         response.StatusCode.Should()
@@ -69,23 +68,23 @@ public sealed class StartupTests
     }
 
     [TestMethod]
-    public async Task ShouldReturnSwagger()
+    public async Task Should_Return_Swagger()
     {
         //GIVEN
         var client = this.factory.CreateClient();
 
         //WHEN
-        var response = await client.GetAsync("/swagger/v1/swagger.json");
+        var response = await client.GetAsync(SWAGGER_URL);
 
         //THEN
         response.StatusCode.Should()
             .Be(HttpStatusCode.OK)
             ;
 
-        //response.Content.Headers.ContentType?.ToString()
-        //    .Should()
-        //    .Be("application/json; charset=utf-8")
-        //    ;
+        response.Content.Headers.ContentType?.ToString()
+            .Should()
+            .Be("text/html; charset=utf-8")
+            ;
     }
 }
 #endif

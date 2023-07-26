@@ -4,6 +4,7 @@ using System.Reflection;
 using FluentAssertions;
 using global::AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using SilentMike.DietMenu.Auth.Domain.Entities;
@@ -24,12 +25,12 @@ public sealed class UserServiceTests : FakeDietMenuDbContext
         Name = "family name",
     };
 
+    private readonly NullLogger<UserService> logger = new();
     private readonly IMapper mapper;
 
     public UserServiceTests()
+        : base(EXISTING_FAMILY)
     {
-        this.Create(EXISTING_FAMILY);
-
         var config = new MapperConfiguration(config => config.AddMaps(Assembly.GetAssembly(typeof(DependencyInjection))));
         this.mapper = config.CreateMapper();
     }
@@ -53,7 +54,7 @@ public sealed class UserServiceTests : FakeDietMenuDbContext
                 .Returns(Task.FromResult(identityResult)))
             .Build();
 
-        var service = new UserService(this.Context!, this.mapper, userManager.Object);
+        var service = new UserService(this.Context!, this.logger, this.mapper, userManager.Object);
 
         //WHEN
         await service.CreateUserAsync(password, userToCreate, CancellationToken.None);
@@ -104,7 +105,7 @@ public sealed class UserServiceTests : FakeDietMenuDbContext
             )
             .Build();
 
-        var service = new UserService(this.Context!, this.mapper, userManager.Object);
+        var service = new UserService(this.Context!, this.logger, this.mapper, userManager.Object);
 
         //WHEN
         var result = await service.GetByEmailAsync("email@domain.com", CancellationToken.None);
@@ -141,7 +142,7 @@ public sealed class UserServiceTests : FakeDietMenuDbContext
             )
             .Build();
 
-        var service = new UserService(this.Context!, this.mapper, userManager.Object);
+        var service = new UserService(this.Context!, this.logger, this.mapper, userManager.Object);
 
         //WHEN
         var result = await service.GetByIdAsync(Guid.NewGuid(), CancellationToken.None);
@@ -149,6 +150,70 @@ public sealed class UserServiceTests : FakeDietMenuDbContext
         //THEN
         result.Should()
             .BeNull()
+            ;
+    }
+
+    [TestMethod]
+    public async Task Should_Return_Null_When_Missing_User_On_Generate_Email_Confirmation_Token()
+    {
+        //GIVEN
+        var user = UserEntityFactory.Create(Guid.NewGuid(), Guid.NewGuid());
+
+        var userManager = new FakeUserManagerBuilder()
+            .Build();
+
+        var service = new UserService(this.Context!, this.logger, this.mapper, userManager.Object);
+
+        //WHEN
+        var result = await service.GenerateEmailConfirmationTokenAsync(user, CancellationToken.None);
+
+        //THEN
+        result.Should()
+            .BeNull()
+            ;
+    }
+
+    [TestMethod]
+    public async Task Should_Return_Token_When_Missing_User_On_Generate_Email_Confirmation_Token()
+    {
+        //GIVEN
+        const string token = "confirm_email_token";
+        var userId = Guid.NewGuid();
+
+        var userEntity = UserEntityFactory.Create(Guid.NewGuid(), userId);
+
+        var user = new User
+        {
+            Email = "user@domain.com",
+            Family = new Family
+            {
+                Id = userEntity.FamilyId,
+            },
+            FirstName = "John",
+            Id = userId.ToString(),
+            LastLogin = DateTime.Now,
+            LastName = "Wick",
+        };
+
+        var userManager = new FakeUserManagerBuilder()
+            .With(userManager => userManager
+                .Setup(service => service.FindByIdAsync(user.Id))
+                .ReturnsAsync(user)
+            )
+            .With(userManager => userManager
+                .Setup(service => service.GenerateEmailConfirmationTokenAsync(It.IsAny<User>()))
+                .ReturnsAsync(token)
+            )
+            .Build();
+
+        var service = new UserService(this.Context!, this.logger, this.mapper, userManager.Object);
+
+        //WHEN
+        var result = await service.GenerateEmailConfirmationTokenAsync(userEntity, CancellationToken.None);
+
+        //THEN
+        result.Should()
+            .Be(token)
             ;
     }
 
@@ -176,7 +241,7 @@ public sealed class UserServiceTests : FakeDietMenuDbContext
             )
             .Build();
 
-        var service = new UserService(this.Context!, this.mapper, userManager.Object);
+        var service = new UserService(this.Context!, this.logger, this.mapper, userManager.Object);
 
         //WHEN
         var result = await service.GetByEmailAsync(user.Email, CancellationToken.None);
@@ -217,7 +282,7 @@ public sealed class UserServiceTests : FakeDietMenuDbContext
             )
             .Build();
 
-        var service = new UserService(this.Context!, this.mapper, userManager.Object);
+        var service = new UserService(this.Context!, this.logger, this.mapper, userManager.Object);
 
         //WHEN
         var result = await service.GetByIdAsync(userId, CancellationToken.None);
@@ -254,7 +319,7 @@ public sealed class UserServiceTests : FakeDietMenuDbContext
                 .Returns(Task.FromResult(identityResult)))
             .Build();
 
-        var service = new UserService(this.Context!, this.mapper, userManager.Object);
+        var service = new UserService(this.Context!, this.logger, this.mapper, userManager.Object);
 
         //WHEN
         var action = async () => await service.CreateUserAsync(password, userToCreate, CancellationToken.None);

@@ -1,4 +1,4 @@
-﻿namespace SilentMike.DietMenu.Auth.Infrastructure.MassTransit.Models;
+﻿namespace SilentMike.DietMenu.Auth.Infrastructure.MassTransit.Email.Models;
 
 using SilentMike.DietMenu.Shared.Email.Interfaces;
 

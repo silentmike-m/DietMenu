@@ -1,4 +1,4 @@
-﻿namespace SilentMike.DietMenu.Auth.Infrastructure.MassTransit.Families.Models;
+﻿namespace SilentMike.DietMenu.Auth.Infrastructure.MassTransit.Core.Models;
 
 using SilentMike.DietMenu.Shared.Core.Interfaces;
 
