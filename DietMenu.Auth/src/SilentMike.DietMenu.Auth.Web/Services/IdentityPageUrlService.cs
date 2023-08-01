@@ -11,16 +11,16 @@ internal sealed class IdentityPageUrlService : IIdentityPageUrlService
     public IdentityPageUrlService(LinkGenerator linkGenerator)
         => this.linkGenerator = linkGenerator;
 
-    public string GetConfirmUserEmailPageUrl(Uri host, string token, Guid userId)
+    public string GetConfirmUserEmailPageUrl(Uri hostUri, Uri returnHostUri, string token, Guid userId)
     {
         var values = new ConfirmUserEmailPageValues
         {
-            ReturnUrl = host,
+            ReturnUrl = returnHostUri,
             Token = token,
             UserId = userId,
         };
 
-        var url = this.GetUrl(host, IdentityPageNames.CONFIRM_USER_EMAIL, values);
+        var url = this.GetUrl(hostUri, IdentityPageNames.CONFIRM_USER_EMAIL, values);
 
         return url;
     }

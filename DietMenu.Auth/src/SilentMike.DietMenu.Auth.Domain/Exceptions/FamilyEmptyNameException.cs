@@ -13,7 +13,7 @@ public sealed class FamilyEmptyNameException : DomainException
         : base($"Family name with id '{id}' can not be empty")
         => this.Id = id;
 
-    public FamilyEmptyNameException(SerializationInfo info, StreamingContext context)
+    private FamilyEmptyNameException(SerializationInfo info, StreamingContext context)
         : base(info, context)
     {
     }

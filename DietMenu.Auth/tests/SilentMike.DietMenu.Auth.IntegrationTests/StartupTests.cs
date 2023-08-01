@@ -8,9 +8,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SilentMike.DietMenu.Auth.Infrastructure.HealthCheck.Models;
 using SilentMike.DietMenu.Auth.IntegrationTests.Helpers;
 
-#if DEBUG
 [TestClass]
-public sealed class StartupTests
+public sealed class StartupTests : IDisposable
 {
     private const string HEALTH_CHECK_URL = "/health";
     private const string SWAGGER_URL = "/swagger/v1/swagger.json";
@@ -20,6 +19,11 @@ public sealed class StartupTests
     public StartupTests()
         => this.factory = new WebApplicationFactory<Program>()
             .WithFakeDbContext();
+
+    public void Dispose()
+    {
+        this.factory.Dispose();
+    }
 
     [TestMethod]
     public async Task Should_Return_Health_Check()
@@ -87,4 +91,3 @@ public sealed class StartupTests
             ;
     }
 }
-#endif

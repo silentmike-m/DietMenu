@@ -13,7 +13,7 @@ public sealed class UserEmptyLastNameException : DomainException
         : base($"User last name with id '{id}' can not be empty")
         => this.Id = id;
 
-    public UserEmptyLastNameException(SerializationInfo info, StreamingContext context)
+    private UserEmptyLastNameException(SerializationInfo info, StreamingContext context)
         : base(info, context)
     {
     }

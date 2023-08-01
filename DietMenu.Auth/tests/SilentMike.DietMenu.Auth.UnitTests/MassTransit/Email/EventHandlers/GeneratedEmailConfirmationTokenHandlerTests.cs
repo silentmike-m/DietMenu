@@ -20,6 +20,7 @@ using SilentMike.DietMenu.Shared.Email.Models;
 [TestClass]
 public sealed class GeneratedEmailConfirmationTokenHandlerTests
 {
+    private const string DEFAULT_CLIENT_URI = "https://client.domain.com";
     private const string ISSUER_URI = "https://auth.domain.com";
 
     private readonly Mock<IIdentityPageUrlService> identityPageUrlService = new();
@@ -29,6 +30,7 @@ public sealed class GeneratedEmailConfirmationTokenHandlerTests
     public GeneratedEmailConfirmationTokenHandlerTests()
         => this.identityServerOptions = Options.Create(new IdentityServerOptions
         {
+            DefaultClientUri = DEFAULT_CLIENT_URI,
             IssuerUri = ISSUER_URI,
         });
 
@@ -41,7 +43,7 @@ public sealed class GeneratedEmailConfirmationTokenHandlerTests
         var userId = Guid.NewGuid();
 
         this.identityPageUrlService
-            .Setup(service => service.GetConfirmUserEmailPageUrl(new Uri(ISSUER_URI), token, userId))
+            .Setup(service => service.GetConfirmUserEmailPageUrl(new Uri(ISSUER_URI), new Uri(DEFAULT_CLIENT_URI), token, userId))
             .Returns(url);
 
         await using var provider = new ServiceCollection()

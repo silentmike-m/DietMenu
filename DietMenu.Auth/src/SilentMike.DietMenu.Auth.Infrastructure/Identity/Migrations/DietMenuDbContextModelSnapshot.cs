@@ -10,6 +10,9 @@ using SilentMike.DietMenu.Auth.Infrastructure.Identity.Data;
 
 namespace SilentMike.DietMenu.Auth.Infrastructure.Identity.Migrations
 {
+    using System.Diagnostics.CodeAnalysis;
+
+    [ExcludeFromCodeCoverage]
     [DbContext(typeof(DietMenuDbContext))]
     partial class DietMenuDbContextModelSnapshot : ModelSnapshot
     {

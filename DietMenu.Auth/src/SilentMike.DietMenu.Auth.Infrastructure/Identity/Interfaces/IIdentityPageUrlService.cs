@@ -2,5 +2,5 @@
 
 public interface IIdentityPageUrlService
 {
-    string GetConfirmUserEmailPageUrl(Uri host, string token, Guid userId);
+    string GetConfirmUserEmailPageUrl(Uri hostUri, Uri returnHostUri, string token, Guid userId);
 }

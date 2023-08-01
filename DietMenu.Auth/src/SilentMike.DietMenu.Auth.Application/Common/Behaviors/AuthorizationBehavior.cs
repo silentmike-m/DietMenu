@@ -26,7 +26,7 @@ internal sealed class AuthorizationBehavior<TRequest, TResponse> : IPipelineBeha
                 request.UserId = userId;
             }
 
-            if (request.FamilyId == Guid.Empty && request.UserId == Guid.Empty)
+            if (request.FamilyId == Guid.Empty || request.UserId == Guid.Empty)
             {
                 throw new DietMenuUnauthorizedException(portfolioId, userId);
             }

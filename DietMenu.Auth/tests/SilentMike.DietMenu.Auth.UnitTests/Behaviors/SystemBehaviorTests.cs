@@ -19,6 +19,29 @@ public sealed class SystemBehaviorTests
     public async Task Should_Pass_When_User_Role_Is_System()
     {
         //GIVEN
+        var userRole = UserRole.System.ToString();
+
+        this.currentRequestService
+            .Setup(service => service.CurrentUserRole)
+            .Returns(userRole);
+
+        var request = new CreateFamily();
+
+        var behavior = new SystemBehavior<CreateFamily, Unit>(this.currentRequestService.Object);
+
+        //WHEN
+        var action = async () => await behavior.Handle(request, () => Task.FromResult(Unit.Value), CancellationToken.None);
+
+        //THEN
+        await action.Should()
+                .NotThrowAsync()
+            ;
+    }
+
+    [TestMethod]
+    public async Task Should_Throw_Invalid_Role_Exception_When_User_Role_Is_Not_System()
+    {
+        //GIVEN
         var userRole = UserRole.User.ToString();
 
         this.currentRequestService
@@ -36,29 +59,6 @@ public sealed class SystemBehaviorTests
         await action.Should()
                 .ThrowAsync<InvalidRoleException>()
                 .WithMessage($"*{userRole}*")
-            ;
-    }
-
-    [TestMethod]
-    public async Task Should_Throw_Invalid_Role_Exception_When_User_Role_Is_Not_System()
-    {
-        //GIVEN
-        var userRole = UserRole.System.ToString();
-
-        this.currentRequestService
-            .Setup(service => service.CurrentUserRole)
-            .Returns(userRole);
-
-        var request = new CreateFamily();
-
-        var behavior = new SystemBehavior<CreateFamily, Unit>(this.currentRequestService.Object);
-
-        //WHEN
-        var action = async () => await behavior.Handle(request, () => Task.FromResult(Unit.Value), CancellationToken.None);
-
-        //THEN
-        await action.Should()
-                .NotThrowAsync()
             ;
     }
 }

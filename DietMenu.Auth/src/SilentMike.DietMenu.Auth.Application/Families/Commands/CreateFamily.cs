@@ -2,8 +2,10 @@
 
 using SilentMike.DietMenu.Auth.Application.Common;
 
-public sealed class CreateFamily : IRequest, ISystemRequest
+public sealed class CreateFamily : IRequest, IAuthRequest, ISystemRequest
 {
-    public Guid Id { get; init; } = Guid.NewGuid();
-    public string Name { get; init; } = string.Empty;
+    [JsonIgnore] public Guid FamilyId { get; set; } = Guid.Empty;
+    [JsonPropertyName("id")] public Guid Id { get; init; } = Guid.NewGuid();
+    [JsonPropertyName("name")] public string Name { get; init; } = string.Empty;
+    [JsonIgnore] public Guid UserId { get; set; } = Guid.Empty;
 }

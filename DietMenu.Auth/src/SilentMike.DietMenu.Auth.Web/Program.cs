@@ -37,7 +37,7 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<IActionContextAccessor, ActionContextAccessor>();
 builder.Services.AddScoped<ICurrentRequestService, CurrentRequestService>();
-builder.Services.AddScoped<IIdentityPageUrlService, IdentityPageUrlService>();
+builder.Services.AddSingleton<IIdentityPageUrlService, IdentityPageUrlService>();
 
 builder.Services
     .AddAuthentication();

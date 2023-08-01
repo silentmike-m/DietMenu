@@ -34,9 +34,11 @@ internal sealed class GeneratedEmailConfirmationTokenHandler : INotificationHand
 
         this.logger.LogInformation("Try to send confirm user email message");
 
-        var host = new Uri(this.identityServerOptions.IssuerUri);
+        var hostUri = new Uri(this.identityServerOptions.IssuerUri);
 
-        var url = this.identityPageUrlService.GetConfirmUserEmailPageUrl(host, notification.Token, notification.Id);
+        var returnHostUri = new Uri(this.identityServerOptions.DefaultClientUri);
+
+        var url = this.identityPageUrlService.GetConfirmUserEmailPageUrl(hostUri, returnHostUri, notification.Token, notification.Id);
 
         var payload = new ConfirmUserEmailPayload
         {
