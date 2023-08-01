@@ -6,6 +6,7 @@ using SilentMike.DietMenu.Auth.Domain.Enums;
 internal sealed class User : IdentityUser
 {
     public Family Family { get; set; } = null!;
+    public Guid FamilyId { get; set; } = Guid.Empty;
     public int FamilyKey { get; set; } = default;
     public string FirstName { get; set; } = string.Empty;
     public int Key { get; set; } = default;

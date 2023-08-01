@@ -66,6 +66,7 @@ internal static class DependencyInjection
             Email = options.SystemUserEmail,
             EmailConfirmed = true,
             Family = family,
+            FamilyId = family.Id,
             FamilyKey = family.Key,
             FirstName = "Saruman",
             LastName = "White",

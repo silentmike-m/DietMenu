@@ -5,6 +5,8 @@ using System.Security.Claims;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
 using Microsoft.Extensions.Logging;
+using SilentMike.DietMenu.Auth.Application.Auth.Events;
+using SilentMike.DietMenu.Auth.Application.Auth.Queries;
 
 internal sealed class ProfileService : IProfileService
 {
@@ -12,20 +14,35 @@ internal sealed class ProfileService : IProfileService
     private readonly IMediator mediator;
 
     public ProfileService(ILogger<ProfileService> logger, IMediator mediator)
-        => (this.logger, this.mediator) = (logger, mediator);
+    {
+        this.logger = logger;
+        this.mediator = mediator;
+    }
 
     public async Task GetProfileDataAsync(ProfileDataRequestContext context)
     {
-        // var email = GetUserEmail(context.Subject);
-        //
-        // var getUserClaimsRequest = new GetUserClaims
-        // {
-        //     Email = email,
-        // };
-        //
-        // var userClaims = await this.mediator.Send(getUserClaimsRequest, CancellationToken.None);
-        //
-        // context.IssuedClaims.AddRange(userClaims.Claims);
+        var email = GetUserEmail(context.Subject);
+
+        var getUserClaimsRequest = new GetUserClaims
+        {
+            Email = email,
+        };
+
+        var userClaims = await this.mediator.Send(getUserClaimsRequest, CancellationToken.None);
+
+        foreach (var userClaim in userClaims.Claims)
+        {
+            var claim = new Claim(userClaim.Key, userClaim.Value);
+
+            context.IssuedClaims.Add(claim);
+        }
+
+        var notification = new UserLoggedIn
+        {
+            UserId = userClaims.UserId,
+        };
+
+        await this.mediator.Publish(notification, CancellationToken.None);
     }
 
     public async Task IsActiveAsync(IsActiveContext context)

@@ -2,7 +2,7 @@
 
 using global::MassTransit;
 using Microsoft.Extensions.Logging;
-using SilentMike.DietMenu.Auth.Application.Common;
+using SilentMike.DietMenu.Auth.Application.Common.Extensions;
 using SilentMike.DietMenu.Auth.Application.Families.Events;
 using SilentMike.DietMenu.Auth.Infrastructure.MassTransit.Core.Models;
 using SilentMike.DietMenu.Shared.Core.Interfaces;

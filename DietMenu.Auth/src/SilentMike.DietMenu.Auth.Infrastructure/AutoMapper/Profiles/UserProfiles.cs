@@ -10,7 +10,7 @@ internal sealed class UserProfiles : Profile
     {
         this.CreateMap<Dto, Entity>()
             .ForMember(target => target.Email, options => options.MapFrom(source => source.Email))
-            .ForMember(target => target.FamilyId, options => options.MapFrom(source => source.Family.Id))
+            .ForMember(target => target.FamilyId, options => options.MapFrom(source => source.FamilyId))
             .ForMember(target => target.FirstName, options => options.MapFrom(source => source.FirstName))
             .ForMember(target => target.Id, options => options.MapFrom(source => source.Id))
             .ForMember(target => target.LastName, options => options.MapFrom(source => source.LastName))

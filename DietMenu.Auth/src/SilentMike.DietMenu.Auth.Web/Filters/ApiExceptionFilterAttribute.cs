@@ -9,6 +9,8 @@ using SilentMike.DietMenu.Auth.Application.Common;
 using SilentMike.DietMenu.Auth.Application.Common.Constants;
 using SilentMike.DietMenu.Auth.Application.Exceptions;
 using SilentMike.DietMenu.Auth.Application.ViewModels;
+using SilentMike.DietMenu.Auth.Domain.Common;
+using SilentMike.DietMenu.Auth.Infrastructure.Common;
 
 [ExcludeFromCodeCoverage]
 internal sealed class ApiExceptionFilterAttribute : ExceptionFilterAttribute
@@ -33,6 +35,8 @@ internal sealed class ApiExceptionFilterAttribute : ExceptionFilterAttribute
         {
             ValidationException => HandleValidationException,
             ApplicationException => HandleApplicationException,
+            DomainException => HandleDomainException,
+            InfrastructureException => HandleInfrastructureException,
             _ => new Action<ExceptionContext>(HandleUnknownException),
         };
 
@@ -46,10 +50,15 @@ internal sealed class ApiExceptionFilterAttribute : ExceptionFilterAttribute
             throw new UnhandledErrorException();
         }
 
+        HandleDietMenuException(context, exception.Code, exception.Message);
+    }
+
+    private static void HandleDietMenuException(ExceptionContext context, string code, string message)
+    {
         var response = new BaseResponse<object>
         {
-            Code = exception.Code,
-            Error = exception.Message,
+            Code = code,
+            Error = message,
         };
 
         context.Result = new ObjectResult(response)
@@ -62,6 +71,26 @@ internal sealed class ApiExceptionFilterAttribute : ExceptionFilterAttribute
         };
 
         context.ExceptionHandled = true;
+    }
+
+    private static void HandleDomainException(ExceptionContext context)
+    {
+        if (context.Exception is not DomainException exception)
+        {
+            throw new UnhandledErrorException();
+        }
+
+        HandleDietMenuException(context, exception.Code, exception.Message);
+    }
+
+    private static void HandleInfrastructureException(ExceptionContext context)
+    {
+        if (context.Exception is not InfrastructureException exception)
+        {
+            throw new UnhandledErrorException();
+        }
+
+        HandleDietMenuException(context, exception.Code, exception.Message);
     }
 
     private static void HandleUnknownException(ExceptionContext context)

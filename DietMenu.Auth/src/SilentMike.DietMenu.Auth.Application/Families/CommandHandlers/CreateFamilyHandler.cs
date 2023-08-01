@@ -1,7 +1,7 @@
 ﻿namespace SilentMike.DietMenu.Auth.Application.Families.CommandHandlers;
 
 using Microsoft.Extensions.Logging;
-using SilentMike.DietMenu.Auth.Application.Common;
+using SilentMike.DietMenu.Auth.Application.Common.Extensions;
 using SilentMike.DietMenu.Auth.Application.Exceptions.Families;
 using SilentMike.DietMenu.Auth.Application.Families.Commands;
 using SilentMike.DietMenu.Auth.Application.Families.Events;

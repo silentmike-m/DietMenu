@@ -51,7 +51,7 @@ public sealed class UserServiceTests : FakeDietMenuDbContext
             .With(userManager => userManager
                 .Setup(service => service.CreateAsync(It.IsAny<User>(), It.IsAny<string>()))
                 .Callback<User, string>((user, _) => createdUser = user)
-                .Returns(Task.FromResult(identityResult)))
+                .ReturnsAsync(identityResult))
             .Build();
 
         var service = new UserService(this.Context!, this.logger, this.mapper, userManager.Object);
@@ -64,6 +64,7 @@ public sealed class UserServiceTests : FakeDietMenuDbContext
         {
             Email = userToCreate.Email,
             Family = EXISTING_FAMILY,
+            FamilyId = EXISTING_FAMILY.Id,
             FamilyKey = EXISTING_FAMILY.Key,
             FirstName = userToCreate.FirstName,
             Id = userToCreate.Id.ToString(),
@@ -228,6 +229,7 @@ public sealed class UserServiceTests : FakeDietMenuDbContext
             {
                 Id = Guid.NewGuid(),
             },
+            FamilyId = Guid.NewGuid(),
             FirstName = "John",
             Id = "18ff1b8b-0f85-4b37-b5d3-073f82f52431",
             LastLogin = DateTime.Now,
@@ -247,7 +249,7 @@ public sealed class UserServiceTests : FakeDietMenuDbContext
         var result = await service.GetByEmailAsync(user.Email, CancellationToken.None);
 
         //THEN
-        var expectedResult = new UserEntity(user.Email, user.Family.Id, user.FirstName, user.LastName, new Guid(user.Id), user.Role);
+        var expectedResult = new UserEntity(user.Email, user.FamilyId, user.FirstName, user.LastName, new Guid(user.Id), user.Role);
 
         result.Should()
             .NotBeNull()
@@ -269,6 +271,7 @@ public sealed class UserServiceTests : FakeDietMenuDbContext
             {
                 Id = Guid.NewGuid(),
             },
+            FamilyId = Guid.NewGuid(),
             FirstName = "John",
             Id = userId.ToString(),
             LastLogin = DateTime.Now,
@@ -288,7 +291,7 @@ public sealed class UserServiceTests : FakeDietMenuDbContext
         var result = await service.GetByIdAsync(userId, CancellationToken.None);
 
         //THEN
-        var expectedResult = new UserEntity(user.Email, user.Family.Id, user.FirstName, user.LastName, new Guid(user.Id), user.Role);
+        var expectedResult = new UserEntity(user.Email, user.FamilyId, user.FirstName, user.LastName, new Guid(user.Id), user.Role);
 
         result.Should()
             .NotBeNull()
@@ -316,7 +319,7 @@ public sealed class UserServiceTests : FakeDietMenuDbContext
         var userManager = new FakeUserManagerBuilder()
             .With(userManager => userManager
                 .Setup(service => service.CreateAsync(It.IsAny<User>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(identityResult)))
+                .ReturnsAsync(identityResult))
             .Build();
 
         var service = new UserService(this.Context!, this.logger, this.mapper, userManager.Object);

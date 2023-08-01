@@ -23,6 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <InternalsVisibleTo Include="SilentMike.DietMenu.Auth.IntegrationTests" />
         <InternalsVisibleTo Include="SilentMike.DietMenu.Auth.UnitTests" />
         <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
     </ItemGroup>

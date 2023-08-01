@@ -1,4 +1,4 @@
-﻿namespace SilentMike.DietMenu.Auth.Application.Common;
+﻿namespace SilentMike.DietMenu.Auth.Application.Common.Extensions;
 
 using Microsoft.Extensions.Logging;
 

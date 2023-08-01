@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using SilentMike.DietMenu.Auth.Application.Common;
 using SilentMike.DietMenu.Auth.Infrastructure.AutoMapper;
+using SilentMike.DietMenu.Auth.Infrastructure.Date.Services;
 using SilentMike.DietMenu.Auth.Infrastructure.HealthCheck;
 using SilentMike.DietMenu.Auth.Infrastructure.Identity;
 using SilentMike.DietMenu.Auth.Infrastructure.Identity.Data;
@@ -32,6 +34,8 @@ public static class DependencyInjection
         services.AddDietMenuSwagger();
 
         services.AddAutoMapper();
+
+        services.AddSingleton<IDateTimeService, DateTimeService>();
     }
 
     public static void UseInfrastructure(this IApplicationBuilder app, IConfiguration configuration)

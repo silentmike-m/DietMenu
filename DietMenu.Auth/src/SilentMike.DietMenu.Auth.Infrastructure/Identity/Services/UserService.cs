@@ -35,6 +35,7 @@ internal sealed class UserService : IUserService
         {
             Email = user.Email,
             Family = family,
+            FamilyId = family.Id,
             FamilyKey = family.Key,
             FirstName = user.FirstName,
             Id = userId,
