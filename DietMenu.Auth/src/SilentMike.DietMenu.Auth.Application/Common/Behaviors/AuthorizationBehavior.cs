@@ -12,21 +12,21 @@ internal sealed class AuthorizationBehavior<TRequest, TResponse> : IPipelineBeha
 
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        if (request.FamilyId == Guid.Empty || request.UserId == Guid.Empty)
+        if (request.AuthData.FamilyId == Guid.Empty || request.AuthData.UserId == Guid.Empty)
         {
             var (portfolioId, userId) = this.currentUserService.CurrentUser;
 
-            if (request.FamilyId == Guid.Empty)
+            if (request.AuthData.FamilyId == Guid.Empty)
             {
-                request.FamilyId = portfolioId;
+                request.AuthData.FamilyId = portfolioId;
             }
 
-            if (request.UserId == Guid.Empty)
+            if (request.AuthData.UserId == Guid.Empty)
             {
-                request.UserId = userId;
+                request.AuthData.UserId = userId;
             }
 
-            if (request.FamilyId == Guid.Empty || request.UserId == Guid.Empty)
+            if (request.AuthData.FamilyId == Guid.Empty || request.AuthData.UserId == Guid.Empty)
             {
                 throw new DietMenuUnauthorizedException(portfolioId, userId);
             }

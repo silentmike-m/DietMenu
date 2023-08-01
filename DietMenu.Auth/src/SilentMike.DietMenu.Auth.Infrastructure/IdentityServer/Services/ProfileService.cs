@@ -7,6 +7,7 @@ using IdentityServer4.Services;
 using Microsoft.Extensions.Logging;
 using SilentMike.DietMenu.Auth.Application.Auth.Events;
 using SilentMike.DietMenu.Auth.Application.Auth.Queries;
+using SilentMike.DietMenu.Auth.Application.Users.Queries;
 
 internal sealed class ProfileService : IProfileService
 {
@@ -49,16 +50,20 @@ internal sealed class ProfileService : IProfileService
     {
         try
         {
-            // var email = GetUserEmail(context.Subject);
-            //
-            // var getUserActivationStatusRequest = new GetUserActivationStatus
-            // {
-            //     Email = email,
-            // };
-            //
-            // var userActivationStatus = await this.mediator.Send(getUserActivationStatusRequest, CancellationToken.None);
-            //
-            // context.IsActive = userActivationStatus.IsActive;
+            var email = GetUserEmail(context.Subject);
+
+            var getUserActivationStatusRequest = new GetUserStatus
+            {
+                Email = email,
+            };
+
+            var userStatus = await this.mediator.Send(getUserActivationStatusRequest, CancellationToken.None);
+
+            context.IsActive = userStatus is
+            {
+                IsEmailConfirmed: true,
+                IsLockedOut: false,
+            };
         }
         catch (Exception exception)
         {
