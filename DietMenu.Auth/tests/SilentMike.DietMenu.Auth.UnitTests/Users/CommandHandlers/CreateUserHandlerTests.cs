@@ -25,7 +25,7 @@ public sealed class CreateUserHandlerTests
     private readonly Mock<IFamilyRepository> familyRepository = new();
     private readonly NullLogger<CreateUserHandler> logger = new();
     private readonly Mock<IPublisher> mediator = new();
-    private readonly Mock<IUserService> userService = new();
+    private readonly Mock<IUserRepository> userService = new();
 
     public CreateUserHandlerTests()
     {
@@ -102,6 +102,7 @@ public sealed class CreateUserHandlerTests
 
         var expectedNotification = new CreatedUser
         {
+            Email = userToCreate.Email,
             Id = userToCreate.Id,
         };
 

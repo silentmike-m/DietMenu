@@ -2,5 +2,5 @@
 
 public sealed class GenerateEmailConfirmationToken : IRequest
 {
-    public Guid Id { get; init; } = Guid.Empty;
+    public string Email { get; init; } = string.Empty;
 }

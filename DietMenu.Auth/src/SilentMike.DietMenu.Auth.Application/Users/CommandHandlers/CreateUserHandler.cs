@@ -14,14 +14,14 @@ internal sealed class CreateUserHandler : IRequestHandler<CreateUser>
     private readonly IFamilyRepository familyRepository;
     private readonly ILogger<CreateUserHandler> logger;
     private readonly IPublisher mediator;
-    private readonly IUserService userService;
+    private readonly IUserRepository userRepository;
 
-    public CreateUserHandler(IFamilyRepository familyRepository, ILogger<CreateUserHandler> logger, IPublisher mediator, IUserService userService)
+    public CreateUserHandler(IFamilyRepository familyRepository, ILogger<CreateUserHandler> logger, IPublisher mediator, IUserRepository userRepository)
     {
         this.familyRepository = familyRepository;
         this.logger = logger;
         this.mediator = mediator;
-        this.userService = userService;
+        this.userRepository = userRepository;
     }
 
     public async Task Handle(CreateUser request, CancellationToken cancellationToken)
@@ -39,14 +39,14 @@ internal sealed class CreateUserHandler : IRequestHandler<CreateUser>
             throw new FamilyNotFoundException(request.User.FamilyId);
         }
 
-        var user = await this.userService.GetByIdAsync(request.User.Id, cancellationToken);
+        var user = await this.userRepository.GetByIdAsync(request.User.Id, cancellationToken);
 
         if (user is not null)
         {
             throw new UserAlreadyExistsException(request.User.Id);
         }
 
-        user = await this.userService.GetByEmailAsync(request.User.Email, cancellationToken);
+        user = await this.userRepository.GetByEmailAsync(request.User.Email, cancellationToken);
 
         if (user is not null)
         {
@@ -55,10 +55,11 @@ internal sealed class CreateUserHandler : IRequestHandler<CreateUser>
 
         user = new UserEntity(request.User.Email, request.User.FamilyId, request.User.FirstName, request.User.LastName, request.User.Id);
 
-        await this.userService.CreateUserAsync(request.User.Password, user, cancellationToken);
+        await this.userRepository.CreateUserAsync(request.User.Password, user, cancellationToken);
 
         var notification = new CreatedUser
         {
+            Email = user.Email,
             Id = user.Id,
         };
 

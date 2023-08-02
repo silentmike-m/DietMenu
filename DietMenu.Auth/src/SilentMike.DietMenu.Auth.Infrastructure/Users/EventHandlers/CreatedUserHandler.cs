@@ -36,7 +36,7 @@ internal sealed class CreatedUserHandler : INotificationHandler<CreatedUser>
 
         var request = new GenerateEmailConfirmationToken
         {
-            Id = notification.Id,
+            Email = notification.Email,
         };
 
         await this.mediator.Send(request, cancellationToken);

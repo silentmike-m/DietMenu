@@ -10,14 +10,14 @@ using SilentMike.DietMenu.Auth.Infrastructure.Exceptions.Users;
 using SilentMike.DietMenu.Auth.Infrastructure.Identity.Data;
 using SilentMike.DietMenu.Auth.Infrastructure.Identity.Models;
 
-internal sealed class UserService : IUserService
+internal sealed class UserRepository : IUserRepository
 {
     private readonly IDietMenuDbContext context;
-    private readonly ILogger<UserService> logger;
+    private readonly ILogger<UserRepository> logger;
     private readonly IMapper mapper;
     private readonly UserManager<User> userManager;
 
-    public UserService(IDietMenuDbContext context, ILogger<UserService> logger, IMapper mapper, UserManager<User> userManager)
+    public UserRepository(IDietMenuDbContext context, ILogger<UserRepository> logger, IMapper mapper, UserManager<User> userManager)
     {
         this.context = context;
         this.logger = logger;
@@ -50,24 +50,6 @@ internal sealed class UserService : IUserService
         {
             throw new CreateUserException(user.Email, result.Errors.First().Description);
         }
-    }
-
-    public async Task<string?> GenerateEmailConfirmationTokenAsync(UserEntity user, CancellationToken cancellationToken = default)
-    {
-        var userId = user.Id.ToString();
-
-        var dtoUser = await this.userManager.FindByIdAsync(userId);
-
-        if (dtoUser is null)
-        {
-            this.logger.LogError("User has not been found");
-
-            return null;
-        }
-
-        var token = await this.userManager.GenerateEmailConfirmationTokenAsync(dtoUser);
-
-        return token;
     }
 
     public async Task<UserEntity?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)

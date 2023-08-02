@@ -7,19 +7,19 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using SilentMike.DietMenu.Auth.Application.Common.Constants;
 using SilentMike.DietMenu.Auth.Application.Exceptions.Users;
-using SilentMike.DietMenu.Auth.Application.Users.CommandHandlers;
 using SilentMike.DietMenu.Auth.Application.Users.Commands;
 using SilentMike.DietMenu.Auth.Application.Users.Events;
-using SilentMike.DietMenu.Auth.Domain.Entities;
-using SilentMike.DietMenu.Auth.Domain.Services;
+using SilentMike.DietMenu.Auth.Infrastructure.Identity.Models;
+using SilentMike.DietMenu.Auth.Infrastructure.Users.CommandHandlers;
 using SilentMike.DietMenu.Auth.UnitTests.Helpers;
 
 [TestClass]
 public sealed class GenerateEmailConfirmationTokenHandlerTests
 {
+    private static readonly Guid USER_ID = Guid.NewGuid();
+
     private readonly NullLogger<GenerateEmailConfirmationTokenHandler> logger = new();
     private readonly Mock<IPublisher> mediator = new();
-    private readonly Mock<IUserService> userService = new();
 
     [TestMethod]
     public async Task Should_Generate_Token()
@@ -32,22 +32,30 @@ public sealed class GenerateEmailConfirmationTokenHandlerTests
             .Callback<GeneratedEmailConfirmationToken, CancellationToken>((notification, _) => generatedEmailConfirmationTokenNotification = notification);
 
         const string token = "email_confirmation_token";
-        var user = UserEntityFactory.Create(Guid.NewGuid(), Guid.NewGuid());
 
-        this.userService
-            .Setup(service => service.GetByIdAsync(user.Id, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(user);
+        var user = new User
+        {
+            Email = "user@domain.com",
+            Id = USER_ID.ToString(),
+        };
 
-        this.userService
-            .Setup(service => service.GenerateEmailConfirmationTokenAsync(It.IsAny<UserEntity>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(token);
+        var userManager = new FakeUserManagerBuilder()
+            .With(manager => manager
+                .Setup(service => service.FindByEmailAsync(user.Email))
+                .ReturnsAsync(user)
+            )
+            .With(manager => manager
+                .Setup(service => service.GenerateEmailConfirmationTokenAsync(It.IsAny<User>()))
+                .ReturnsAsync(token)
+            )
+            .Build();
 
         var request = new GenerateEmailConfirmationToken
         {
-            Id = user.Id,
+            Email = user.Email,
         };
 
-        var handler = new GenerateEmailConfirmationTokenHandler(this.logger, this.mediator.Object, this.userService.Object);
+        var handler = new GenerateEmailConfirmationTokenHandler(this.logger, this.mediator.Object, userManager.Object);
 
         //WHEN
         await handler.Handle(request, CancellationToken.None);
@@ -58,7 +66,7 @@ public sealed class GenerateEmailConfirmationTokenHandlerTests
         var expectedNotification = new GeneratedEmailConfirmationToken
         {
             Email = user.Email,
-            Id = user.Id,
+            Id = USER_ID,
             Token = token,
         };
 
@@ -73,22 +81,25 @@ public sealed class GenerateEmailConfirmationTokenHandlerTests
     public async Task Should_Not_Throw_Exception_When_Token_Is_Null()
     {
         //GIVEN
-        var user = new UserEntity("user@domain.com", Guid.NewGuid(), "John", "Wick", Guid.NewGuid());
+        var user = new User
+        {
+            Email = "user@domain.com",
+            Id = USER_ID.ToString(),
+        };
 
-        this.userService
-            .Setup(service => service.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(user);
-
-        this.userService
-            .Setup(service => service.GenerateEmailConfirmationTokenAsync(It.IsAny<UserEntity>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((string?)null);
+        var userManager = new FakeUserManagerBuilder()
+            .With(manager => manager
+                .Setup(service => service.FindByEmailAsync(user.Email))
+                .ReturnsAsync(user)
+            )
+            .Build();
 
         var request = new GenerateEmailConfirmationToken
         {
-            Id = Guid.NewGuid(),
+            Email = user.Email,
         };
 
-        var handler = new GenerateEmailConfirmationTokenHandler(this.logger, this.mediator.Object, this.userService.Object);
+        var handler = new GenerateEmailConfirmationTokenHandler(this.logger, this.mediator.Object, userManager.Object);
 
         //WHEN
         var action = async () => await handler.Handle(request, CancellationToken.None);
@@ -105,16 +116,25 @@ public sealed class GenerateEmailConfirmationTokenHandlerTests
     public async Task Should_Throw_User_Not_Found_Exception_When_Missing_User()
     {
         //GIVEN
-        this.userService
-            .Setup(service => service.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((UserEntity?)null);
+        var user = new User
+        {
+            Email = "user@domain.com",
+            Id = USER_ID.ToString(),
+        };
+
+        var userManager = new FakeUserManagerBuilder()
+            .With(manager => manager
+                .Setup(service => service.FindByEmailAsync(user.Email))
+                .ReturnsAsync(user)
+            )
+            .Build();
 
         var request = new GenerateEmailConfirmationToken
         {
-            Id = Guid.NewGuid(),
+            Email = "fake@domain.com",
         };
 
-        var handler = new GenerateEmailConfirmationTokenHandler(this.logger, this.mediator.Object, this.userService.Object);
+        var handler = new GenerateEmailConfirmationTokenHandler(this.logger, this.mediator.Object, userManager.Object);
 
         //WHEN
         var action = async () => await handler.Handle(request, CancellationToken.None);
@@ -122,7 +142,6 @@ public sealed class GenerateEmailConfirmationTokenHandlerTests
         //THEN
         await action.Should()
                 .ThrowAsync<UserNotFoundException>()
-                .Where(exception => exception.Id == request.Id)
                 .Where(exception => exception.Code == ErrorCodes.USER_NOT_FOUND)
             ;
 

@@ -72,7 +72,7 @@ public sealed class CreatedUserHandlerTests
 
         var expectedRequest = new GenerateEmailConfirmationToken
         {
-            Id = notification.Id,
+            Email = notification.Email,
         };
 
         generateEmailConfirmationTokenRequest.Should()

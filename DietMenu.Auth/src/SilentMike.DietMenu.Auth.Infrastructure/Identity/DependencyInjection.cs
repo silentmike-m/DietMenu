@@ -30,7 +30,7 @@ internal static class DependencyInjection
             .AddDefaultTokenProviders();
 
         services.AddScoped<IFamilyRepository, FamilyRepository>();
-        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IUserRepository, UserRepository>();
     }
 
     public static void UseIdentity(this IApplicationBuilder _, IConfiguration configuration, DietMenuDbContext context, UserManager<User> userManager)
