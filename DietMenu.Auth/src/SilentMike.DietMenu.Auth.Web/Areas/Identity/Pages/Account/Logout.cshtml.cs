@@ -1,45 +1,77 @@
 namespace SilentMike.DietMenu.Auth.Web.Areas.Identity.Pages.Account;
 
+using IdentityServer4.Models;
 using IdentityServer4.Services;
+using IdentityServer4.Stores;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using SilentMike.DietMenu.Auth.Application.Auth.Commands;
 
+[AllowAnonymous]
 public class LogoutModel : PageModel
 {
+    private readonly IClientStore clientStore;
+    private readonly IIdentityServerInteractionService identityServerService;
     private readonly ILogger<LogoutModel> logger;
-    private readonly IIdentityServerInteractionService service;
+    private readonly ISender mediator;
+
     public string? ClientName { get; set; } = default;
+    public List<string> FrontChannelLogoutUris { get; set; } = new();
     public string? PostLogoutRedirectUri { get; set; } = default;
-    public string? SignOutIframeUrl { get; set; } = default;
-    //private readonly SignInManager<DietMenuUser> signInManager;
 
-    // public LogoutModel(ILogger<LogoutModel> logger, IIdentityServerInteractionService service, SignInManager<DietMenuUser> signInManager)
-    // {
-    //     this.logger = logger;
-    //     this.service = service;
-    //     this.signInManager = signInManager;
-    // }
-
-    public async Task<IActionResult> OnGetAsync(string? logoutId)
+    public LogoutModel(IClientStore clientStore, IIdentityServerInteractionService identityServerService, ILogger<LogoutModel> logger, ISender mediator)
     {
-        logoutId ??= await this.service.CreateLogoutContextAsync();
+        this.clientStore = clientStore;
+        this.identityServerService = identityServerService;
+        this.logger = logger;
+        this.mediator = mediator;
+    }
 
-        //await this.signInManager.SignOutAsync();
+    public async Task<IActionResult> OnGetAsync(string? logoutId, CancellationToken cancellationToken = default)
+    {
+        logoutId ??= await this.identityServerService.CreateLogoutContextAsync();
+
+        var request = new SignOut();
+
+        await this.mediator.Send(request, cancellationToken);
 
         await this.HttpContext.SignOutAsync();
 
-        var logoutContext = await this.service.GetLogoutContextAsync(logoutId);
-
         this.logger.LogInformation("User logged out.");
 
-        this.ClientName = string.IsNullOrEmpty(logoutContext?.ClientName)
-            ? logoutContext?.ClientId
-            : logoutContext.ClientName;
+        var logoutRequest = await this.identityServerService.GetLogoutContextAsync(logoutId);
 
-        this.PostLogoutRedirectUri = logoutContext?.PostLogoutRedirectUri;
-        this.SignOutIframeUrl = logoutContext?.SignOutIFrameUrl;
+        if (logoutRequest is not null)
+        {
+            this.ClientName = logoutRequest.ClientName;
+
+            this.PostLogoutRedirectUri = logoutRequest.PostLogoutRedirectUri;
+
+            this.FrontChannelLogoutUris = await this.GetFrontChannelLogoutUris(logoutRequest);
+        }
 
         return this.Page();
+    }
+
+    private async Task<List<string>> GetFrontChannelLogoutUris(LogoutRequest logoutRequest)
+    {
+        var frontChannelLogoutUris = new List<string>();
+
+        if (logoutRequest.ClientIds is not null)
+        {
+            foreach (var clientId in logoutRequest.ClientIds)
+            {
+                var client = await this.clientStore.FindClientByIdAsync(clientId);
+
+                if (!string.IsNullOrEmpty(client?.FrontChannelLogoutUri))
+                {
+                    frontChannelLogoutUris.Add(client.FrontChannelLogoutUri);
+                }
+            }
+        }
+
+        return frontChannelLogoutUris;
     }
 }

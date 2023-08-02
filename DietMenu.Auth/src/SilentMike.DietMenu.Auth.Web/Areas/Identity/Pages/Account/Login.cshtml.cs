@@ -36,7 +36,7 @@ public sealed class LoginModel : PageModel
         return this.Page();
     }
 
-    public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
+    public async Task<IActionResult> OnPostAsync(string? returnUrl = null, CancellationToken cancellationToken = default)
     {
         if (!this.ModelState.IsValid)
         {
@@ -52,9 +52,9 @@ public sealed class LoginModel : PageModel
                 Remember = this.Input.RememberMe,
             };
 
-            await this.mediator.Send(passwordSignInUser, CancellationToken.None);
+            await this.mediator.Send(passwordSignInUser, cancellationToken);
 
-            await this.httpContextSignInService.SignInAsync(this.Input.Email);
+            await this.httpContextSignInService.SignInAsync(this.Input.Email, cancellationToken);
 
             return this.LocalRedirect(this.Input.ReturnUrl);
         }
