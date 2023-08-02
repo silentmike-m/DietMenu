@@ -4,6 +4,7 @@ public static class ErrorCodes
 {
     public static readonly string FAMILY_ALREADY_EXISTS = "FAMILY_ALREADY_EXISTS";
     public static readonly string FAMILY_NOT_FOUND = "FAMILY_NOT_FOUND";
+    public static readonly string FAMILY_OWNER_NOT_FOUND = "FAMILY_OWNER_NOT_FOUND";
     public static readonly string INVALID_ROLE = "INVALID_ROLE";
     public static readonly string LOGIN_USER_ERROR = "LOGIN_USER_ERROR";
     public static readonly string RESET_PASSWORD = "RESET_PASSWORD";

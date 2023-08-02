@@ -38,7 +38,7 @@ public sealed class AuthorizationBehaviorTests
     }
 
     [TestMethod]
-    public async Task Should_Pass_Validation_When_PortfolioId_And_UserId_Are_Not_Empty()
+    public async Task Should_Pass_Validation_When_FamilyId_And_UserId_Are_Not_Empty()
     {
         //GIVEN
         var familyId = Guid.NewGuid();
@@ -70,7 +70,7 @@ public sealed class AuthorizationBehaviorTests
     }
 
     [TestMethod]
-    public async Task Should_Throw_DietMenu_Unauthorized_Exception_When_PortfolioId_Is_Empty()
+    public async Task Should_Throw_DietMenu_Unauthorized_Exception_When_FamilyId_Is_Empty()
     {
         //GIVEN
         var familyId = Guid.Empty;

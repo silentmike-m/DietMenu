@@ -5,6 +5,7 @@ using System.Security.Authentication;
 using global::MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SilentMike.DietMenu.Auth.Infrastructure.MassTransit.Consumers;
 
 [ExcludeFromCodeCoverage]
 internal static class DependencyInjection
@@ -16,6 +17,8 @@ internal static class DependencyInjection
 
         services.AddMassTransit(configure =>
         {
+            configure.AddConsumer<GetFamilyOwnerEmailRequestConsumer>();
+
             configure.UsingRabbitMq((context, cfg) =>
             {
                 cfg.Host(rabbitMqSettings.HostName, rabbitMqSettings.Port, rabbitMqSettings.VirtualHost, host =>

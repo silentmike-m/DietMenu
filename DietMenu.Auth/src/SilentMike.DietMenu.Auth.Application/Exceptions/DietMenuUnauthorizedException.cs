@@ -9,7 +9,7 @@ public sealed class DietMenuUnauthorizedException : ApplicationException
     public override string Code => ErrorCodes.UNAUTHORIZED;
 
     public DietMenuUnauthorizedException(Guid familyId, Guid userId)
-        : base($"Missing portfolioId ({familyId}) or userId ({userId})")
+        : base($"Missing familyId ({familyId}) or userId ({userId})")
     {
     }
 

@@ -14,11 +14,11 @@ internal sealed class AuthorizationBehavior<TRequest, TResponse> : IPipelineBeha
     {
         if (request.AuthData.FamilyId == Guid.Empty || request.AuthData.UserId == Guid.Empty)
         {
-            var (portfolioId, userId) = this.currentUserService.CurrentUser;
+            var (familyId, userId) = this.currentUserService.CurrentUser;
 
             if (request.AuthData.FamilyId == Guid.Empty)
             {
-                request.AuthData.FamilyId = portfolioId;
+                request.AuthData.FamilyId = familyId;
             }
 
             if (request.AuthData.UserId == Guid.Empty)
@@ -28,7 +28,7 @@ internal sealed class AuthorizationBehavior<TRequest, TResponse> : IPipelineBeha
 
             if (request.AuthData.FamilyId == Guid.Empty || request.AuthData.UserId == Guid.Empty)
             {
-                throw new DietMenuUnauthorizedException(portfolioId, userId);
+                throw new DietMenuUnauthorizedException(familyId, userId);
             }
         }
 
