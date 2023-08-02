@@ -11,6 +11,7 @@ using SilentMike.DietMenu.Auth.Infrastructure.Identity.Interfaces;
 using SilentMike.DietMenu.Auth.Web;
 using SilentMike.DietMenu.Auth.Web.Common.Constants;
 using SilentMike.DietMenu.Auth.Web.Filters;
+using SilentMike.DietMenu.Auth.Web.Interfaces;
 using SilentMike.DietMenu.Auth.Web.Services;
 
 const int EXIT_FAILURE = 1;
@@ -37,6 +38,7 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<IActionContextAccessor, ActionContextAccessor>();
 builder.Services.AddScoped<ICurrentRequestService, CurrentRequestService>();
+builder.Services.AddScoped<IHttpContextSignInService, HttpContextSignInService>();
 builder.Services.AddSingleton<IIdentityPageUrlService, IdentityPageUrlService>();
 
 builder.Services

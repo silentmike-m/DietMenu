@@ -4,13 +4,14 @@ using System.ComponentModel.DataAnnotations;
 
 public sealed class LoginInputModel
 {
-    [Required(ErrorMessage = "Należy podać email.")]
-    [EmailAddress]
+    [EmailAddress, Required(ErrorMessage = "Należy podać email")]
     public string Email { get; set; } = string.Empty;
 
-
-    [Required(ErrorMessage = "Należy podać hasło.")]
-    [DataType(DataType.Password)]
-    [Display(Name = "Hasło")]
+    [DataType(DataType.Password), Display(Name = "Hasło"), Required(ErrorMessage = "Należy podać hasło")]
     public string Password { get; set; } = string.Empty;
+
+    [Display(Name = "Remember me?")]
+    public bool RememberMe { get; set; } = default;
+
+    public string ReturnUrl { get; set; } = string.Empty;
 }
