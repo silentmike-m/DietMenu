@@ -65,7 +65,7 @@ public class LogoutModel : PageModel
             {
                 var client = await this.clientStore.FindClientByIdAsync(clientId);
 
-                if (!string.IsNullOrEmpty(client?.FrontChannelLogoutUri))
+                if (string.IsNullOrEmpty(client?.FrontChannelLogoutUri) is false)
                 {
                     frontChannelLogoutUris.Add(client.FrontChannelLogoutUri);
                 }

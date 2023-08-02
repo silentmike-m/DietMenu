@@ -20,7 +20,7 @@ internal sealed class IdentityPageUrlService : IIdentityPageUrlService
             UserId = userId,
         };
 
-        var url = this.GetUrl(hostUri, IdentityPageNames.CONFIRM_USER_EMAIL, values);
+        var url = this.GetUrl(hostUri, IdentityPageNames.COMPLETE_USER_REGISTRATION, values);
 
         return url;
     }

@@ -11,7 +11,7 @@
 
 <div class="content-text">
     <div class="content-center">
-        @if (Model.PostLogoutRedirectUri != null)
+        @if (Model.PostLogoutRedirectUri is null)
         {
             <div>
                 Click <a class="url__text" href="@Model.PostLogoutRedirectUri">here</a> to return to the

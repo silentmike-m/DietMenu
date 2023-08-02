@@ -29,11 +29,18 @@ internal sealed class CreateFamilyHandler : IRequestHandler<CreateFamily>
 
         this.logger.LogInformation("Try to create family");
 
-        var family = await this.repository.GetAsync(request.Id, cancellationToken);
+        var family = await this.repository.GetByIdAsync(request.Id, cancellationToken);
 
         if (family is not null)
         {
             throw new FamilyAlreadyExistsException(request.Id);
+        }
+
+        family = await this.repository.GetByNameAsync(request.Name, cancellationToken);
+
+        if (family is not null)
+        {
+            throw new FamilyAlreadyExistsException(request.Name);
         }
 
         family = new FamilyEntity(request.Id, request.Name);

@@ -78,7 +78,7 @@ public sealed class CreateFamilyHandlerTests
         var family = new FamilyEntity(Guid.NewGuid(), "family");
 
         this.repository
-            .Setup(service => service.GetAsync(family.Id, It.IsAny<CancellationToken>()))
+            .Setup(service => service.GetByIdAsync(family.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(family);
 
         var request = new CreateFamily

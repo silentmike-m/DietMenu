@@ -37,7 +37,7 @@ internal sealed class PasswordSignInUserHandler : IRequestHandler<PasswordSignIn
             request.Remember,
             DEFAULT_LOCK_OUT_ON_FAILURE);
 
-        if (!result.Succeeded)
+        if (result.Succeeded is false)
         {
             this.LogInvalidLoginAttempt(result);
 

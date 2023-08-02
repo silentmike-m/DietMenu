@@ -30,7 +30,7 @@ public sealed class CreateUserHandlerTests
     public CreateUserHandlerTests()
     {
         this.familyRepository
-            .Setup(service => service.GetAsync(EXISTING_FAMILY.Id, It.IsAny<CancellationToken>()))
+            .Setup(service => service.GetByIdAsync(EXISTING_FAMILY.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(EXISTING_FAMILY)
             ;
 

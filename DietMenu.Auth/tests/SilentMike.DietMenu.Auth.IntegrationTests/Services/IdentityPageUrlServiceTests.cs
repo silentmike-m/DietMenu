@@ -36,7 +36,7 @@ public sealed class IdentityPageUrlServiceTests : IDisposable
 
         var service = this.factory.Services.GetRequiredService<IIdentityPageUrlService>();
 
-        var expectedUrl = $@"{ISSUER_URI}/{IdentityPageNames.AREA}{IdentityPageNames.CONFIRM_USER_EMAIL}?ReturnUrl={returnUri.Scheme}%3A%2F%2F{returnUri.Host}%2F&Token={token}&UserId={userId}";
+        var expectedUrl = $@"{ISSUER_URI}/{IdentityPageNames.AREA}{IdentityPageNames.COMPLETE_USER_REGISTRATION}?ReturnUrl={returnUri.Scheme}%3A%2F%2F{returnUri.Host}%2F&Token={token}&UserId={userId}";
 
         //WHEN
         var resultUrl = service.GetConfirmUserEmailPageUrl(hostUri, returnUri, token, userId);

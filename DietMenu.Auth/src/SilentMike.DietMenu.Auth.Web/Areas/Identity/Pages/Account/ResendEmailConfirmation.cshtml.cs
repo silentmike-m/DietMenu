@@ -16,7 +16,7 @@ public class ResendEmailConfirmationModel : PageModel
 
     public async Task<IActionResult> OnPostAsync()
     {
-        if (!this.ModelState.IsValid)
+        if (this.ModelState.IsValid is false)
         {
             return this.Page();
         }

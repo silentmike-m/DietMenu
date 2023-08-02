@@ -23,7 +23,7 @@ public sealed class FamilyRepositoryTests : FakeDietMenuDbContext
     private static readonly Family EXISTING_FAMILY_TO_UPDATE = new()
     {
         Id = Guid.NewGuid(),
-        Name = "family name",
+        Name = "family name to update",
     };
 
     private readonly IMapper mapper;
@@ -63,13 +63,13 @@ public sealed class FamilyRepositoryTests : FakeDietMenuDbContext
     }
 
     [TestMethod]
-    public async Task Should_Return_Family_On_Get_Family()
+    public async Task Should_Return_Family_On_Get_Family_By_Id()
     {
         //GIVEN
         var repository = new FamilyRepository(this.Context!, this.mapper);
 
         //WHEN
-        var result = await repository.GetAsync(EXISTING_FAMILY.Id, CancellationToken.None);
+        var result = await repository.GetByIdAsync(EXISTING_FAMILY.Id, CancellationToken.None);
 
         //THEN
         var expectedResult = new FamilyEntity(EXISTING_FAMILY.Id, EXISTING_FAMILY.Name);
@@ -82,13 +82,47 @@ public sealed class FamilyRepositoryTests : FakeDietMenuDbContext
     }
 
     [TestMethod]
-    public async Task Should_Return_Null_When_Missing_Family_On_Get_Family()
+    public async Task Should_Return_Family_On_Get_Family_By_Name()
     {
         //GIVEN
         var repository = new FamilyRepository(this.Context!, this.mapper);
 
         //WHEN
-        var result = await repository.GetAsync(Guid.NewGuid(), CancellationToken.None);
+        var result = await repository.GetByNameAsync(EXISTING_FAMILY.Name, CancellationToken.None);
+
+        //THEN
+        var expectedResult = new FamilyEntity(EXISTING_FAMILY.Id, EXISTING_FAMILY.Name);
+
+        result.Should()
+            .NotBeNull()
+            .And
+            .BeEquivalentTo(expectedResult)
+            ;
+    }
+
+    [TestMethod]
+    public async Task Should_Return_Null_When_Missing_Family_On_Get_Family_By_Id()
+    {
+        //GIVEN
+        var repository = new FamilyRepository(this.Context!, this.mapper);
+
+        //WHEN
+        var result = await repository.GetByIdAsync(Guid.NewGuid(), CancellationToken.None);
+
+        //THEN
+        result.Should()
+            .BeNull()
+            ;
+    }
+
+    [TestMethod]
+    public async Task Should_Return_Null_When_Missing_Family_On_Get_Family_By_Name()
+    {
+        //GIVEN
+        var repository = new FamilyRepository(this.Context!, this.mapper);
+
+        //WHEN
+        var result = await repository.GetByNameAsync("fake name", CancellationToken.None);
 
         //THEN
         result.Should()

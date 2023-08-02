@@ -26,7 +26,7 @@ public class ResetPasswordModel : PageModel
 
     public async Task<IActionResult> OnPostAsync(string code = "")
     {
-        if (!this.ModelState.IsValid)
+        if (this.ModelState.IsValid is false)
         {
             return this.Page();
         }

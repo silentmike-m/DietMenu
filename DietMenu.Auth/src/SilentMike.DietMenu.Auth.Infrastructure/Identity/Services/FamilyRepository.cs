@@ -18,9 +18,23 @@ internal sealed class FamilyRepository : IFamilyRepository
         this.mapper = mapper;
     }
 
-    public async Task<FamilyEntity?> GetAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<FamilyEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var family = await this.context.Families.SingleOrDefaultAsync(family => family.Id == id, cancellationToken);
+
+        if (family is null)
+        {
+            return null;
+        }
+
+        var result = this.mapper.Map<FamilyEntity>(family);
+
+        return result;
+    }
+
+    public async Task<FamilyEntity?> GetByNameAsync(string name, CancellationToken cancellationToken = default)
+    {
+        var family = await this.context.Families.SingleOrDefaultAsync(family => family.Name == name, cancellationToken);
 
         if (family is null)
         {

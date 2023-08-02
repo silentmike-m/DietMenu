@@ -12,6 +12,11 @@ public sealed class FamilyAlreadyExistsException : ApplicationException
         : base($"Family with id '{id}' already exists")
         => this.Id = id;
 
+    public FamilyAlreadyExistsException(string name)
+        : base($"Family with name '{name}' already exists")
+    {
+    }
+
     private FamilyAlreadyExistsException(SerializationInfo info, StreamingContext context)
         : base(info, context)
     {

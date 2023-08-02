@@ -32,7 +32,7 @@ internal sealed class CreateUserHandler : IRequestHandler<CreateUser>
 
         this.logger.LogInformation("Try to create user");
 
-        var family = await this.familyRepository.GetAsync(request.User.FamilyId, cancellationToken);
+        var family = await this.familyRepository.GetByIdAsync(request.User.FamilyId, cancellationToken);
 
         if (family is null)
         {
