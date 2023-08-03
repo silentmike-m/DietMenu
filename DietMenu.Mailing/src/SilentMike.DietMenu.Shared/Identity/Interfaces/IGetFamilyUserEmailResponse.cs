@@ -4,4 +4,5 @@ public interface IGetFamilyUserEmailResponse
 {
     string Email { get; }
     Guid FamilyId { get; }
+    Guid UserId { get; }
 }

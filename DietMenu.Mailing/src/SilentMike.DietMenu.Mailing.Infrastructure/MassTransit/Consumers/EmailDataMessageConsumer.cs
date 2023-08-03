@@ -1,8 +1,6 @@
 ﻿namespace SilentMike.DietMenu.Mailing.Infrastructure.MassTransit.Consumers;
 
 using global::MassTransit;
-using MediatR;
-using Microsoft.Extensions.Logging;
 using SilentMike.DietMenu.Mailing.Application.Identity.Commands;
 using SilentMike.DietMenu.Mailing.Infrastructure.Extensions;
 using SilentMike.DietMenu.Shared.Email.Interfaces;
@@ -25,9 +23,9 @@ internal sealed class EmailDataMessageConsumer : IConsumer<IEmailDataMessage>
             throw new TimeoutException();
         }
 
-        if (context.Message.PayloadType == typeof(ResetPasswordEmailPayload).FullName)
+        if (context.Message.PayloadType == typeof(ResetUserPasswordEmailPayload).FullName)
         {
-            var payload = context.Message.Payload.To<ResetPasswordEmailPayload>();
+            var payload = context.Message.Payload.To<ResetUserPasswordEmailPayload>();
 
             var command = new SendResetPasswordEmail
             {
@@ -37,9 +35,9 @@ internal sealed class EmailDataMessageConsumer : IConsumer<IEmailDataMessage>
 
             await this.mediator.Send(command, CancellationToken.None);
         }
-        else if (context.Message.PayloadType == typeof(VerifyUserEmailPayload).FullName)
+        else if (context.Message.PayloadType == typeof(ConfirmUserEmailPayload).FullName)
         {
-            var payload = context.Message.Payload.To<VerifyUserEmailPayload>();
+            var payload = context.Message.Payload.To<ConfirmUserEmailPayload>();
 
             var command = new SendVerifyUserEmail
             {
