@@ -1,5 +1,6 @@
 ﻿namespace SilentMike.DietMenu.Auth.Infrastructure.Identity;
 
+using IdentityServer4.EntityFramework.DbContexts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SilentMike.DietMenu.Auth.Domain.Services;
 using SilentMike.DietMenu.Auth.Infrastructure.Identity.Data;
+using SilentMike.DietMenu.Auth.Infrastructure.Identity.Interfaces;
 using SilentMike.DietMenu.Auth.Infrastructure.Identity.Models;
 using SilentMike.DietMenu.Auth.Infrastructure.Identity.Services;
 
@@ -31,48 +33,16 @@ internal static class DependencyInjection
 
         services.AddScoped<IFamilyRepository, FamilyRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
+
+        services.AddScoped<ISystemMigrationService, SystemMigrationService>();
     }
 
-    public static void UseIdentity(this IApplicationBuilder _, IConfiguration configuration, DietMenuDbContext context, UserManager<User> userManager)
+    public static void UseIdentity(this IApplicationBuilder _, DietMenuDbContext context, PersistedGrantDbContext grantContext, ISystemMigrationService systemMigrationService)
     {
         context.Database.Migrate();
 
-        var identityOptions = configuration.GetSection(IdentityOptions.SECTION_NAME).Get<IdentityOptions>();
-        identityOptions ??= new IdentityOptions();
+        grantContext.Database.Migrate();
 
-        AddSystemUser(identityOptions, userManager);
-    }
-
-    private static void AddSystemUser(IdentityOptions options, UserManager<User> userManager)
-    {
-        var user = userManager.FindByNameAsync(options.SystemUserEmail).Result;
-
-        if (user is not null)
-        {
-            return;
-        }
-
-        var userId = Guid.NewGuid();
-
-        var family = new Family
-        {
-            Id = userId,
-            Name = "System",
-        };
-
-        user = new User
-        {
-            Id = userId.ToString(),
-            Email = options.SystemUserEmail,
-            EmailConfirmed = true,
-            Family = family,
-            FamilyId = family.Id,
-            FamilyKey = family.Key,
-            FirstName = "Saruman",
-            LastName = "White",
-            UserName = options.SystemUserEmail,
-        };
-
-        _ = userManager.CreateAsync(user, options.SystemUserPassword).Result;
+        systemMigrationService.MigrateSystemAsync().Wait();
     }
 }

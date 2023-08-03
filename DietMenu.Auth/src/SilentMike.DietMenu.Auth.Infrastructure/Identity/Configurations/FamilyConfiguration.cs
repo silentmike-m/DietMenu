@@ -12,5 +12,8 @@ internal sealed class FamilyConfiguration : IEntityTypeConfiguration<Family>
 
         builder.HasIndex(entity => entity.Id)
             .IsUnique();
+
+        builder.HasIndex(entity => entity.Name)
+            .IsUnique();
     }
 }

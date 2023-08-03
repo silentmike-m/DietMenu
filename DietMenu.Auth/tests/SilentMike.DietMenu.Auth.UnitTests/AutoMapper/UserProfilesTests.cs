@@ -21,7 +21,6 @@ public sealed class UserProfilesTests
         FamilyId = Guid.NewGuid(),
         FirstName = "John",
         Id = "18ff1b8b-0f85-4b37-b5d3-073f82f52431",
-        Key = 2,
         LastLogin = DateTime.Now,
         LastName = "Wick",
         Role = UserRole.System,

@@ -1,8 +1,9 @@
 ﻿namespace SilentMike.DietMenu.Auth.Infrastructure;
 
 using System.Reflection;
+using IdentityServer4.EntityFramework.DbContexts;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -12,7 +13,7 @@ using SilentMike.DietMenu.Auth.Infrastructure.Date.Services;
 using SilentMike.DietMenu.Auth.Infrastructure.HealthCheck;
 using SilentMike.DietMenu.Auth.Infrastructure.Identity;
 using SilentMike.DietMenu.Auth.Infrastructure.Identity.Data;
-using SilentMike.DietMenu.Auth.Infrastructure.Identity.Models;
+using SilentMike.DietMenu.Auth.Infrastructure.Identity.Interfaces;
 using SilentMike.DietMenu.Auth.Infrastructure.IdentityServer;
 using SilentMike.DietMenu.Auth.Infrastructure.MassTransit;
 using SilentMike.DietMenu.Auth.Infrastructure.Swagger;
@@ -38,6 +39,13 @@ public static class DependencyInjection
         services.AddSingleton<IDateTimeService, DateTimeService>();
     }
 
+    public static AuthenticationBuilder AddInfrastructure(this AuthenticationBuilder builder)
+    {
+        builder.AddIdentityServer4Authentication();
+
+        return builder;
+    }
+
     public static void UseInfrastructure(this IApplicationBuilder app, IConfiguration configuration)
     {
         using var scope = app.ApplicationServices.CreateScope();
@@ -47,13 +55,14 @@ public static class DependencyInjection
         try
         {
             var context = scope.ServiceProvider.GetRequiredService<DietMenuDbContext>();
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+            var grantContext = scope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>();
+            var systemMigrationService = scope.ServiceProvider.GetRequiredService<ISystemMigrationService>();
 
             app.UseHealthChecks();
 
             app.UseDietMenuSwagger();
 
-            app.UseIdentity(configuration, context, userManager);
+            app.UseIdentity(context, grantContext, systemMigrationService);
         }
         catch (Exception exception)
         {

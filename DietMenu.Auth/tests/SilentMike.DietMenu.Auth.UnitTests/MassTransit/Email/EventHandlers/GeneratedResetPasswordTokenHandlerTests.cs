@@ -41,7 +41,7 @@ public sealed class GeneratedResetPasswordTokenHandlerTests
     {
         //GIVEN
         this.identityPageUrlService
-            .Setup(service => service.GetResetUserPasswordPageUrl(new Uri(ISSUER_URI), new Uri(DEFAULT_CLIENT_URI), TOKEN))
+            .Setup(service => service.GetResetUserPasswordPageUrl(new Uri(ISSUER_URI), new Uri(DEFAULT_CLIENT_URI), It.IsAny<string>()))
             .Returns(URL);
 
         await using var provider = new ServiceCollection()

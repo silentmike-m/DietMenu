@@ -15,7 +15,7 @@ public sealed class UserController : ControllerBase
         => this.mediator = mediator;
 
     [HttpPost(Name = "CreateUser")]
-    public async Task<IActionResult> CreateFamily(CreateUser request, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> CreateUser(CreateUser request, CancellationToken cancellationToken = default)
     {
         await this.mediator.Send(request, cancellationToken);
 

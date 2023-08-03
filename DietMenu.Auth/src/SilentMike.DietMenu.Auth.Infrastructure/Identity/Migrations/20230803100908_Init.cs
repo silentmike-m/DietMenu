@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace SilentMike.DietMenu.Auth.Infrastructure.Identity.Migrations
 {
-    [ExcludeFromCodeCoverage]
     /// <inheritdoc />
     public partial class Init : Migration
     {
@@ -39,7 +37,7 @@ namespace SilentMike.DietMenu.Auth.Infrastructure.Identity.Migrations
                     Key = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -75,11 +73,12 @@ namespace SilentMike.DietMenu.Auth.Infrastructure.Identity.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    FamilyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     FamilyKey = table.Column<int>(type: "int", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Key = table.Column<int>(type: "int", nullable: false),
                     LastLogin = table.Column<DateTime>(type: "datetime2", nullable: true),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -246,13 +245,6 @@ namespace SilentMike.DietMenu.Auth.Infrastructure.Identity.Migrations
                 column: "FamilyKey");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_Id",
-                schema: "SilentMike",
-                table: "AspNetUsers",
-                column: "Id",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
                 schema: "SilentMike",
                 table: "AspNetUsers",
@@ -265,6 +257,13 @@ namespace SilentMike.DietMenu.Auth.Infrastructure.Identity.Migrations
                 schema: "SilentMike",
                 table: "Families",
                 column: "Id",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Families_Name",
+                schema: "SilentMike",
+                table: "Families",
+                column: "Name",
                 unique: true);
         }
 

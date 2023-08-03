@@ -3,6 +3,7 @@
 using System.Security.Claims;
 using IdentityServer4;
 using Microsoft.AspNetCore.Authentication;
+using SilentMike.DietMenu.Auth.Application.Auth.Events;
 using SilentMike.DietMenu.Auth.Application.Auth.Queries;
 using SilentMike.DietMenu.Auth.Web.Interfaces;
 
@@ -10,9 +11,9 @@ internal sealed class HttpContextSignInService : IHttpContextSignInService
 {
     private readonly IHttpContextAccessor httpContextAccessor;
     private readonly ILogger<HttpContextSignInService> logger;
-    private readonly ISender mediator;
+    private readonly IMediator mediator;
 
-    public HttpContextSignInService(IHttpContextAccessor httpContextAccessor, ILogger<HttpContextSignInService> logger, ISender mediator)
+    public HttpContextSignInService(IHttpContextAccessor httpContextAccessor, ILogger<HttpContextSignInService> logger, IMediator mediator)
     {
         this.httpContextAccessor = httpContextAccessor;
         this.logger = logger;
@@ -50,5 +51,12 @@ internal sealed class HttpContextSignInService : IHttpContextSignInService
         AuthenticationProperties? authenticationProperties = null;
 
         await this.httpContextAccessor.HttpContext.SignInAsync(issuer, authenticationProperties);
+
+        var notification = new UserLoggedIn
+        {
+            UserId = userClaims.UserId,
+        };
+
+        await this.mediator.Publish(notification, CancellationToken.None);
     }
 }

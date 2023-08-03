@@ -2,6 +2,7 @@
 
 using System.Reflection;
 using IdentityServer4.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,6 +11,8 @@ using SilentMike.DietMenu.Auth.Infrastructure.IdentityServer.Services;
 
 internal static class DependencyInjection
 {
+    private const string IDENTITY_SERVER_CLIENTS_CONFIGURATION_SECTION = "IdentityServer:Clients";
+
     public static void AddIdentityServer4(this IServiceCollection services, IConfiguration configuration)
     {
         var connectionString = configuration.GetConnectionString("DefaultConnection");
@@ -35,14 +38,21 @@ internal static class DependencyInjection
                 }
             )
             .AddAspNetIdentity<User>()
-            .AddDeveloperSigningCredential()
             .AddInMemoryApiResources(Setup.GetApiResources())
             .AddInMemoryApiScopes(Setup.GetApiScopes())
-            .AddInMemoryClients(configuration.GetSection("IdentityServer:Clients"))
+            .AddInMemoryClients(configuration.GetSection(IDENTITY_SERVER_CLIENTS_CONFIGURATION_SECTION))
             .AddInMemoryIdentityResources(Setup.GetIdentityResources())
             .AddInMemoryPersistedGrants()
-            .AddProfileService<ProfileService>();
+            .AddProfileService<ProfileService>()
+            ;
 
         services.AddTransient<IProfileService, ProfileService>();
+    }
+
+    internal static AuthenticationBuilder AddIdentityServer4Authentication(this AuthenticationBuilder builder)
+    {
+        builder.AddLocalApi();
+
+        return builder;
     }
 }

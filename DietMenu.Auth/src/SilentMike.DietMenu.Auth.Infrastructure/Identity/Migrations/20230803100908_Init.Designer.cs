@@ -12,7 +12,7 @@ using SilentMike.DietMenu.Auth.Infrastructure.Identity.Data;
 namespace SilentMike.DietMenu.Auth.Infrastructure.Identity.Migrations
 {
     [DbContext(typeof(DietMenuDbContext))]
-    [Migration("20230719182400_Init")]
+    [Migration("20230803100908_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -172,11 +172,14 @@ namespace SilentMike.DietMenu.Auth.Infrastructure.Identity.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Key");
 
                     b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("Name")
                         .IsUnique();
 
                     b.ToTable("Families", "SilentMike");
@@ -201,15 +204,15 @@ namespace SilentMike.DietMenu.Auth.Infrastructure.Identity.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<Guid>("FamilyId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int>("FamilyKey")
                         .HasColumnType("int");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Key")
-                        .HasColumnType("int");
 
                     b.Property<DateTime?>("LastLogin")
                         .HasColumnType("datetime2");
@@ -241,6 +244,10 @@ namespace SilentMike.DietMenu.Auth.Infrastructure.Identity.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -254,9 +261,6 @@ namespace SilentMike.DietMenu.Auth.Infrastructure.Identity.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("FamilyKey");
-
-                    b.HasIndex("Id")
-                        .IsUnique();
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");

@@ -1,6 +1,8 @@
 ﻿namespace SilentMike.DietMenu.Auth.Infrastructure.MassTransit.Email.EventHandlers;
 
+using System.Text;
 using global::MassTransit;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SilentMike.DietMenu.Auth.Application.Common.Extensions;
@@ -38,7 +40,9 @@ internal sealed class GeneratedEmailConfirmationTokenHandler : INotificationHand
 
         var returnHostUri = new Uri(this.identityServerOptions.DefaultClientUri);
 
-        var url = this.identityPageUrlService.GetConfirmUserEmailPageUrl(hostUri, returnHostUri, notification.Token, notification.Id);
+        var token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(notification.Token));
+
+        var url = this.identityPageUrlService.GetConfirmUserEmailPageUrl(hostUri, returnHostUri, token, notification.Id);
 
         var payload = new ConfirmUserEmailPayload
         {

@@ -70,10 +70,10 @@ public sealed class AuthorizationBehaviorTests
     }
 
     [TestMethod]
-    public async Task Should_Throw_DietMenu_Unauthorized_Exception_When_FamilyId_Is_Empty()
+    public async Task Should_Throw_DietMenu_Unauthorized_Exception_When_FamilyId_Is_Null()
     {
         //GIVEN
-        var familyId = Guid.Empty;
+        var familyId = (Guid?)null;
         var userId = Guid.NewGuid();
 
         this.currentRequestService

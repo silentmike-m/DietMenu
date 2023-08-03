@@ -43,7 +43,7 @@ public sealed class GeneratedEmailConfirmationTokenHandlerTests
         var userId = Guid.NewGuid();
 
         this.identityPageUrlService
-            .Setup(service => service.GetConfirmUserEmailPageUrl(new Uri(ISSUER_URI), new Uri(DEFAULT_CLIENT_URI), TOKEN, userId))
+            .Setup(service => service.GetConfirmUserEmailPageUrl(new Uri(ISSUER_URI), new Uri(DEFAULT_CLIENT_URI), It.IsAny<string>(), userId))
             .Returns(URL);
 
         await using var provider = new ServiceCollection()

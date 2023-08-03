@@ -36,7 +36,7 @@ public sealed class LoginModel : PageModel
         return this.Page();
     }
 
-    public async Task<IActionResult> OnPostAsync(string? returnUrl = null, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> OnPostAsync(CancellationToken cancellationToken = default)
     {
         if (this.ModelState.IsValid is false)
         {

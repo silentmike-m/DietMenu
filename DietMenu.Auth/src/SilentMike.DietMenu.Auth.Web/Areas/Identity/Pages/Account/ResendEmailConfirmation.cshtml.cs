@@ -3,6 +3,7 @@ namespace SilentMike.DietMenu.Auth.Web.Areas.Identity.Pages.Account;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using SilentMike.DietMenu.Auth.Application.Exceptions.Users;
 using SilentMike.DietMenu.Auth.Application.Users.Commands;
 using SilentMike.DietMenu.Auth.Web.Areas.Identity.Models;
 using SilentMike.DietMenu.Auth.Web.Common.Constants;
@@ -37,6 +38,12 @@ public class ResendEmailConfirmationModel : PageModel
             };
 
             await this.mediator.Send(request, CancellationToken.None);
+
+            return this.RedirectToPage(IdentityPageNames.LOGIN, new LoginPageValues());
+        }
+        catch (UserNotFoundException exception)
+        {
+            this.logger.LogError(exception, "{Message}", exception.Message);
 
             return this.RedirectToPage(IdentityPageNames.LOGIN, new LoginPageValues());
         }

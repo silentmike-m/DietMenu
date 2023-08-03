@@ -8,7 +8,7 @@ internal sealed class CurrentRequestService : ICurrentRequestService
 {
     private readonly IHttpContextAccessor httpContextAccessor;
 
-    public (Guid familyId, Guid userId) CurrentUser
+    public (Guid? familyId, Guid userId) CurrentUser
     {
         get
         {
@@ -20,7 +20,7 @@ internal sealed class CurrentRequestService : ICurrentRequestService
                 : new Guid(userIdentifier);
 
             var familyId = string.IsNullOrEmpty(familyIdentifier)
-                ? Guid.Empty
+                ? (Guid?)null
                 : new Guid(familyIdentifier);
 
             return (familyId, userId);

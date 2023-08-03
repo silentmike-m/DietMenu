@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using SilentMike.DietMenu.Auth.Application.Exceptions.Users;
 using SilentMike.DietMenu.Auth.Web.Areas.Identity.Models;
+using SilentMike.DietMenu.Auth.Web.Common.Constants;
 
 public class CompleteUserRegistration : PageModel
 {
@@ -44,6 +45,11 @@ public class CompleteUserRegistration : PageModel
 
         try
         {
+            if (string.IsNullOrWhiteSpace(returnUrl))
+            {
+                returnUrl = IdentityPageNames.LOGIN;
+            }
+
             var tokenString = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
 
             var request = new Application.Users.Commands.CompleteUserRegistration

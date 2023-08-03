@@ -42,7 +42,9 @@ builder.Services.AddScoped<IHttpContextSignInService, HttpContextSignInService>(
 builder.Services.AddSingleton<IIdentityPageUrlService, IdentityPageUrlService>();
 
 builder.Services
-    .AddAuthentication();
+    .AddAuthentication()
+    .AddInfrastructure()
+    ;
 
 builder.Services.AddAuthorization(options =>
 {
