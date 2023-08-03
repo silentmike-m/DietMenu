@@ -61,7 +61,7 @@ public class CompleteUserRegistration : PageModel
         {
             this.logger.LogError(exception, "{Message}", exception.Message);
 
-            this.ModelState.AddModelError(string.Empty, "Invalid login attempt");
+            this.ModelState.AddModelError(string.Empty, "Invalid complete registration attempt");
         }
         catch (Exception exception)
         {

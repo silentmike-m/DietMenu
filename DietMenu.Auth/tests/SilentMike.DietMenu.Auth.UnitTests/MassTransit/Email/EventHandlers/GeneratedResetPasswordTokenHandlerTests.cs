@@ -18,18 +18,18 @@ using SilentMike.DietMenu.Shared.Email.Interfaces;
 using SilentMike.DietMenu.Shared.Email.Models;
 
 [TestClass]
-public sealed class GeneratedEmailConfirmationTokenHandlerTests
+public sealed class GeneratedResetPasswordTokenHandlerTests
 {
     private const string DEFAULT_CLIENT_URI = "https://client.domain.com";
     private const string ISSUER_URI = "https://auth.domain.com";
-    private const string TOKEN = "confirm_token";
-    private const string URL = "confirm.domain.com";
+    private const string TOKEN = "reset_password_token";
+    private const string URL = "reset.password.domain.com";
 
     private readonly Mock<IIdentityPageUrlService> identityPageUrlService = new();
     private readonly IOptions<IdentityServerOptions> identityServerOptions;
-    private readonly NullLogger<GeneratedEmailConfirmationTokenHandler> logger = new();
+    private readonly NullLogger<GeneratedResetPasswordTokenHandler> logger = new();
 
-    public GeneratedEmailConfirmationTokenHandlerTests()
+    public GeneratedResetPasswordTokenHandlerTests()
         => this.identityServerOptions = Options.Create(new IdentityServerOptions
         {
             DefaultClientUri = DEFAULT_CLIENT_URI,
@@ -37,13 +37,11 @@ public sealed class GeneratedEmailConfirmationTokenHandlerTests
         });
 
     [TestMethod]
-    public async Task Should_Send_Confirm_User_Email_Message()
+    public async Task Should_Send_Reset_User_Password_Email_Message()
     {
         //GIVEN
-        var userId = Guid.NewGuid();
-
         this.identityPageUrlService
-            .Setup(service => service.GetConfirmUserEmailPageUrl(new Uri(ISSUER_URI), new Uri(DEFAULT_CLIENT_URI), TOKEN, userId))
+            .Setup(service => service.GetResetUserPasswordPageUrl(new Uri(ISSUER_URI), new Uri(DEFAULT_CLIENT_URI), TOKEN))
             .Returns(URL);
 
         await using var provider = new ServiceCollection()
@@ -54,14 +52,14 @@ public sealed class GeneratedEmailConfirmationTokenHandlerTests
         harness.TestTimeout = TimeSpan.FromSeconds(5);
         await harness.Start();
 
-        var notification = new GeneratedEmailConfirmationToken
+        var notification = new GeneratedResetPasswordToken
         {
             Email = "user@domain.com",
-            Id = userId,
+            Id = Guid.NewGuid(),
             Token = TOKEN,
         };
 
-        var handler = new GeneratedEmailConfirmationTokenHandler(harness.Bus, this.identityPageUrlService.Object, this.identityServerOptions, this.logger);
+        var handler = new GeneratedResetPasswordTokenHandler(harness.Bus, this.identityPageUrlService.Object, this.identityServerOptions, this.logger);
 
         //WHEN
         await handler.Handle(notification, CancellationToken.None);
@@ -73,7 +71,7 @@ public sealed class GeneratedEmailConfirmationTokenHandlerTests
             .BeTrue()
             ;
 
-        var expectedPayload = new ConfirmUserEmailPayload
+        var expectedPayload = new ResetUserPasswordEmailPayload
         {
             Email = notification.Email,
             Url = URL,
@@ -82,7 +80,7 @@ public sealed class GeneratedEmailConfirmationTokenHandlerTests
         var expectedMessage = new EmailDataMessage
         {
             Payload = expectedPayload.ToJson(),
-            PayloadType = typeof(ConfirmUserEmailPayload).FullName!,
+            PayloadType = typeof(ResetUserPasswordEmailPayload).FullName!,
         };
 
         var messages = harness.Published

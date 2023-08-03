@@ -46,4 +46,26 @@ public sealed class IdentityPageUrlServiceTests : IDisposable
             .Be(resultUrl)
             ;
     }
+
+    [TestMethod]
+    public void Should_Build_Reset_User_Password_Page_Url_On_Get_Reset_User_Password_Email_Page_Url()
+    {
+        //GIVEN
+        var hostUri = new Uri(ISSUER_URI);
+        var returnUri = new Uri(DEFAULT_CLIENT_URI);
+        const string token = "confirm_token";
+        var userId = Guid.NewGuid();
+
+        var service = this.factory.Services.GetRequiredService<IIdentityPageUrlService>();
+
+        var expectedUrl = $@"{ISSUER_URI}/{IdentityPageNames.AREA}{IdentityPageNames.RESET_USER_PASSWORD}?ReturnUrl={returnUri.Scheme}%3A%2F%2F{returnUri.Host}%2F&Token={token}";
+
+        //WHEN
+        var resultUrl = service.GetResetUserPasswordPageUrl(hostUri, returnUri, token);
+
+        //THEN
+        expectedUrl.Should()
+            .Be(resultUrl)
+            ;
+    }
 }

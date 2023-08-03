@@ -4,53 +4,75 @@ using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using SilentMike.DietMenu.Auth.Application.Exceptions.Users;
+using SilentMike.DietMenu.Auth.Application.Users.Commands;
 using SilentMike.DietMenu.Auth.Web.Areas.Identity.Models;
+using SilentMike.DietMenu.Auth.Web.Common.Constants;
+using SilentMike.DietMenu.Auth.Web.Models;
 
 public class ResetPasswordModel : PageModel
 {
-    private readonly IMediator mediator;
+    private readonly ILogger<ResetPasswordModel> logger;
+    private readonly ISender mediator;
+
     [BindProperty] public ResetPasswordInputModel Input { get; set; } = new();
 
-    public ResetPasswordModel(IMediator mediator)
-        => this.mediator = mediator;
-
-    public IActionResult OnGet(string code = "")
+    public ResetPasswordModel(ILogger<ResetPasswordModel> logger, ISender mediator)
     {
-        if (string.IsNullOrEmpty(code))
+        this.logger = logger;
+        this.mediator = mediator;
+    }
+
+    public IActionResult OnGet(string token)
+    {
+        if (string.IsNullOrEmpty(token))
         {
-            return this.BadRequest("A code must be supplied for password reset.");
+            return this.BadRequest("A token must be supplied for password reset.");
         }
 
         return this.Page();
     }
 
-    public async Task<IActionResult> OnPostAsync(string code = "")
+    public async Task<IActionResult> OnPostAsync(string token, string returnUrl)
     {
-        if (this.ModelState.IsValid is false)
+        if (!this.ModelState.IsValid)
         {
             return this.Page();
         }
 
         try
         {
-            var token = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
+            var tokenString = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
 
-            // var request = new ResetPassword
-            // {
-            //     Email = this.Input.Email,
-            //     Password = this.Input.Password,
-            //     Token = token,
-            // };
-            //
-            // await this.mediator.Send(request, CancellationToken.None);
+            var request = new ResetUserPassword
+            {
+                Email = this.Input.Email,
+                Password = this.Input.Password,
+                Token = tokenString,
+            };
 
-            return this.RedirectToPage("./ResetPasswordConfirmation");
+            await this.mediator.Send(request, CancellationToken.None);
+
+            var pageValues = new ResetPasswordConfirmationPageValues
+            {
+                ReturnUrl = new Uri(returnUrl),
+            };
+
+            return this.RedirectToPage(IdentityPageNames.RESET_PASSWORD_CONFIRMATION, pageValues);
+        }
+        catch (UserNotFoundException exception)
+        {
+            this.logger.LogError(exception, "{Message}", exception.Message);
+
+            this.ModelState.AddModelError(string.Empty, "Invalid reset password attempt");
         }
         catch (Exception exception)
         {
-            this.ModelState.AddModelError(string.Empty, exception.Message);
+            this.logger.LogError(exception, "{Message}", exception.Message);
 
-            return this.Page();
+            this.ModelState.AddModelError(string.Empty, exception.Message);
         }
+
+        return this.Page();
     }
 }

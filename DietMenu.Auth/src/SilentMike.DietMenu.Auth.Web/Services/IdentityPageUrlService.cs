@@ -25,6 +25,19 @@ internal sealed class IdentityPageUrlService : IIdentityPageUrlService
         return url;
     }
 
+    public string GetResetUserPasswordPageUrl(Uri hostUri, Uri returnHostUri, string token)
+    {
+        var values = new ResetUserPasswordPageValues
+        {
+            ReturnUrl = returnHostUri,
+            Token = token,
+        };
+
+        var url = this.GetUrl(hostUri, IdentityPageNames.RESET_USER_PASSWORD, values);
+
+        return url;
+    }
+
     private string GetUrl(Uri host, string pageName, object values)
     {
         var hostString = host.IsDefaultPort

@@ -4,6 +4,5 @@ using System.ComponentModel.DataAnnotations;
 
 public sealed class ResendEmailConfirmationInputModel
 {
-    [Required] [EmailAddress] public string Email { get; set; } = string.Empty;
+    [EmailAddress, Required] public string Email { get; set; } = string.Empty;
 }
-
