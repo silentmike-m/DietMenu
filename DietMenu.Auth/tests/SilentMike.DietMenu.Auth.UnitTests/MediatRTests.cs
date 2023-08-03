@@ -52,7 +52,7 @@ public sealed class MediatRTests
                     .Any(type => type.GenericTypeArguments
                         .Any(argument => argument == notificationType)));
 
-            if (!existsHandler)
+            if (existsHandler is false)
             {
                 errors.Add($"Missing handler for notification {notificationType}");
             }

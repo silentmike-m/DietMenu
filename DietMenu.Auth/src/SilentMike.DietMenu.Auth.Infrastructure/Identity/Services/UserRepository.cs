@@ -3,7 +3,6 @@
 using global::AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using SilentMike.DietMenu.Auth.Domain.Entities;
 using SilentMike.DietMenu.Auth.Domain.Services;
 using SilentMike.DietMenu.Auth.Infrastructure.Exceptions.Users;
@@ -13,14 +12,12 @@ using SilentMike.DietMenu.Auth.Infrastructure.Identity.Models;
 internal sealed class UserRepository : IUserRepository
 {
     private readonly IDietMenuDbContext context;
-    private readonly ILogger<UserRepository> logger;
     private readonly IMapper mapper;
     private readonly UserManager<User> userManager;
 
-    public UserRepository(IDietMenuDbContext context, ILogger<UserRepository> logger, IMapper mapper, UserManager<User> userManager)
+    public UserRepository(IDietMenuDbContext context, IMapper mapper, UserManager<User> userManager)
     {
         this.context = context;
-        this.logger = logger;
         this.mapper = mapper;
         this.userManager = userManager;
     }

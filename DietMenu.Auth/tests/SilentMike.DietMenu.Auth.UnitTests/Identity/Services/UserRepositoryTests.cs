@@ -4,7 +4,6 @@ using System.Reflection;
 using FluentAssertions;
 using global::AutoMapper;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using SilentMike.DietMenu.Auth.Domain.Entities;
@@ -25,7 +24,6 @@ public sealed class UserRepositoryTests : FakeDietMenuDbContext
         Name = "family name",
     };
 
-    private readonly NullLogger<UserRepository> logger = new();
     private readonly IMapper mapper;
 
     public UserRepositoryTests()
@@ -54,7 +52,7 @@ public sealed class UserRepositoryTests : FakeDietMenuDbContext
                 .ReturnsAsync(identityResult))
             .Build();
 
-        var service = new UserRepository(this.Context!, this.logger, this.mapper, userManager.Object);
+        var service = new UserRepository(this.Context!, this.mapper, userManager.Object);
 
         //WHEN
         await service.CreateUserAsync(password, userToCreate, CancellationToken.None);
@@ -106,7 +104,7 @@ public sealed class UserRepositoryTests : FakeDietMenuDbContext
             )
             .Build();
 
-        var service = new UserRepository(this.Context!, this.logger, this.mapper, userManager.Object);
+        var service = new UserRepository(this.Context!, this.mapper, userManager.Object);
 
         //WHEN
         var result = await service.GetByEmailAsync("email@domain.com", CancellationToken.None);
@@ -143,7 +141,7 @@ public sealed class UserRepositoryTests : FakeDietMenuDbContext
             )
             .Build();
 
-        var service = new UserRepository(this.Context!, this.logger, this.mapper, userManager.Object);
+        var service = new UserRepository(this.Context!, this.mapper, userManager.Object);
 
         //WHEN
         var result = await service.GetByIdAsync(Guid.NewGuid(), CancellationToken.None);
@@ -179,7 +177,7 @@ public sealed class UserRepositoryTests : FakeDietMenuDbContext
             )
             .Build();
 
-        var service = new UserRepository(this.Context!, this.logger, this.mapper, userManager.Object);
+        var service = new UserRepository(this.Context!, this.mapper, userManager.Object);
 
         //WHEN
         var result = await service.GetByEmailAsync(user.Email, CancellationToken.None);
@@ -221,7 +219,7 @@ public sealed class UserRepositoryTests : FakeDietMenuDbContext
             )
             .Build();
 
-        var service = new UserRepository(this.Context!, this.logger, this.mapper, userManager.Object);
+        var service = new UserRepository(this.Context!, this.mapper, userManager.Object);
 
         //WHEN
         var result = await service.GetByIdAsync(userId, CancellationToken.None);
@@ -258,7 +256,7 @@ public sealed class UserRepositoryTests : FakeDietMenuDbContext
                 .ReturnsAsync(identityResult))
             .Build();
 
-        var service = new UserRepository(this.Context!, this.logger, this.mapper, userManager.Object);
+        var service = new UserRepository(this.Context!, this.mapper, userManager.Object);
 
         //WHEN
         var action = async () => await service.CreateUserAsync(password, userToCreate, CancellationToken.None);
