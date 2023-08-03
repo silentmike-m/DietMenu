@@ -2,10 +2,11 @@
 
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
 using Microsoft.Extensions.Logging;
+using SilentMike.DietMenu.Auth.Application.Auth.Events;
+using SilentMike.DietMenu.Auth.Application.Auth.Queries;
 using SilentMike.DietMenu.Auth.Application.Users.Queries;
 
 internal sealed class ProfileService : IProfileService
@@ -14,7 +15,10 @@ internal sealed class ProfileService : IProfileService
     private readonly IMediator mediator;
 
     public ProfileService(ILogger<ProfileService> logger, IMediator mediator)
-        => (this.logger, this.mediator) = (logger, mediator);
+    {
+        this.logger = logger;
+        this.mediator = mediator;
+    }
 
     public async Task GetProfileDataAsync(ProfileDataRequestContext context)
     {
@@ -27,7 +31,19 @@ internal sealed class ProfileService : IProfileService
 
         var userClaims = await this.mediator.Send(getUserClaimsRequest, CancellationToken.None);
 
-        context.IssuedClaims.AddRange(userClaims.Claims);
+        foreach (var userClaim in userClaims.Claims)
+        {
+            var claim = new Claim(userClaim.Key, userClaim.Value);
+
+            context.IssuedClaims.Add(claim);
+        }
+
+        var notification = new UserLoggedIn
+        {
+            UserId = userClaims.UserId,
+        };
+
+        await this.mediator.Publish(notification, CancellationToken.None);
     }
 
     public async Task IsActiveAsync(IsActiveContext context)
@@ -36,14 +52,18 @@ internal sealed class ProfileService : IProfileService
         {
             var email = GetUserEmail(context.Subject);
 
-            var getUserActivationStatusRequest = new GetUserActivationStatus
+            var getUserActivationStatusRequest = new GetUserStatus
             {
                 Email = email,
             };
 
-            var userActivationStatus = await this.mediator.Send(getUserActivationStatusRequest, CancellationToken.None);
+            var userStatus = await this.mediator.Send(getUserActivationStatusRequest, CancellationToken.None);
 
-            context.IsActive = userActivationStatus.IsActive;
+            context.IsActive = userStatus is
+            {
+                IsEmailConfirmed: true,
+                IsLockedOut: false,
+            };
         }
         catch (Exception exception)
         {

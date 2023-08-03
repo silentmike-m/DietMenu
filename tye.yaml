@@ -1,3 +1,6 @@
+#30000 - identity
+#30003 - mailing
+
 name: dietmenu
 network: dietmenu-dev
 services:
@@ -15,30 +18,42 @@ services:
     # bindings:
     # - protocol: https
       # port: 8080   
-  # - name: identity
-    # project: DietMenu.Auth/src/SilentMike.DietMenu.Auth.Web/SilentMike.DietMenu.Auth.Web.csproj
-    # env:
-      # - name: ASPNETCORE_URLS
-        # value: https://localhost:30000 
-      # - name: CONFIG_CONNECTIONSTRINGS__DEFAULTCONNECTION
-        # value: Server=localhost,1433;Database=dietmenu-aspnet-identity;User Id=sa;Password=P@ssw0rd;MultipleActiveResultSets=true
-      # - name: CONFIG_IDENTITY__REGISTERCODE
-        # value: P@ssw0rd
-      # - name: CONFIG_IDENTITY__SYSTEMUSEREMAIL
-        # value: system@domain.com
-      # - name: CONFIG_IDENTITY__SYSTEMUSERPASSWORD
-        # value: P@ssw0rd
-      # - name: CONFIG_RABBITMQ__HOSTNAME
-        # value: localhost   
-      # - name: CONFIG_RABBITMQ__SERVER
-        # value: rabbitmq://localhost
-      # - name: CONFIG_RABBITMQ__USER
-        # value: user
-      # - name: CONFIG_RABBITMQ__PASSWORD
-        # value: P@ssw0rd         
-    # bindings:
-    # - protocol: https 
-      # port: 30000   
+  - name: identity
+    project: DietMenu.Auth/src/SilentMike.DietMenu.Auth.Web/SilentMike.DietMenu.Auth.Web.csproj
+    env:
+      - name: ASPNETCORE_URLS
+        value: https://localhost:30000 
+      - name: CONFIG_CONNECTIONSTRINGS__DEFAULTCONNECTION
+        value: Server=localhost,1433;Database=dietmenu-aspnet-identity;User Id=sa;Password=P@ssw0rd;MultipleActiveResultSets=true;TrustServerCertificate=true
+      - name: CONFIG_CORS__ALLOWEDORIGINS__2
+        value: https://localhost:8080
+      - name: CONFIG_CORS__ALLOWEDORIGINS__3
+        value: https://localhost:30000
+      - name: CONFIG_IDENTITY__REQUIRECONFIRMEDACCOUNT
+        value: true
+      - name: CONFIG_IDENTITY__SYSTEMUSEREMAIL
+        value: system@domain.com
+      - name: CONFIG_IDENTITY__SYSTEMUSERPASSWORD
+        value: P@ssw0rd
+      - name: CONFIG_IDENTITYSERVER__DEFAULTCLIENTURI
+        value: https://localhost
+      - name: CONFIG_IDENTITYSERVER__ISSUERURI
+        value: https://localhost:30000
+      - name: CONFIG_RABBITMQ__HOSTNAME
+        value: localhost   
+      - name: CONFIG_RABBITMQ__SERVER
+        value: rabbitmq://localhost
+      - name: CONFIG_RABBITMQ__USER
+        value: user
+      - name: CONFIG_RABBITMQ__PASSWORD
+        value: P@ssw0rd   
+      - name: CONFIG_SERILOG__WRITETO__1__NAME
+        value: Seq
+      - name: CONFIG_SERILOG__WRITETO__1__ARGS__SERVERURL
+        value: http://localhost:5341   
+    bindings:
+    - protocol: https 
+      port: 30000   
   # - name: api
     # project: DietMenu.Core/src/SilentMike.DietMenu.Core.WebApi/SilentMike.DietMenu.Core.WebApi.csproj
     # env:

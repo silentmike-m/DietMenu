@@ -29,7 +29,7 @@ public sealed class EmailDataMessageConsumerTests
             .Setup(service => service.Send(It.IsAny<SendResetPasswordEmail>(), It.IsAny<CancellationToken>()))
             .Callback<IRequest, CancellationToken>((request, _) => sendResetPasswordEmailRequest = request as SendResetPasswordEmail);
 
-        var payload = new ResetPasswordEmailPayload
+        var payload = new ResetUserPasswordEmailPayload
         {
             Email = "test@domain.com",
             Url = "test.com",
@@ -39,7 +39,7 @@ public sealed class EmailDataMessageConsumerTests
 
         var message = Mock.Of<IEmailDataMessage>(dataMessage =>
             dataMessage.Payload == payloadJson
-            && dataMessage.PayloadType == typeof(ResetPasswordEmailPayload).FullName);
+            && dataMessage.PayloadType == typeof(ResetUserPasswordEmailPayload).FullName);
 
         this.context
             .Setup(consumeContext => consumeContext.Message)
@@ -76,7 +76,7 @@ public sealed class EmailDataMessageConsumerTests
             .Setup(service => service.Send(It.IsAny<SendVerifyUserEmail>(), It.IsAny<CancellationToken>()))
             .Callback<IRequest, CancellationToken>((request, _) => sendVerifyUserEmail = request as SendVerifyUserEmail);
 
-        var payload = new VerifyUserEmailPayload
+        var payload = new ConfirmUserEmailPayload
         {
             Email = "test@domain.com",
             Url = "test.com",
@@ -86,7 +86,7 @@ public sealed class EmailDataMessageConsumerTests
 
         var message = Mock.Of<IEmailDataMessage>(dataMessage =>
             dataMessage.Payload == payloadJson
-            && dataMessage.PayloadType == typeof(VerifyUserEmailPayload).FullName);
+            && dataMessage.PayloadType == typeof(ConfirmUserEmailPayload).FullName);
 
         this.context
             .Setup(consumeContext => consumeContext.Message)

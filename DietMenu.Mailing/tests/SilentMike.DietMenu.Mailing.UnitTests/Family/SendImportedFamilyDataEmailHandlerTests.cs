@@ -31,7 +31,6 @@ public sealed class SendImportedFamilyDataEmailHandlerTests
         const string dataArea = "data name";
         const string errorMessageOne = "error message 'one'";
         const string errorMessageTwo = "error message 'two'";
-        const string serverName = "domain.com";
         const string familyUserEmail = "family@domain.com";
 
         var emailFactory = new EmailFactory(new XmlService());
@@ -68,7 +67,6 @@ public sealed class SendImportedFamilyDataEmailHandlerTests
                 },
             },
             IsSuccess = false,
-            Server = serverName,
         };
 
         var handler = new SendImportedFamilyDataEmailHandler(emailFactory, logger, mediator.Object);
@@ -105,10 +103,6 @@ public sealed class SendImportedFamilyDataEmailHandlerTests
             .Contain(dataArea)
             ;
 
-        sendEmailCommand.Email.TextMessage.Should()
-            .Contain(serverName)
-            ;
-
         var htmlDocument = new HtmlDocument();
         htmlDocument.LoadHtml(sendEmailCommand.Email.HtmlMessage);
 
@@ -130,10 +124,6 @@ public sealed class SendImportedFamilyDataEmailHandlerTests
 
         htmlDocument.DocumentNode.InnerHtml.Should()
             .Contain(dataArea)
-            ;
-
-        htmlDocument.DocumentNode.InnerHtml.Should()
-            .Contain(serverName)
             ;
     }
 

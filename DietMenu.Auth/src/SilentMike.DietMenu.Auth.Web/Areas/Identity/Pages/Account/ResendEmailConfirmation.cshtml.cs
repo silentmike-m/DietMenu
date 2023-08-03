@@ -1,47 +1,59 @@
 namespace SilentMike.DietMenu.Auth.Web.Areas.Identity.Pages.Account;
 
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using SilentMike.DietMenu.Auth.Application.Exceptions.Users;
 using SilentMike.DietMenu.Auth.Application.Users.Commands;
 using SilentMike.DietMenu.Auth.Web.Areas.Identity.Models;
+using SilentMike.DietMenu.Auth.Web.Common.Constants;
+using SilentMike.DietMenu.Auth.Web.Models;
 
 [AllowAnonymous]
 public class ResendEmailConfirmationModel : PageModel
 {
-    [BindProperty]
-    public ResendEmailConfirmationInputModel Input { get; set; } = new();
+    private readonly ILogger<ResendEmailConfirmationModel> logger;
+    private readonly ISender mediator;
 
-    private readonly IMediator mediator;
+    [BindProperty] public ResendEmailConfirmationInputModel Input { get; set; } = new();
 
-    public ResendEmailConfirmationModel(IMediator mediator) => this.mediator = mediator;
+    public ResendEmailConfirmationModel(ILogger<ResendEmailConfirmationModel> logger, ISender mediator)
+    {
+        this.logger = logger;
+        this.mediator = mediator;
+    }
 
     public async Task<IActionResult> OnPostAsync()
     {
-        if (!this.ModelState.IsValid)
-        {
-            return this.Page();
-        }
-
         try
         {
-            var request = new SendUserConfirmation
+            if (!this.ModelState.IsValid)
+            {
+                return this.Page();
+            }
+
+            var request = new GenerateEmailConfirmationToken
             {
                 Email = this.Input.Email,
             };
 
-            _ = await this.mediator.Send(request, CancellationToken.None);
+            await this.mediator.Send(request, CancellationToken.None);
 
-            return this.RedirectToPage("./Login");
+            return this.RedirectToPage(IdentityPageNames.LOGIN, new LoginPageValues());
+        }
+        catch (UserNotFoundException exception)
+        {
+            this.logger.LogError(exception, "{Message}", exception.Message);
+
+            return this.RedirectToPage(IdentityPageNames.LOGIN, new LoginPageValues());
         }
         catch (Exception exception)
         {
+            this.logger.LogError(exception, "{Message}", exception.Message);
+
             this.ModelState.AddModelError(string.Empty, exception.Message);
-            return this.Page();
         }
+
+        return this.Page();
     }
 }

@@ -2,6 +2,7 @@
 
 public interface ICurrentRequestService
 {
-    (Guid familyId, Guid userId) CurrentUser { get; }
+    (Guid? familyId, Guid userId) CurrentUser { get; }
+    string CurrentUserRole { get; }
     string Schema { get; }
 }

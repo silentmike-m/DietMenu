@@ -2,8 +2,9 @@
 
 public sealed class IdentityOptions
 {
-    public static readonly string SectionName = "Identity";
-    public string RegisterCode { get; set; } = string.Empty;
+    public static readonly string SECTION_NAME = "Identity";
+
+    public bool RequireConfirmedAccount { get; set; } = default;
     public string SystemUserEmail { get; set; } = string.Empty;
     public string SystemUserPassword { get; set; } = string.Empty;
 }

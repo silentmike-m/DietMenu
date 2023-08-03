@@ -1,7 +1,8 @@
-namespace SilentMike.DietMenu.Auth.Application.Users.Events;
+﻿namespace SilentMike.DietMenu.Auth.Application.Users.Events;
 
-public sealed record GeneratedResetPasswordToken : INotification
+public sealed class GeneratedResetPasswordToken : INotification
 {
-    [JsonPropertyName("email")] public string Email { get; init; } = string.Empty;
-    [JsonPropertyName("token")] public string Token { get; init; } = string.Empty;
+    public string Email { get; init; } = string.Empty;
+    public Guid Id { get; init; } = Guid.Empty;
+    public string Token { get; init; } = string.Empty;
 }

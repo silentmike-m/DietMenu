@@ -1,72 +1,48 @@
 ﻿namespace SilentMike.DietMenu.Auth.Infrastructure.Identity;
 
+using IdentityServer4.EntityFramework.DbContexts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SilentMike.DietMenu.Auth.Domain.Services;
 using SilentMike.DietMenu.Auth.Infrastructure.Identity.Data;
+using SilentMike.DietMenu.Auth.Infrastructure.Identity.Interfaces;
 using SilentMike.DietMenu.Auth.Infrastructure.Identity.Models;
+using SilentMike.DietMenu.Auth.Infrastructure.Identity.Services;
 
 internal static class DependencyInjection
 {
     public static void AddIdentity(this IServiceCollection services, IConfiguration configuration)
     {
-        services.Configure<IdentityOptions>(configuration.GetSection(IdentityOptions.SectionName));
+        services.Configure<IdentityOptions>(configuration.GetSection(IdentityOptions.SECTION_NAME));
 
         var connectionString = configuration.GetConnectionString("DefaultConnection");
 
-        services.AddDbContext<DietMenuDbContext>(options => options.UseSqlServer(connectionString));
+        var identityOptions = configuration.GetSection(IdentityOptions.SECTION_NAME).Get<IdentityOptions>();
+        identityOptions ??= new IdentityOptions();
+
+        services.AddDbContext<IDietMenuDbContext, DietMenuDbContext>(options => options.UseSqlServer(connectionString));
 
         services.AddDatabaseDeveloperPageExceptionFilter();
 
-        services.AddDefaultIdentity<DietMenuUser>(options => options.SignIn.RequireConfirmedAccount = true)
+        services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = identityOptions.RequireConfirmedAccount)
             .AddEntityFrameworkStores<DietMenuDbContext>()
             .AddDefaultTokenProviders();
+
+        services.AddScoped<IFamilyRepository, FamilyRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
+
+        services.AddScoped<ISystemMigrationService, SystemMigrationService>();
     }
 
-    public static void UseIdentity(
-        this IApplicationBuilder _,
-        IConfiguration configuration,
-        DietMenuDbContext context,
-        UserManager<DietMenuUser> userManager)
+    public static void UseIdentity(this IApplicationBuilder _, DietMenuDbContext context, PersistedGrantDbContext grantContext, ISystemMigrationService systemMigrationService)
     {
         context.Database.Migrate();
 
-        var identityOptions = configuration.GetSection(IdentityOptions.SectionName).Get<IdentityOptions>();
+        grantContext.Database.Migrate();
 
-        AddSystemUser(identityOptions, userManager);
-    }
-
-    private static void AddSystemUser(IdentityOptions options, UserManager<DietMenuUser> userManager)
-    {
-        var user = userManager.FindByNameAsync(options.SystemUserEmail).Result;
-
-        if (user is not null)
-        {
-            return;
-        }
-
-        var userId = Guid.NewGuid();
-
-        var family = new DietMenuFamily
-        {
-            Id = userId,
-            Name = "System",
-        };
-
-        user = new DietMenuUser
-        {
-            Id = userId.ToString(),
-            Email = options.SystemUserEmail,
-            EmailConfirmed = true,
-            Family = family,
-            FamilyId = family.Id,
-            FirstName = "Saruman",
-            LastName = "White",
-            UserName = options.SystemUserEmail,
-        };
-
-        _ = userManager.CreateAsync(user, options.SystemUserPassword).Result;
+        systemMigrationService.MigrateSystemAsync().Wait();
     }
 }

@@ -1,80 +1,76 @@
 namespace SilentMike.DietMenu.Auth.Web.Areas.Identity.Pages.Account;
 
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using IdentityServer4;
-using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using SilentMike.DietMenu.Auth.Application.Users.Commands;
-using SilentMike.DietMenu.Auth.Application.Users.Queries;
+using SilentMike.DietMenu.Auth.Application.Auth.Commands;
+using SilentMike.DietMenu.Auth.Application.Exceptions.Users;
 using SilentMike.DietMenu.Auth.Web.Areas.Identity.Models;
+using SilentMike.DietMenu.Auth.Web.Common.Constants;
+using SilentMike.DietMenu.Auth.Web.Interfaces;
 
-public class LoginModel : PageModel
+public sealed class LoginModel : PageModel
 {
+    private readonly IHttpContextSignInService httpContextSignInService;
+    private readonly ILogger<LoginModel> logger;
+    private readonly ISender mediator;
+
     [BindProperty] public LoginInputModel Input { get; set; } = new();
 
-    [TempData] private string ErrorMessage { get; set; } = string.Empty;
-
-    private readonly IMediator mediator;
-
-    public LoginModel(IMediator mediator) => this.mediator = mediator;
-
-    public async Task OnGetAsync()
+    public LoginModel(IHttpContextSignInService httpContextSignInService, ILogger<LoginModel> logger, ISender mediator)
     {
-        if (!string.IsNullOrEmpty(this.ErrorMessage))
-        {
-            this.ModelState.AddModelError(string.Empty, this.ErrorMessage);
-        }
-
-        await this.HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+        this.httpContextSignInService = httpContextSignInService;
+        this.logger = logger;
+        this.mediator = mediator;
     }
 
-    public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
+    public async Task<IActionResult> OnGetAsync(string? returnUrl = default)
     {
-        if (!this.ModelState.IsValid)
+        returnUrl ??= this.Url.Content(IdentityPageNames.HOME);
+
+        await this.HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+
+        this.Input.ReturnUrl = returnUrl;
+
+        return this.Page();
+    }
+
+    public async Task<IActionResult> OnPostAsync(CancellationToken cancellationToken = default)
+    {
+        if (this.ModelState.IsValid is false)
         {
             return this.Page();
         }
 
         try
         {
-            returnUrl ??= this.Url.Content("~/");
-
-            var loginUserRequest = new LoginUser
+            var passwordSignInUser = new PasswordSignInUser
             {
                 Email = this.Input.Email,
                 Password = this.Input.Password,
+                Remember = this.Input.RememberMe,
             };
 
-            _ = await this.mediator.Send(loginUserRequest, CancellationToken.None);
+            await this.mediator.Send(passwordSignInUser, cancellationToken);
 
-            var getUserClaimsRequest = new GetUserClaims
-            {
-                Email = this.Input.Email,
-            };
+            await this.httpContextSignInService.SignInAsync(this.Input.Email, cancellationToken);
 
-            var userClaims = await this.mediator.Send(getUserClaimsRequest, CancellationToken.None);
+            return this.LocalRedirect(this.Input.ReturnUrl);
+        }
+        catch (UserNotFoundException exception)
+        {
+            this.logger.LogError(exception, "{Message}", exception.Message);
 
-            var claims = userClaims.Claims.ToList();
-
-            var issuer = new IdentityServerUser(userClaims.UserId)
-            {
-                DisplayName = this.Input.Email,
-                AdditionalClaims = claims,
-            };
-
-            await this.HttpContext.SignInAsync(issuer);
-
-            return this.LocalRedirect(returnUrl);
+            this.ModelState.AddModelError(string.Empty, "Invalid login attempt");
         }
         catch (Exception exception)
         {
+            this.logger.LogError(exception, "{Message}", exception.Message);
+
             this.ModelState.AddModelError(string.Empty, exception.Message);
-            return this.Page();
         }
+
+        return this.Page();
     }
 }

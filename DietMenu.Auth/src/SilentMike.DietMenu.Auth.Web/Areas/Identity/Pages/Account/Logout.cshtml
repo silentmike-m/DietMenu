@@ -11,7 +11,7 @@
 
 <div class="content-text">
     <div class="content-center">
-        @if (Model.PostLogoutRedirectUri != null)
+        @if (Model.PostLogoutRedirectUri is null)
         {
             <div>
                 Click <a class="url__text" href="@Model.PostLogoutRedirectUri">here</a> to return to the
@@ -20,12 +20,17 @@
         }
         else
         {
-            <div><p>Missing Client logout context</p></div>
+            <div>
+                <p>Missing Client logout context</p>
+            </div>
         }
 
-        @if (Model.SignOutIframeUrl != null)
+        @if (Model.FrontChannelLogoutUris.Count > 0)
         {
-            <iframe width="0" height="0" class="signout" src="@Model.SignOutIframeUrl" title="Signout"></iframe>
+            @foreach (var frontChannelLogoutUri in Model.FrontChannelLogoutUris)
+            {
+                <iframe width="0" height="0" class="signout" src="@frontChannelLogoutUri" title="Signout"></iframe>
+            }
         }
     </div>
 </div>

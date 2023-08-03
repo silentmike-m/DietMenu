@@ -13,38 +13,40 @@
 <div class="content-text">
     <form id="account" method="post">
         <div asp-validation-summary="ModelOnly" class="text-error"></div>
-        
+
         <div class="content-form-input-container">
             <label asp-for="Input.Email" class="content-form-input-label"></label>
-            <input asp-for="Input.Email" autocomplete="email" aria-required="true" class="content-form-input"/>
+            <input asp-for="Input.Email" autocomplete="email" aria-required="true" class="content-form-input" />
             <span asp-validation-for="Input.Email" class="text-error"></span>
         </div>
-        
+
         <div class="content-form-input-container">
             <label asp-for="Input.Password" class="content-form-input-label"></label>
-            <input asp-for="Input.Password" autocomplete="current-password" aria-required="true" class="content-form-input"/>
+            <input asp-for="Input.Password" autocomplete="current-password" aria-required="true" class="content-form-input" />
             <span asp-validation-for="Input.Password" class="text-error"></span>
         </div>
     </form>
 </div>
 
 <div class="content-actions">
-    <button type="submit" form="account" class="content-button content-button-primary content-button-elevated"><span class="content-button-text">ZALOGUJ</span></button>
+    <button type="submit" form="account" class="content-button content-button-primary content-button-elevated">
+        <span class="content-button-text">ZALOGUJ</span>
+    </button>
     <div class="content-spacer"></div>
-    <a type="button" asp-page="./ForgotPassword" class="content-button content-button-error content-button-outlined"><span class="content-button-text">ZRESETUJ HASŁO</span></a>
+    <a type="button" asp-page="./ForgotPassword" class="content-button content-button-error content-button-outlined">
+        <span class="content-button-text">ZRESETUJ HASŁO</span>
+    </a>
 </div>
 
 <div class="content-register content-center">
     <hr role="separator" aria-orientation="horizontal" class="content-divider">
     <div class="content-text">
-        <p>Nie masz konta? <a asp-page="./Register">Utwórz nowe</a></p>
-    </div>
-    <hr role="separator" aria-orientation="horizontal" class="content-divider">
-    <div class="content-text">
-        <a type="button" asp-page="./ResendEmailConfirmation" class="content-button content-button-error content-button-outlined"><span class="content-button-text">Ponownie wyślij potwierdzenie</span></a>
+        <a type="button" asp-page="./ResendEmailConfirmation" class="content-button content-button-error content-button-outlined">
+            <span class="content-button-text">Ponownie wyślij potwierdzenie</span>
+        </a>
     </div>
 </div>
 
 @section Scripts {
-<partial name="_ValidationScriptsPartial" />
+    <partial name="_ValidationScriptsPartial" />
 }

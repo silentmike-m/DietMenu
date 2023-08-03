@@ -1,45 +1,57 @@
 namespace SilentMike.DietMenu.Auth.Web.Areas.Identity.Pages.Account;
 
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using SilentMike.DietMenu.Auth.Application.Exceptions.Users;
 using SilentMike.DietMenu.Auth.Application.Users.Commands;
 using SilentMike.DietMenu.Auth.Web.Areas.Identity.Models;
+using SilentMike.DietMenu.Auth.Web.Common.Constants;
+using SilentMike.DietMenu.Auth.Web.Models;
 
 public class ForgotPasswordModel : PageModel
 {
-    [BindProperty]
-    public ForgotPasswordInputModel Input { get; set; } = new();
+    private readonly ILogger<ForgotPasswordModel> logger;
+    private readonly ISender mediator;
 
-    private readonly IMediator mediator;
+    [BindProperty] public ForgotPasswordInputModel Input { get; set; } = new();
 
-    public ForgotPasswordModel(IMediator mediator) => this.mediator = mediator;
+    public ForgotPasswordModel(ILogger<ForgotPasswordModel> logger, ISender mediator)
+    {
+        this.logger = logger;
+        this.mediator = mediator;
+    }
 
     public async Task<IActionResult> OnPostAsync()
     {
-        if (!this.ModelState.IsValid)
+        if (this.ModelState.IsValid is false)
         {
             return this.Page();
         }
 
         try
         {
-            var request = new ResetPasswordRequest
+            var request = new GenerateResetPasswordToken
             {
                 Email = this.Input.Email,
             };
 
-            _ = await this.mediator.Send(request, CancellationToken.None);
+            await this.mediator.Send(request, CancellationToken.None);
 
-            return this.RedirectToPage("./ForgotPasswordConfirmation");
+            return this.RedirectToPage(IdentityPageNames.FORGOT_PASSWORD_CONFIRMATION, new ForgotPasswordConfirmationPageValues());
+        }
+        catch (UserNotFoundException exception)
+        {
+            this.logger.LogError(exception, "{Message}", exception.Message);
+
+            this.ModelState.AddModelError(string.Empty, "Invalid generate reset password token attempt");
         }
         catch (Exception exception)
         {
+            this.logger.LogError(exception, "{Message}", exception.Message);
+
             this.ModelState.AddModelError(string.Empty, exception.Message);
-            return this.Page();
         }
+
+        return this.Page();
     }
 }

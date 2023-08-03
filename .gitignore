@@ -541,3 +541,6 @@ sw.*
 # Vim swap files
 *.swp
 /.tye/*
+
+#dotCover tests
+**/dotCover.Output**
