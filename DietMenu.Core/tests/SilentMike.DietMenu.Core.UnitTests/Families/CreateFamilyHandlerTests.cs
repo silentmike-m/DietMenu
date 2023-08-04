@@ -1,81 +1,96 @@
 ﻿namespace SilentMike.DietMenu.Core.UnitTests.Families;
 
-using SilentMike.DietMenu.Core.Application.Common.Constants;
-using SilentMike.DietMenu.Core.Application.Exceptions.Families;
 using SilentMike.DietMenu.Core.Application.Families.CommandHandlers;
 using SilentMike.DietMenu.Core.Application.Families.Commands;
 using SilentMike.DietMenu.Core.Application.Families.Events;
 using SilentMike.DietMenu.Core.Domain.Entities;
-using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Services;
-using SilentMike.DietMenu.Core.UnitTests.Services;
+using SilentMike.DietMenu.Core.Domain.Repositories;
+using SilentMike.DietMenu.Core.Infrastructure.Exceptions.Families;
 
 [TestClass]
-public sealed class CreateFamilyHandlerTests : IDisposable
+public sealed class CreateFamilyHandlerTests
 {
-    private readonly Guid existingFamilyId = Guid.NewGuid();
-
-    private readonly DietMenuDbContextFactory factory;
-    private readonly NullLogger<CreateFamilyHandler> logger;
-    private readonly Mock<IMediator> mediator;
-    private readonly FamilyRepository repository;
-
-    public CreateFamilyHandlerTests()
-    {
-        var family = new FamilyEntity(this.existingFamilyId);
-
-        this.factory = new DietMenuDbContextFactory(family);
-        this.logger = new NullLogger<CreateFamilyHandler>();
-        this.mediator = new Mock<IMediator>();
-        this.repository = new FamilyRepository(this.factory.Context);
-    }
+    private readonly NullLogger<CreateFamilyHandler> logger = new();
+    private readonly Mock<IPublisher> mediator = new();
+    private readonly Mock<IFamilyRepository> repository = new();
 
     [TestMethod]
-    public async Task ShouldThrowFamilyAlreadyExistsWhenSameId()
+    public async Task Should_Create_Family()
     {
         //GIVEN
-        var command = new CreateFamily
-        {
-            Id = this.existingFamilyId,
-        };
+        CreatedFamily? createdFamilyNotification = null;
+        FamilyEntity? familyToCreate = null;
 
-        var commandHandler = new CreateFamilyHandler(this.logger, this.mediator.Object, this.repository);
+        this.mediator
+            .Setup(service => service.Publish(It.IsAny<CreatedFamily>(), It.IsAny<CancellationToken>()))
+            .Callback<CreatedFamily, CancellationToken>((notification, _) => createdFamilyNotification = notification);
 
-        //WHEN
-        Func<Task<Unit>> action = async () => await commandHandler.Handle(command, CancellationToken.None);
+        this.repository
+            .Setup(service => service.AddFamilyAsync(It.IsAny<FamilyEntity>(), It.IsAny<CancellationToken>()))
+            .Callback<FamilyEntity, CancellationToken>((family, _) => familyToCreate = family);
 
-        //THEN
-        await action.Should()
-                .ThrowAsync<FamilyAlreadyExistsException>()
-                .Where(i => i.Code == ErrorCodes.FAMILY_ALREADY_EXISTS
-                            && i.Id == command.Id)
-            ;
-    }
-
-    [TestMethod]
-    public async Task ShouldCreateFamilyIfNotExists()
-    {
-        //GIVEN
-        var command = new CreateFamily
+        var request = new CreateFamily
         {
             Id = Guid.NewGuid(),
         };
 
-        var commandHandler = new CreateFamilyHandler(this.logger, this.mediator.Object, this.repository);
+        var handler = new CreateFamilyHandler(this.logger, this.mediator.Object, this.repository.Object);
 
         //WHEN
-        await commandHandler.Handle(command, CancellationToken.None);
+        await handler.Handle(request, CancellationToken.None);
 
         //THEN
-        this.mediator.Verify(i => i.Publish(It.IsAny<CreatedFamily>(), It.IsAny<CancellationToken>()), Times.Once);
+        this.repository.Verify(service => service.AddFamilyAsync(It.IsAny<FamilyEntity>(), It.IsAny<CancellationToken>()), Times.Once);
 
-        var family = this.repository.Get(command.Id);
-        family.Should()
+        var expectedFamilyToCreate = new FamilyEntity(request.Id);
+
+        familyToCreate.Should()
             .NotBeNull()
+            .And
+            .BeEquivalentTo(expectedFamilyToCreate)
+            ;
+
+        this.mediator.Verify(service => service.Publish(It.IsAny<CreatedFamily>(), It.IsAny<CancellationToken>()), Times.Once);
+
+        var expectedNotification = new CreatedFamily
+        {
+            Id = request.Id,
+        };
+
+        createdFamilyNotification.Should()
+            .NotBeNull()
+            .And
+            .BeEquivalentTo(expectedNotification)
             ;
     }
 
-    public void Dispose()
+    [TestMethod]
+    public async Task Should_Not_Publish_Notification_When_Create_Family_Fails()
     {
-        this.factory.Dispose();
+        //GIVEN
+        var exception = new FamilyAlreadyExistsException(Guid.NewGuid());
+
+        this.repository
+            .Setup(service => service.AddFamilyAsync(It.IsAny<FamilyEntity>(), It.IsAny<CancellationToken>()))
+            .Throws(exception);
+
+        var request = new CreateFamily
+        {
+            Id = Guid.NewGuid(),
+        };
+
+        var handler = new CreateFamilyHandler(this.logger, this.mediator.Object, this.repository.Object);
+
+        //WHEN
+        var action = async () => await handler.Handle(request, CancellationToken.None);
+
+        //THEN
+        await action.Should()
+                .ThrowAsync<FamilyAlreadyExistsException>()
+            ;
+
+        this.repository.Verify(service => service.AddFamilyAsync(It.IsAny<FamilyEntity>(), It.IsAny<CancellationToken>()), Times.Once);
+
+        this.mediator.Verify(service => service.Publish(It.IsAny<CreatedFamily>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 }

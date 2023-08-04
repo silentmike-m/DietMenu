@@ -2,5 +2,5 @@
 
 public interface IAuthService
 {
-    (Guid familyId, Guid userId) CurrentUser { get; }
+    (Guid? familyId, Guid userId) CurrentUser { get; }
 }

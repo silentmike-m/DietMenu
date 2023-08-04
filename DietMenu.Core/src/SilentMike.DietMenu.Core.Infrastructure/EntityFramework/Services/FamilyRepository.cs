@@ -1,23 +1,38 @@
 ﻿namespace SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Services;
 
+using Microsoft.EntityFrameworkCore;
 using SilentMike.DietMenu.Core.Domain.Entities;
 using SilentMike.DietMenu.Core.Domain.Repositories;
+using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Data;
+using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Models;
+using SilentMike.DietMenu.Core.Infrastructure.Exceptions.Families;
 
 internal sealed class FamilyRepository : IFamilyRepository
 {
-    private readonly DietMenuDbContext context;
+    private readonly IDietMenuDbContext context;
 
-    public FamilyRepository(DietMenuDbContext context) => (this.context) = (context);
+    public FamilyRepository(IDietMenuDbContext context)
+        => this.context = context;
 
-    public bool Exists(Guid id)
-        => this.context.Families.Any(family => family.Id == id);
+    public async Task AddFamilyAsync(FamilyEntity entity, CancellationToken cancellationToken = default)
+    {
+        var family = await this.context.Families.SingleOrDefaultAsync(family => family.InternalId == entity.Id, cancellationToken);
 
-    public FamilyEntity? Get(Guid id)
-        => this.context.Families.SingleOrDefault(family => family.Id == id);
+        if (family is not null)
+        {
+            throw new FamilyAlreadyExistsException(entity.Id);
+        }
 
-    public void Save(FamilyEntity family)
-        => this.context.Upsert(family);
+        family = new Family
+        {
+            InternalId = entity.Id,
+        };
 
-    public void SaveChanges()
-        => this.context.SaveChanges();
+        await this.context.Families.AddAsync(family, cancellationToken);
+
+        await this.context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default)
+        => await this.context.Families.AnyAsync(family => family.InternalId == id, cancellationToken);
 }

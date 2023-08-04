@@ -10,9 +10,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using RabbitMQ.Client;
-using SilentMike.DietMenu.Core.Infrastructure.EntityFramework;
+using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Data;
 using SilentMike.DietMenu.Core.Infrastructure.HealthChecks.Models;
-using SilentMike.DietMenu.Core.Infrastructure.MailingServer;
 using SilentMike.DietMenu.Core.Infrastructure.MassTransit;
 
 [ExcludeFromCodeCoverage]
@@ -21,8 +20,10 @@ internal static class DependencyInjection
     public static void AddHealthChecks(this IServiceCollection services, IConfiguration configuration)
     {
         var defaultConnectionString = configuration.GetConnectionString("DefaultConnection");
-        var rabbitMqOptions = configuration.GetSection(RabbitMqOptions.SectionName).Get<RabbitMqOptions>();
-        var mailingServerOptions = configuration.GetSection(MailingServerOptions.SectionName).Get<MailingServerOptions>();
+        defaultConnectionString ??= string.Empty;
+
+        var rabbitMqOptions = configuration.GetSection(RabbitMqOptions.SECTION_NAME).Get<RabbitMqOptions>();
+        rabbitMqOptions ??= new RabbitMqOptions();
 
         services.AddHealthChecks()
             .AddDbContextCheck<DietMenuDbContext>(name: "Db Context")
@@ -32,9 +33,8 @@ internal static class DependencyInjection
                 Password = rabbitMqOptions.Password,
                 UserName = rabbitMqOptions.User,
             }, "RabbitMQ")
-            .AddSqlServer(connectionString: defaultConnectionString, name: "SQL Default")
-            .AddSqlServer(connectionString: defaultConnectionString, name: "SQL Hangfire")
-            .AddUrlGroup(options => options.AddUri(mailingServerOptions.BaseAddress), name: "Mailing server")
+            .AddSqlServer(defaultConnectionString, name: "SQL Default")
+            .AddSqlServer(defaultConnectionString, name: "SQL Hangfire")
             ;
     }
 
@@ -70,6 +70,7 @@ internal static class DependencyInjection
                 HealthCheckDurationInMilliseconds = componentReport.Duration.Milliseconds,
                 Status = componentReport.Status.ToString(),
             };
+
             componentHealthChecks.Add(componentHealthCheck);
         }
 
@@ -85,6 +86,7 @@ internal static class DependencyInjection
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
             WriteIndented = true,
         };
+
         await context.Response.WriteAsync(JsonSerializer.Serialize(healthCheck, jsonOptions));
     }
 }

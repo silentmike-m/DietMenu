@@ -11,11 +11,11 @@ public sealed class HomeController : Controller
     public HomeController(ILogger<HomeController> logger)
         => this.logger = logger;
 
-    [Route(""), HttpGet]
-    [ApiExplorerSettings(IgnoreApi = true)]
+    [Route(""), HttpGet, ApiExplorerSettings(IgnoreApi = true)]
     public RedirectResult Index()
     {
         this.logger.LogInformation("Redirect to Swagger");
-        return Redirect("swagger/index.html");
+
+        return this.Redirect("swagger/index.html");
     }
 }

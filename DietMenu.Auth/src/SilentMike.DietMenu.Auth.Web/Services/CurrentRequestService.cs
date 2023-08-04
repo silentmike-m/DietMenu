@@ -38,8 +38,6 @@ internal sealed class CurrentRequestService : ICurrentRequestService
         }
     }
 
-    public string Schema => this.httpContextAccessor!.HttpContext!.Request.Scheme;
-
     public CurrentRequestService(IHttpContextAccessor httpContextAccessor) =>
         this.httpContextAccessor = httpContextAccessor;
 }

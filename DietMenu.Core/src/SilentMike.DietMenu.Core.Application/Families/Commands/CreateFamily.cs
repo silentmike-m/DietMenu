@@ -2,5 +2,5 @@
 
 public sealed record CreateFamily : IRequest
 {
-    [JsonPropertyName("id")] public Guid Id { get; init; } = Guid.Empty;
+    public Guid Id { get; init; } = Guid.NewGuid();
 }

@@ -21,16 +21,18 @@ internal sealed class AuthorizeCheckOperationFilter : IOperationFilter
 
             operation.Security = new List<OpenApiSecurityRequirement>
             {
-                new OpenApiSecurityRequirement
+                new()
                 {
                     [
-                        new OpenApiSecurityScheme {Reference = new OpenApiReference
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
                             {
                                 Type = ReferenceType.SecurityScheme,
                                 Id = "bearer",
                             },
                         }
-                    ] = new[] {"api1"},
+                    ] = new[] { "api1" },
                 },
             };
         }

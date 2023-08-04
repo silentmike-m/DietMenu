@@ -11,9 +11,8 @@ internal sealed class ImportFamilyDataHandler : IRequestHandler<ImportFamilyData
     public ImportFamilyDataHandler(IBackgroundJobClient jobClient)
         => this.jobClient = jobClient;
 
-    public async Task<Unit> Handle(ImportFamilyData request, CancellationToken cancellationToken)
+    public async Task Handle(ImportFamilyData request, CancellationToken cancellationToken)
     {
         this.jobClient.Enqueue<Job>(i => i.Run(request.FamilyId));
-        return await Task.FromResult(Unit.Value);
     }
 }

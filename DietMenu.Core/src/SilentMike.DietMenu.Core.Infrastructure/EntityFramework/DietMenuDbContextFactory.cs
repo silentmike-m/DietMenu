@@ -2,6 +2,7 @@
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Data;
 
 internal sealed class DietMenuDbContextFactory : IDesignTimeDbContextFactory<DietMenuDbContext>
 {
