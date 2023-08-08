@@ -9,6 +9,7 @@ internal sealed class Ingredient
     public Guid FamilyId { get; set; } = Guid.Empty;
     public int Id { get; set; } = default;
     public Guid InternalId { get; set; } = Guid.Empty;
+    public string InternalName { get; set; } = string.Empty;
     public bool IsSystem { get; set; } = default;
     public string Name { get; set; } = string.Empty;
     public string Type { get; set; } = string.Empty;

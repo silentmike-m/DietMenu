@@ -82,38 +82,6 @@ public sealed class CreateIngredientValidatorTests
     }
 
     [TestMethod]
-    public async Task Should_Not_Pass_Validation_When_Exchanger_Is_Zero()
-    {
-        //GIVEN
-        var ingredientToCreate = new IngredientToCreate
-        {
-            Exchanger = 0m,
-            Name = "ingredient name",
-            Type = IngredientTypeNames.Fruit,
-            UnitSymbol = "kg",
-        };
-
-        var request = new CreateIngredient
-        {
-            Ingredient = ingredientToCreate,
-        };
-
-        var validator = new CreateIngredientValidator();
-
-        //WHEN
-        var result = await validator.ValidateAsync(request);
-
-        //THEN
-        result.Errors.Should()
-            .HaveCount(1)
-            .And
-            .Contain(failure =>
-                failure.ErrorCode == ValidationErrorCodes.CREATE_INGREDIENT_INVALID_EXCHANGER && failure.ErrorMessage == ValidationErrorCodes.CREATE_INGREDIENT_INVALID_EXCHANGER_MESSAGE
-            )
-            ;
-    }
-
-    [TestMethod]
     public async Task Should_Not_Pass_Validation_When_Name_Is_Empty()
     {
         //GIVEN
@@ -177,13 +145,13 @@ public sealed class CreateIngredientValidatorTests
             ;
     }
 
-    [TestMethod]
-    public async Task Should_Pass_Validation_When_All_Data_Are_Correct()
+    [DataRow(0), DataRow(1), DataTestMethod]
+    public async Task Should_Pass_Validation_When_All_Data_Are_Correct(int exchanger)
     {
         //GIVEN
         var ingredientToCreate = new IngredientToCreate
         {
-            Exchanger = 1m,
+            Exchanger = exchanger,
             Name = "ingredient name",
             Type = IngredientTypeNames.Fruit,
             UnitSymbol = "kg",

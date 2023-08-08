@@ -10,7 +10,10 @@ internal sealed class IngredientConfiguration : IEntityTypeConfiguration<Ingredi
 {
     public void Configure(EntityTypeBuilder<Ingredient> builder)
     {
-        builder.HasIndex(ingredient => ingredient.InternalId)
+        builder.HasIndex(p => new { p.FamilyId, p.InternalId })
+            .IsUnique();
+
+        builder.HasIndex(p => new { p.FamilyId, p.InternalName })
             .IsUnique();
     }
 }

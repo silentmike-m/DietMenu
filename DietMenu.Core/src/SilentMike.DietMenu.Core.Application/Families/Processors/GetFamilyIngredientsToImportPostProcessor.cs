@@ -1,11 +1,9 @@
 ﻿// namespace SilentMike.DietMenu.Core.Application.Families.Processors;
 //
+// using SilentMike.DietMenu.Core.Application.Common;
 // using SilentMike.DietMenu.Core.Application.Exceptions;
-// using SilentMike.DietMenu.Core.Application.Exceptions.IngredientTypes;
 // using SilentMike.DietMenu.Core.Application.Families.Interfaces;
-// using SilentMike.DietMenu.Core.Domain.Common.Constants;
-// using SilentMike.DietMenu.Core.Domain.Entities;
-// using ApplicationException = SilentMike.DietMenu.Core.Application.Common.ApplicationException;
+//
 // internal sealed class GetFamilyIngredientsToImportPostProcessor<TRequest, TResponse> : IGetFamilyDataToImportPostProcessor<TRequest, TResponse>
 //     where TRequest : IRequest<TResponse>, IGetFamilyDataToImport
 //     where TResponse : IFamilyDataToImport
@@ -38,6 +36,20 @@
 //         }
 //
 //         await Task.CompletedTask;
+//     }
+//
+//     private static void DeactivateIngredients(IReadOnlyCollection<CoreIngredientEntity> coreIngredients, List<IngredientEntity> familyIngredients)
+//     {
+//         foreach (var familyIngredient in familyIngredients)
+//         {
+//             var coreIngredient = coreIngredients
+//                 .SingleOrDefault(ingredient => ingredient.InternalName == familyIngredient.InternalName);
+//
+//             if (coreIngredient is null)
+//             {
+//                 familyIngredient.IsActive = false;
+//             }
+//         }
 //     }
 //
 //     private static void Import(CoreIngredientTypeEntity ingredientType, TRequest request, TResponse response)
@@ -103,20 +115,4 @@
 //             response.AddException(ingredientType.InternalName, new UnknownErrorException(exception.Message));
 //         }
 //     }
-//
-//     private static void DeactivateIngredients(IReadOnlyCollection<CoreIngredientEntity> coreIngredients, List<IngredientEntity> familyIngredients)
-//     {
-//         foreach (var familyIngredient in familyIngredients)
-//         {
-//             var coreIngredient = coreIngredients
-//                 .SingleOrDefault(ingredient => ingredient.InternalName == familyIngredient.InternalName);
-//
-//             if (coreIngredient is null)
-//             {
-//                 familyIngredient.IsActive = false;
-//             }
-//         }
-//     }
 // }
-
-
