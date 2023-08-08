@@ -9,6 +9,7 @@ public sealed record FamilyDataToImport : IFamilyDataToImport
     public IDictionary<string, ICollection<ApplicationException>> Exceptions { get; init; } = new Dictionary<string, ICollection<ApplicationException>>();
     public Guid FamilyId { get; init; } = Guid.Empty;
     public IReadOnlyList<Ingredient> Ingredients { get; init; } = new List<Ingredient>();
+    public string IngredientsVersion { get; set; } = string.Empty;
 
     public void AddException(string dataName, ApplicationException exception)
     {

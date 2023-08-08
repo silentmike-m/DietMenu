@@ -28,15 +28,14 @@ internal sealed class ImportFamilyData
 
         try
         {
-            var family = this.context.Families
+            var family = await this.context.Families
                 .AsNoTracking()
-                .SingleOrDefault(family => family.InternalId == familyId);
+                .SingleOrDefaultAsync(family => family.InternalId == familyId, CancellationToken.None);
 
             if (family is null)
             {
                 family = CreateFamily(familyId);
-
-                this.context.Add(family);
+                await this.context.Families.AddAsync(family, CancellationToken.None);
             }
 
             var familyDataToImport = await this.GetFamilyDataToImport(familyId);
