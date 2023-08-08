@@ -27,7 +27,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <InternalsVisibleTo Include="SilentMike.DietMenu.Core.UnitTests" />
+        <InternalsVisibleTo Include="SilentMike.DietMenu.Core.Application.Tests" />
         <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
     </ItemGroup>
 

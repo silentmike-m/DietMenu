@@ -16,12 +16,15 @@ internal sealed class AuthorizationBehavior<TRequest, TResponse> : IPipelineBeha
         {
             var (familyId, userId) = this.currentUserService.CurrentUser;
 
-            if (familyId is null || userId == Guid.Empty)
+            if (familyId == Guid.Empty || userId == Guid.Empty)
             {
                 throw new DietMenuUnauthorizedException(familyId, userId);
             }
 
-            request.AuthData.FamilyId = familyId.Value;
+            if (request.AuthData.FamilyId == Guid.Empty)
+            {
+                request.AuthData.FamilyId = familyId;
+            }
 
             if (request.AuthData.UserId == Guid.Empty)
             {

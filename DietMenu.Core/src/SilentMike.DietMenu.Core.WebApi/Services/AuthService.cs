@@ -10,7 +10,7 @@ internal class AuthService : IAuthService
 {
     private readonly IHttpContextAccessor httpContextAccessor;
 
-    public (Guid? familyId, Guid userId) CurrentUser
+    public (Guid familyId, Guid userId) CurrentUser
     {
         get
         {
@@ -18,7 +18,7 @@ internal class AuthService : IAuthService
             var userIdentifier = this.httpContextAccessor.HttpContext?.User.FindFirstValue(DietMenuClaimNames.USER_ID);
 
             var familyId = string.IsNullOrEmpty(familyIdentifier)
-                ? (Guid?)null
+                ? Guid.Empty
                 : new Guid(familyIdentifier);
 
             var userId = string.IsNullOrEmpty(userIdentifier)

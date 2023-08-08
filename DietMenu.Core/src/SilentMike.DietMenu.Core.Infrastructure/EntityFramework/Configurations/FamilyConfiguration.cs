@@ -3,12 +3,12 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Models;
+using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Entities;
 
 [ExcludeFromCodeCoverage]
-internal sealed class FamilyConfiguration : IEntityTypeConfiguration<Family>
+internal sealed class FamilyConfiguration : IEntityTypeConfiguration<FamilyEntity>
 {
-    public void Configure(EntityTypeBuilder<Family> builder)
+    public void Configure(EntityTypeBuilder<FamilyEntity> builder)
     {
         builder.HasIndex(family => family.InternalId)
             .IsUnique();

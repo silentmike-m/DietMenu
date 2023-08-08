@@ -2,19 +2,20 @@
 
 internal static class EpplusExtensions
 {
-    public static decimal ToDecimal(this object? self)
+    public static decimal ToDecimal(this object? self, decimal defaultValue)
     {
         if (self is null)
         {
-            return 1;
+            return defaultValue;
         }
 
         var text = self.ToString();
+
         if (decimal.TryParse(text, out var value))
         {
             return value;
         }
 
-        return 1;
+        return defaultValue;
     }
 }

@@ -1,6 +1,9 @@
 ﻿namespace SilentMike.DietMenu.Core.Application.Shared;
 
-public sealed class DietMenuRoleNames
+using System.Diagnostics.CodeAnalysis;
+
+[ExcludeFromCodeCoverage]
+public static class DietMenuRoleNames
 {
     public static readonly string SYSTEM = "SYSTEM";
 }

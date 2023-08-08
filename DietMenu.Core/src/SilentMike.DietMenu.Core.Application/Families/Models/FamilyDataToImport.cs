@@ -2,12 +2,13 @@
 
 using SilentMike.DietMenu.Core.Application.Common;
 using SilentMike.DietMenu.Core.Application.Families.Interfaces;
-using SilentMike.DietMenu.Core.Domain.Entities;
+using SilentMike.DietMenu.Core.Domain.Models;
 
 public sealed record FamilyDataToImport : IFamilyDataToImport
 {
     public IDictionary<string, ICollection<ApplicationException>> Exceptions { get; init; } = new Dictionary<string, ICollection<ApplicationException>>();
-    public ICollection<IngredientEntity> Ingredients { get; init; } = new List<IngredientEntity>();
+    public Guid FamilyId { get; init; } = Guid.Empty;
+    public IReadOnlyList<Ingredient> Ingredients { get; init; } = new List<Ingredient>();
 
     public void AddException(string dataName, ApplicationException exception)
     {

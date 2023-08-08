@@ -3,12 +3,12 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
-using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Models;
+using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Entities;
 
 [ExcludeFromCodeCoverage]
 internal sealed class DietMenuDbContext : DbContext, IDietMenuDbContext
 {
-    public DbSet<Family> Families => this.Set<Family>();
+    public DbSet<FamilyEntity> Families => this.Set<FamilyEntity>();
 
     public DietMenuDbContext(DbContextOptions options) : base(options)
     {

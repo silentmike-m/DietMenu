@@ -56,14 +56,16 @@
     </ItemGroup>
 
     <ItemGroup>
+        <InternalsVisibleTo Include="SilentMike.DietMenu.Core.InfrastructureTests" />
         <InternalsVisibleTo Include="SilentMike.DietMenu.Core.IntegrationTests" />
         <InternalsVisibleTo Include="SilentMike.DietMenu.Core.UnitTests" />
         <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="EntityFramework\Interfaces\" />
-        <Folder Include="Families\" />
+        <Folder Include="EntityFramework\Services\" />
+        <Folder Include="Exceptions\Families\" />
+        <Folder Include="Hangfire\Families\" />
     </ItemGroup>
 
 </Project>

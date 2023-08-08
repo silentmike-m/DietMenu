@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
-using SilentMike.DietMenu.Core.Infrastructure.Extensions;
+using SilentMike.DietMenu.Core.Infrastructure.Common.Extensions;
 using SilentMike.DietMenu.Core.Infrastructure.IdentityServer4;
 using SilentMike.DietMenu.Core.Infrastructure.Swagger.Filters;
 

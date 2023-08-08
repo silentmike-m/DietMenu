@@ -9,7 +9,7 @@ public static class MealTypeNames
     public static readonly string Snack = "Snack";
     public static readonly string Supper = "Supper";
 
-    public static IEnumerable<string> Names
+    public static IEnumerable<string> MealTypes
     {
         get
         {
