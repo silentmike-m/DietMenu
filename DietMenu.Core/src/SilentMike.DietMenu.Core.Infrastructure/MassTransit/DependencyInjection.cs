@@ -1,38 +1,44 @@
 ﻿namespace SilentMike.DietMenu.Core.Infrastructure.MassTransit;
 
 using System.Diagnostics.CodeAnalysis;
+using System.Security.Authentication;
 using global::MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using SilentMike.DietMenu.Core.Infrastructure.MassTransit.Consumers;
+using SilentMike.DietMenu.Core.Infrastructure.MassTransit.Families.Consumers;
 using SilentMike.DietMenu.Core.Infrastructure.MassTransit.Middlewares;
 
 [ExcludeFromCodeCoverage]
 internal static class DependencyInjection
 {
-    public static void AddMassTransit(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddMassTransit(this IServiceCollection services, IConfiguration configuration)
     {
-        var rabbitMqOptions = configuration.GetSection(RabbitMqOptions.SectionName).Get<RabbitMqOptions>();
+        var rabbitMqOptions = configuration.GetSection(RabbitMqOptions.SECTION_NAME).Get<RabbitMqOptions>();
+        rabbitMqOptions ??= new RabbitMqOptions();
 
         services.AddMassTransit(configure =>
         {
-            configure.AddConsumer<CoreDataMessageConsumer>();
+            configure.AddConsumer<CreatedFamilyMessageConsumer>();
 
-            configure.UsingRabbitMq((context, cfg) =>
+            configure.UsingRabbitMq((context, configurator) =>
             {
-                cfg.UseConsumeFilter(typeof(ExceptionLoggerFilter<>), context);
-                cfg.UseConsumeFilter(typeof(ValidationFilter<>), context);
-                cfg.UseConsumeFilter(typeof(RetryFilter<>), context);
+                configurator.UseConsumeFilter(typeof(ExceptionLoggerFilter<>), context);
 
-                cfg.Host(rabbitMqOptions.Server, host =>
+                configurator.Host(rabbitMqOptions.HostName, rabbitMqOptions.Port, rabbitMqOptions.VirtualHost, host =>
                 {
-                    host.Username(rabbitMqOptions.User);
                     host.Password(rabbitMqOptions.Password);
+                    host.Username(rabbitMqOptions.User);
+
+                    if (rabbitMqOptions.UseSsl)
+                    {
+                        host.UseSsl(ssl => ssl.Protocol = SslProtocols.Tls12 | SslProtocols.Tls13);
+                    }
                 });
 
-                cfg.ConfigureEndpoints(context);
+                configurator.ConfigureEndpoints(context);
             });
         });
-        services.AddMassTransitHostedService();
+
+        return services;
     }
 }

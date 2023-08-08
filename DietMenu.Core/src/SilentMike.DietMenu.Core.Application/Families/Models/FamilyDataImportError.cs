@@ -3,5 +3,5 @@
 public sealed record FamilyDataImportError
 {
     public string DataArea { get; init; } = string.Empty;
-    public IDictionary<string, string[]> Errors { get; init; } = new Dictionary<string, string[]>();
+    public IReadOnlyDictionary<string, string[]> Errors { get; init; } = new Dictionary<string, string[]>();
 }

@@ -5,16 +5,18 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
-using SilentMike.DietMenu.Core.Infrastructure.Extensions;
+using SilentMike.DietMenu.Core.Infrastructure.Common.Extensions;
 using SilentMike.DietMenu.Core.Infrastructure.IdentityServer4;
 using SilentMike.DietMenu.Core.Infrastructure.Swagger.Filters;
 
 [ExcludeFromCodeCoverage]
 internal static class DependencyInjection
 {
+    private const string BASE_PATH = "api";
+
     public static void AddSwagger(this IServiceCollection services, IConfiguration configuration)
     {
-        var identityServerOptions = configuration.GetSection(IdentityServer4Options.SectionName).Get<IdentityServer4Options>();
+        var identityServerOptions = configuration.GetSection(IdentityServer4Options.SECTION_NAME).Get<IdentityServer4Options>();
 
         services.ConfigureSwaggerGen(c =>
         {
@@ -41,7 +43,9 @@ internal static class DependencyInjection
                 },
                 Type = SecuritySchemeType.OAuth2,
             });
+
             options.OperationFilter<AuthorizeCheckOperationFilter>();
+
             options.SwaggerDoc("v1", new OpenApiInfo
             {
                 Title = "DietMenu Core WebApi",
@@ -56,13 +60,13 @@ internal static class DependencyInjection
         {
             options.PreSerializeFilters.Add((swagger, httpReq) =>
             {
-                if (httpReq.Headers.ContainsKey("X-Forwarded-Host"))
+                if (httpReq.Headers.TryGetValue("X-Forwarded-Host", out var header))
                 {
-                    var basePath = "api";
-                    var serverUrl = $"https://{httpReq.Headers["X-Forwarded-Host"]}/{basePath}";
+                    var serverUrl = $"https://{header}/{BASE_PATH}";
+
                     swagger.Servers = new List<OpenApiServer>
                     {
-                        new OpenApiServer
+                        new()
                         {
                             Url = serverUrl,
                         },

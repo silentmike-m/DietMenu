@@ -2,23 +2,21 @@ namespace SilentMike.DietMenu.Core.IntegrationTests;
 
 using System.Net;
 using System.Net.Http.Json;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SilentMike.DietMenu.Core.Application.ViewModels;
 using SilentMike.DietMenu.Core.Infrastructure.HealthChecks.Models;
+using SilentMike.DietMenu.Core.IntegrationTests.Helpers;
 
-#if DEBUG
 [TestClass]
-public sealed class StartupTests
+public sealed class StartupTests : IDisposable
 {
-    private readonly WebApplicationFactory<Program> factory;
+    private const string HEALTH_CHECK_URL = "/health";
+    private const string SWAGGER_URL = "/swagger/v1/swagger.json";
 
-    public StartupTests()
-    {
-        this.factory = new WebApplicationFactory<Program>();
-    }
+    private readonly WebApplicationFactory<Program> factory = new WebApplicationFactory<Program>()
+        .WithTestHangfire()
+        .WithFakeDbContext();
 
     public void Dispose()
     {
@@ -26,66 +24,63 @@ public sealed class StartupTests
     }
 
     [TestMethod]
-    public async Task ShouldReturnHealthCheck()
+    public async Task Should_Return_Health_Check()
     {
         //GIVEN
         var client = this.factory.CreateClient();
-        const string url = "/health";
 
         //WHEN
-        var response = await client.GetAsync(url);
+        var response = await client.GetAsync(HEALTH_CHECK_URL);
 
         //THEN
         response.StatusCode.Should()
             .Be(HttpStatusCode.OK)
             ;
+
         response.Content.Headers.ContentType?.ToString()
             .Should()
-            .Be("application/json; charset=utf-8")
+            .Be("application/json")
             ;
 
-        var baseResponse = await response.Content.ReadFromJsonAsync<BaseResponse<HealthCheck>>();
-        baseResponse.Should()
+        var healthCheckResponse = await response.Content.ReadFromJsonAsync<HealthCheck>();
+
+        healthCheckResponse.Should()
             .NotBeNull()
-            ;
-        baseResponse!.Code.Should()
-            .Be("OK")
-            ;
-        baseResponse.Error.Should()
-            .BeNull()
-            ;
-        baseResponse.Response.Should()
-            .NotBeNull()
-            ;
-        baseResponse.Response!.HealthChecks.Count.Should()
-            .Be(6)
             ;
 
-        baseResponse.Response.HealthChecks.Should()
+        healthCheckResponse!.HealthChecks.Count.Should()
+            .Be(5)
+            ;
+
+        healthCheckResponse.HealthChecks.Should()
             .ContainSingle(i => i.Component == "Db Context")
             ;
-        baseResponse.Response.HealthChecks.Should()
-            .ContainSingle(i => i.Component == "Mailing server")
+
+        healthCheckResponse.HealthChecks.Should()
+            .ContainSingle(i => i.Component == "masstransit-bus")
             ;
-        baseResponse.Response.HealthChecks.Should()
+
+        healthCheckResponse.HealthChecks.Should()
             .ContainSingle(i => i.Component == "RabbitMQ")
             ;
-        baseResponse.Response.HealthChecks.Should()
+
+        healthCheckResponse.HealthChecks.Should()
             .ContainSingle(i => i.Component == "SQL Default")
             ;
-        baseResponse.Response.HealthChecks.Should()
+
+        healthCheckResponse.HealthChecks.Should()
             .ContainSingle(i => i.Component == "SQL Hangfire")
             ;
     }
 
     [TestMethod]
-    public async Task ShouldReturnSwagger()
+    public async Task Should_Return_Swagger()
     {
         //GIVEN
         var client = this.factory.CreateClient();
 
         //WHEN
-        var response = await client.GetAsync("/swagger/v1/swagger.json");
+        var response = await client.GetAsync(SWAGGER_URL);
 
         //THEN
         response.StatusCode.Should()
@@ -98,4 +93,3 @@ public sealed class StartupTests
             ;
     }
 }
-#endif

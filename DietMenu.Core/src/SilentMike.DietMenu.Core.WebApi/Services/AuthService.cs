@@ -10,17 +10,12 @@ internal class AuthService : IAuthService
 {
     private readonly IHttpContextAccessor httpContextAccessor;
 
-    public AuthService(IHttpContextAccessor httpContextAccessor)
-    {
-        this.httpContextAccessor = httpContextAccessor;
-    }
-
     public (Guid familyId, Guid userId) CurrentUser
     {
         get
         {
-            var familyIdentifier = this.httpContextAccessor.HttpContext?.User.FindFirstValue(DietMenuClaimNames.FamilyId);
-            var userIdentifier = this.httpContextAccessor.HttpContext?.User.FindFirstValue(DietMenuClaimNames.UserId);
+            var familyIdentifier = this.httpContextAccessor.HttpContext?.User.FindFirstValue(DietMenuClaimNames.FAMILY_ID);
+            var userIdentifier = this.httpContextAccessor.HttpContext?.User.FindFirstValue(DietMenuClaimNames.USER_ID);
 
             var familyId = string.IsNullOrEmpty(familyIdentifier)
                 ? Guid.Empty
@@ -33,4 +28,7 @@ internal class AuthService : IAuthService
             return (familyId, userId);
         }
     }
+
+    public AuthService(IHttpContextAccessor httpContextAccessor)
+        => this.httpContextAccessor = httpContextAccessor;
 }

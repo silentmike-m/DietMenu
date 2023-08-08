@@ -1,31 +1,35 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-    
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
 
-  <ItemGroup>
-    <Using Include="MediatR" />
-    <Using Include="Microsoft.Extensions.Logging" />
-    <Using Include="System.Text.Json.Serialization" />
-    <Using Include="SilentMike.DietMenu.Core.Application.Common.Constants" />
-  </ItemGroup>
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <LangVersion>10.0</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <Company>Silent Mike</Company>
+        <Product>DietMenu-Core-Service</Product>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="10.3.6" />
-    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
-  </ItemGroup>
+    <ItemGroup>
+        <Using Include="MediatR" />
+        <Using Include="Microsoft.Extensions.Logging" />
+        <Using Include="System.Text.Json.Serialization" />
+        <Using Include="SilentMike.DietMenu.Core.Application.Common.Constants" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\SilentMike.DietMenu.Core.Domain\SilentMike.DietMenu.Core.Domain.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.6.0" />
+        <PackageReference Include="MediatR" Version="12.1.1" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
+    </ItemGroup>
 
-  <ItemGroup>
-   <InternalsVisibleTo Include="SilentMike.DietMenu.Core.UnitTests" />
-   <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\SilentMike.DietMenu.Core.Domain\SilentMike.DietMenu.Core.Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="SilentMike.DietMenu.Core.Application.Tests" />
+        <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+    </ItemGroup>
+
 
 </Project>

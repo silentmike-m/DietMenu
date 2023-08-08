@@ -1,14 +1,13 @@
 ﻿namespace SilentMike.DietMenu.Core.Application.Families.Interfaces;
 
-using SilentMike.DietMenu.Core.Domain.Entities;
-using ApplicationException = SilentMike.DietMenu.Core.Application.Common.ApplicationException;
+using SilentMike.DietMenu.Core.Application.Common;
+using SilentMike.DietMenu.Core.Domain.Models;
 
 internal interface IFamilyDataToImport
 {
     IDictionary<string, ICollection<ApplicationException>> Exceptions { get; }
-    ICollection<IngredientTypeEntity> IngredientTypes { get; }
-    ICollection<IngredientEntity> Ingredients { get; }
-    ICollection<MealTypeEntity> MealTypes { get; }
+    Guid FamilyId { get; }
+    IReadOnlyList<Ingredient> Ingredients { get; }
 
     void AddException(string dataName, ApplicationException exception);
 }

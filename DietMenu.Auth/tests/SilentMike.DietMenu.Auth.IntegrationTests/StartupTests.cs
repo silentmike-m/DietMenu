@@ -14,11 +14,8 @@ public sealed class StartupTests : IDisposable
     private const string HEALTH_CHECK_URL = "/health";
     private const string SWAGGER_URL = "/swagger/v1/swagger.json";
 
-    private readonly WebApplicationFactory<Program> factory;
-
-    public StartupTests()
-        => this.factory = new WebApplicationFactory<Program>()
-            .WithFakeDbContext();
+    private readonly WebApplicationFactory<Program> factory = new WebApplicationFactory<Program>()
+        .WithFakeDbContext();
 
     public void Dispose()
     {

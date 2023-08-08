@@ -13,7 +13,7 @@ internal sealed class GetFamilyDataToImportBehaviour<TRequest, TResponse> : IPip
     public GetFamilyDataToImportBehaviour(IEnumerable<IGetFamilyDataToImportPostProcessor<TRequest, TResponse>> postProcessors)
         => this.postProcessors = postProcessors;
 
-    public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
         var response = await next();
 

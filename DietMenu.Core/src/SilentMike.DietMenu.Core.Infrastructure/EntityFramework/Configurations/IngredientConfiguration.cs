@@ -3,30 +3,14 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SilentMike.DietMenu.Core.Domain.Entities;
+using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Entities;
 
 [ExcludeFromCodeCoverage]
-internal sealed class IngredientConfiguration : IEntityTypeConfiguration<IngredientEntity>
+internal sealed class IngredientConfiguration : IEntityTypeConfiguration<Ingredient>
 {
-    public void Configure(EntityTypeBuilder<IngredientEntity> builder)
+    public void Configure(EntityTypeBuilder<Ingredient> builder)
     {
-        builder
-            .HasIndex(ingredient => new { ingredient.FamilyId, ingredient.InternalName })
+        builder.HasIndex(ingredient => ingredient.InternalId)
             .IsUnique();
-
-        builder
-            .HasIndex(ingredient => new { ingredient.FamilyId, ingredient.Name })
-            .IsUnique();
-
-        builder.HasOne(ingredient => ingredient.FamilyEntity)
-            .WithMany()
-            .IsRequired()
-            .HasForeignKey("FamilyId");
-
-        builder.HasOne(ingredient => ingredient.Type)
-            .WithMany()
-            .HasForeignKey(i => i.TypeId)
-            .IsRequired()
-            .OnDelete(DeleteBehavior.Restrict);
     }
 }

@@ -3,8 +3,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using SilentMike.DietMenu.Core.Application.Families.Behaviors;
-using SilentMike.DietMenu.Core.Application.Families.Interfaces;
-using SilentMike.DietMenu.Core.Application.Families.Processors;
 
 [ExcludeFromCodeCoverage]
 internal static class DependencyInjection
@@ -13,8 +11,8 @@ internal static class DependencyInjection
     {
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(GetFamilyDataToImportBehaviour<,>));
 
-        services.AddTransient(typeof(IGetFamilyDataToImportPostProcessor<,>), typeof(GetFamilyIngredientTypesToImportPostProcessor<,>));
-        services.AddTransient(typeof(IGetFamilyDataToImportPostProcessor<,>), typeof(GetFamilyIngredientsToImportPostProcessor<,>));
-        services.AddTransient(typeof(IGetFamilyDataToImportPostProcessor<,>), typeof(GetFamilyMealTypesToImportPostProcessor<,>));
+        // services.AddTransient(typeof(IGetFamilyDataToImportPostProcessor<,>), typeof(GetFamilyIngredientTypesToImportPostProcessor<,>));
+        // services.AddTransient(typeof(IGetFamilyDataToImportPostProcessor<,>), typeof(GetFamilyIngredientsToImportPostProcessor<,>));
+        // services.AddTransient(typeof(IGetFamilyDataToImportPostProcessor<,>), typeof(GetFamilyMealTypesToImportPostProcessor<,>));
     }
 }

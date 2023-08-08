@@ -2,6 +2,6 @@
 
 public interface IAuthData
 {
-    Guid? FamilyId { get; set; }
+    Guid FamilyId { get; set; }
     Guid UserId { get; set; }
 }

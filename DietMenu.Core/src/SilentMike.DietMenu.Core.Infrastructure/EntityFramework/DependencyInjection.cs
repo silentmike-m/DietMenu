@@ -5,9 +5,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using SilentMike.DietMenu.Core.Domain.Repositories;
-using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Interfaces;
-using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Services;
+using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Data;
 
 [ExcludeFromCodeCoverage]
 internal static class DependencyInjection
@@ -18,21 +16,7 @@ internal static class DependencyInjection
 
         services.AddDatabaseDeveloperPageExceptionFilter();
 
-        services.AddDbContext<DietMenuDbContext>(options => options.UseSqlServer(defaultConnectionString));
-
-        services.AddScoped<ICoreMigrationService, CoreMigrationService>();
-
-        services.AddScoped<ICoreRepository, CoreRepository>();
-        services.AddScoped<IFamilyRepository, FamilyRepository>();
-        services.AddScoped<IIngredientRepository, IngredientRepository>();
-        services.AddScoped<IIngredientTypeRepository, IngredientTypeRepository>();
-        services.AddScoped<IMealTypeRepository, MealTypeRepository>();
-        services.AddScoped<IRecipeRepository, RecipeRepository>();
-
-        services.AddScoped<IIngredientReadService, IngredientReadService>();
-        services.AddScoped<IIngredientTypeReadService, IngredientTypeReadService>();
-        services.AddScoped<IMealTypeReadService, MealTypeReadService>();
-        services.AddScoped<IRecipeReadService, RecipeReadService>();
+        services.AddDbContext<IDietMenuDbContext, DietMenuDbContext>(options => options.UseSqlServer(defaultConnectionString));
     }
 
     public static void UseEntityFramework(this IApplicationBuilder _, DietMenuDbContext context)

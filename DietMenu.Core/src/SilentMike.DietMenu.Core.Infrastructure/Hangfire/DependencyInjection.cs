@@ -1,9 +1,9 @@
 ﻿namespace SilentMike.DietMenu.Core.Infrastructure.Hangfire;
 
-using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using global::Hangfire;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SilentMike.DietMenu.Core.Infrastructure.Hangfire.Filters;
@@ -16,6 +16,7 @@ internal static class DependencyInjection
     public static void AddHangfire(this IServiceCollection services, IConfiguration configuration, string hangFireServerName)
     {
         var connectionString = configuration.GetConnectionString("HangfireConnection");
+        connectionString ??= string.Empty;
 
         ProvideHangfireDatabase(connectionString);
 
@@ -63,9 +64,7 @@ internal static class DependencyInjection
         using var connection = new SqlConnection(connectionStringBuilder.ConnectionString);
         connection.Open();
         using var command = connection.CreateCommand();
-        command.CommandText = INIT_DATABASE_QUERY;
-        command.Parameters.AddWithValue("@DatabaseName", catalog);
+        command.CommandText = $"IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = '{catalog}') CREATE DATABASE [{catalog}]";
         command.ExecuteNonQuery();
     }
 }
-

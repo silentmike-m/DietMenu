@@ -1,29 +1,26 @@
 ﻿namespace SilentMike.DietMenu.Core.WebApi.Filters;
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Mime;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Formatters;
-using Microsoft.Extensions.Logging;
+using SilentMike.DietMenu.Core.Application.Common;
 using SilentMike.DietMenu.Core.Application.Common.Constants;
 using SilentMike.DietMenu.Core.Application.Exceptions;
 using SilentMike.DietMenu.Core.Application.ViewModels;
-using ApplicationException = SilentMike.DietMenu.Core.Application.Common.ApplicationException;
 
 [ExcludeFromCodeCoverage]
-// ReSharper disable once ClassNeverInstantiated.Global
 internal sealed class ApiExceptionFilterAttribute : ExceptionFilterAttribute
 {
     private readonly ILogger<ApiExceptionFilterAttribute> logger;
 
     public ApiExceptionFilterAttribute(ILogger<ApiExceptionFilterAttribute> logger)
-        => (this.logger) = (logger);
+        => this.logger = logger;
 
     public override void OnException(ExceptionContext context)
     {
-        HandleException(context);
+        this.HandleException(context);
 
         base.OnException(context);
     }
@@ -63,6 +60,7 @@ internal sealed class ApiExceptionFilterAttribute : ExceptionFilterAttribute
             },
             StatusCode = 500,
         };
+
         context.ExceptionHandled = true;
     }
 
@@ -82,6 +80,7 @@ internal sealed class ApiExceptionFilterAttribute : ExceptionFilterAttribute
             },
             StatusCode = 500,
         };
+
         context.ExceptionHandled = true;
     }
 
@@ -107,6 +106,7 @@ internal sealed class ApiExceptionFilterAttribute : ExceptionFilterAttribute
             },
             StatusCode = 500,
         };
+
         context.ExceptionHandled = true;
     }
 }
