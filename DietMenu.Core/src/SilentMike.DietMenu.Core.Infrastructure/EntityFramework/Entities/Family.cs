@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 [ExcludeFromCodeCoverage]
 internal sealed class FamilyEntity
 {
+    public Guid FamilyId { get; set; } = Guid.NewGuid();
     public int Id { get; set; } = default;
-    public string IngredientsVersion { get; set; } = string.Empty;
-    public Guid InternalId { get; set; } = Guid.Empty;
+    public Dictionary<string, string> IngredientsVersion { get; set; } = new();
 }

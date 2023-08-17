@@ -6,14 +6,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Entities;
 
 [ExcludeFromCodeCoverage]
-internal sealed class IngredientConfiguration : IEntityTypeConfiguration<Ingredient>
+internal sealed class IngredientConfiguration : IEntityTypeConfiguration<IngredientEntity>
 {
-    public void Configure(EntityTypeBuilder<Ingredient> builder)
+    public void Configure(EntityTypeBuilder<IngredientEntity> builder)
     {
-        builder.HasIndex(p => new { p.FamilyId, p.InternalId })
-            .IsUnique();
-
-        builder.HasIndex(p => new { p.FamilyId, p.InternalName })
+        builder.HasIndex(ingredient => new { ingredient.FamilyId, ingredient.IngredientId })
             .IsUnique();
     }
 }

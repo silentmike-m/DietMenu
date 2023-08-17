@@ -9,7 +9,7 @@ public sealed class IngredientInvalidExchangerException : DomainException
 {
     public override string Code => ErrorCodes.INGREDIENT_INVALID_EXCHANGER;
 
-    public IngredientInvalidExchangerException(Guid id, decimal exchanger)
+    public IngredientInvalidExchangerException(Guid id, double exchanger)
         : base($"Ingredient exchanger with id 'id' can not be less than 0 ('{exchanger}')")
         => this.Id = id;
 

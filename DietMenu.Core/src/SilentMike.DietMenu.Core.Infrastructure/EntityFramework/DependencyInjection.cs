@@ -5,7 +5,10 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SilentMike.DietMenu.Core.Domain.Services;
 using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Data;
+using SilentMike.DietMenu.Core.Infrastructure.EntityFramework.Services;
+using SilentMike.DietMenu.Core.Infrastructure.Families.Interfaces;
 
 [ExcludeFromCodeCoverage]
 internal static class DependencyInjection
@@ -17,6 +20,9 @@ internal static class DependencyInjection
         services.AddDatabaseDeveloperPageExceptionFilter();
 
         services.AddDbContext<IDietMenuDbContext, DietMenuDbContext>(options => options.UseSqlServer(defaultConnectionString));
+
+        services.AddScoped<IFamilyMigrationService, FamilyMigrationService>();
+        services.AddScoped<IFamilyRepository, FamilyRepository>();
     }
 
     public static void UseEntityFramework(this IApplicationBuilder _, DietMenuDbContext context)

@@ -25,6 +25,8 @@ public static class DependencyInjection
 
         services.AddMediatR(config => config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
+        services.AddSingleton<IFileProvider>(new ManifestEmbeddedFileProvider(Assembly.GetExecutingAssembly()));
+
         services.AddIdentityServer4(configuration);
 
         services.AddEntityFramework(configuration);
@@ -32,8 +34,6 @@ public static class DependencyInjection
         services.AddMassTransit(configuration);
 
         services.AddHangfire(configuration, hangFireServerName);
-
-        services.AddSingleton<IFileProvider>(new ManifestEmbeddedFileProvider(Assembly.GetExecutingAssembly()));
     }
 
     public static void UseInfrastructure(this IApplicationBuilder app, string hangFireServerName)

@@ -1,9 +1,9 @@
 ﻿namespace SilentMike.DietMenu.Core.Application.Ingredients.Models;
 
-public sealed record IngredientFromExcelFile
+public sealed record IngredientToImport
 {
-    public decimal Exchanger { get; init; } = default;
-    public string InternalName { get; init; } = string.Empty;
+    public double Exchanger { get; init; } = default;
+    public Guid Id { get; init; } = Guid.NewGuid();
     public string Name { get; init; } = string.Empty;
     public string UnitSymbol { get; init; } = string.Empty;
 }

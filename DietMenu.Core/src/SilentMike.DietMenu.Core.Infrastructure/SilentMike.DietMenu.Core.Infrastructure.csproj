@@ -62,10 +62,5 @@
         <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
     </ItemGroup>
 
-    <ItemGroup>
-        <Folder Include="EntityFramework\Services\" />
-        <Folder Include="Exceptions\Families\" />
-        <Folder Include="Hangfire\Families\" />
-    </ItemGroup>
 
 </Project>

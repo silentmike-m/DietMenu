@@ -3,13 +3,13 @@
 using System.Diagnostics.CodeAnalysis;
 
 [ExcludeFromCodeCoverage]
-internal sealed class Ingredient
+internal sealed class IngredientEntity
 {
-    public decimal Exchanger { get; set; } = default;
-    public Guid FamilyId { get; set; } = Guid.Empty;
+    public double Exchanger { get; set; } = default;
+    public Guid FamilyId { get; set; } = Guid.NewGuid();
     public int Id { get; set; } = default;
-    public Guid InternalId { get; set; } = Guid.Empty;
-    public string InternalName { get; set; } = string.Empty;
+    public Guid IngredientId { get; set; } = Guid.NewGuid();
+    public bool IsActive { get; set; } = default;
     public bool IsSystem { get; set; } = default;
     public string Name { get; set; } = string.Empty;
     public string Type { get; set; } = string.Empty;

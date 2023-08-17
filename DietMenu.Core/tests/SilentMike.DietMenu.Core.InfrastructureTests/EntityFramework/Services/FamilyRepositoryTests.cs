@@ -10,7 +10,7 @@ public sealed class FamilyRepositoryTests : FakeDietMenuDbContext
     private static readonly FamilyEntity EXISTING_FAMILY = new()
     {
         Id = 1,
-        InternalId = Guid.NewGuid(),
+        FamilyId = Guid.NewGuid(),
     };
 
     public FamilyRepositoryTests()
@@ -39,7 +39,7 @@ public sealed class FamilyRepositoryTests : FakeDietMenuDbContext
     public async Task Should_Return_True_When_Family_Exists()
     {
         //GIVEN
-        var id = EXISTING_FAMILY.InternalId;
+        var id = EXISTING_FAMILY.FamilyId;
 
         var repository = new FamilyRepository(this.Context!);
 

@@ -5,7 +5,6 @@ using System.Reflection;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using SilentMike.DietMenu.Core.Application.Common.Behaviors;
-using SilentMike.DietMenu.Core.Application.Families;
 
 [ExcludeFromCodeCoverage]
 public static class DependencyInjection
@@ -21,7 +20,5 @@ public static class DependencyInjection
         });
 
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly(), includeInternalTypes: true);
-
-        services.AddFamilyMigrationProcess();
     }
 }

@@ -29,19 +29,19 @@ public sealed class ParseIngredientsFromExcelFileHandlerTests
         var result = await handler.Handle(request, CancellationToken.None);
 
         //THEN
-        var expectedResult = new List<IngredientFromExcelFile>
+        var expectedResult = new List<IngredientToImport>
         {
             new()
             {
-                Exchanger = 1m,
-                InternalName = "46E7473C-9072-9CFD-3ED7-485AF9998E99",
+                Exchanger = 1.0,
+                Id = new Guid("46E7473C-9072-9CFD-3ED7-485AF9998E99"),
                 Name = "Amarantus",
                 UnitSymbol = "g",
             },
             new()
             {
-                Exchanger = 4.1m,
-                InternalName = "5CB3DB36-8733-1EBE-56AF-E7CD359A1499",
+                Exchanger = 4.1,
+                Id = new Guid("5CB3DB36-8733-1EBE-56AF-E7CD359A1499"),
                 Name = "Bataty",
                 UnitSymbol = "g",
             },

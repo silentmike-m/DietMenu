@@ -4,27 +4,28 @@ using SilentMike.DietMenu.Core.Domain.Common.Constants;
 using SilentMike.DietMenu.Core.Domain.Exceptions.Ingredients;
 using SilentMike.DietMenu.Core.Domain.Extensions;
 
-public sealed class Ingredient
+public sealed class Ingredient : BusinessModel
 {
-    public decimal Exchanger { get; private set; } = default;
+    public double Exchanger { get; private set; } = default;
     public Guid FamilyId { get; private set; }
-    public Guid Id { get; private set; }
+    private Guid Id { get; set; } = Guid.NewGuid();
     public string Name { get; private set; } = string.Empty;
     public string Type { get; private set; } = string.Empty;
     public string UnitSymbol { get; private set; }
 
-    public Ingredient(Guid id, decimal exchanger, Guid familyId, string name, string type, string unitSymbol)
+    public Ingredient(double exchanger, Guid familyId, string name, string type, string unitSymbol)
     {
-        this.Id = id;
         this.FamilyId = familyId;
         this.UnitSymbol = unitSymbol;
 
         this.SetExchanger(exchanger);
         this.SetName(name);
         this.SetType(type);
+
+        this.MarkOld();
     }
 
-    public void SetExchanger(decimal exchanger)
+    public void SetExchanger(double exchanger)
     {
         if (exchanger < 0)
         {
@@ -32,6 +33,7 @@ public sealed class Ingredient
         }
 
         this.Exchanger = exchanger;
+        this.MarkDirty();
     }
 
     public void SetName(string name)
@@ -42,6 +44,7 @@ public sealed class Ingredient
         }
 
         this.Name = name;
+        this.MarkDirty();
     }
 
     private void SetType(string type)
@@ -54,5 +57,6 @@ public sealed class Ingredient
         }
 
         this.Type = typeName;
+        this.MarkDirty();
     }
 }

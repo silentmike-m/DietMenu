@@ -8,8 +8,4 @@
         <Company>Silent Mike</Company>
         <Product>DietMenu-Core-Service</Product>
     </PropertyGroup>
-
-    <ItemGroup>
-        <Folder Include="Services\" />
-    </ItemGroup>
 </Project>
