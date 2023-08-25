@@ -51,9 +51,9 @@ internal sealed class FamilyMigrationService : IFamilyMigrationService
                 importResults.Add(importResult);
             }
 
-            var isAnyException = importResults.Any(result => result.Errors.Any());
+            var isAnyException = importResults.Exists(result => result.Errors.Any());
 
-            if (isAnyException == false)
+            if (isAnyException is false)
             {
                 _ = await this.context.SaveChangesAsync(cancellationToken);
             }
@@ -181,7 +181,7 @@ internal sealed class FamilyMigrationService : IFamilyMigrationService
                 {
                     if (ingredient.Type != ingredientType)
                     {
-                        throw new IngredientToImportInvalidType(ingredient.IngredientId, ingredient.Type, ingredientType);
+                        throw new IngredientToImportInvalidTypeException(ingredient.IngredientId, ingredient.Type, ingredientType);
                     }
 
                     if (ingredient.IsSystem is false)

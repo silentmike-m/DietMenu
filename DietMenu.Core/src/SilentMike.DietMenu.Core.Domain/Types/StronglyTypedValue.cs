@@ -1,10 +1,11 @@
 ﻿namespace SilentMike.DietMenu.Core.Domain.Types;
 
-public abstract class StronglyTypedValue<T> : IEquatable<StronglyTypedValue<T>> where T : IComparable<T>
+public abstract class StronglyTypedValue<T> : IEquatable<StronglyTypedValue<T>>
+    where T : IComparable<T>
 {
-    public T Value { get; }
+    private T Value { get; }
 
-    public StronglyTypedValue(T value)
+    protected StronglyTypedValue(T value)
         => this.Value = value;
 
     public bool Equals(StronglyTypedValue<T>? other)
@@ -17,24 +18,24 @@ public abstract class StronglyTypedValue<T> : IEquatable<StronglyTypedValue<T>> 
         return object.ReferenceEquals(this, other) || EqualityComparer<T>.Default.Equals(this.Value, other.Value);
     }
 
-    public override bool Equals(object? @object)
+    public override bool Equals(object? obj)
     {
-        if (@object is null)
+        if (obj is null)
         {
             return false;
         }
 
-        if (object.ReferenceEquals(this, @object))
+        if (object.ReferenceEquals(this, obj))
         {
             return true;
         }
 
-        if (@object.GetType() != this.GetType())
+        if (obj.GetType() != this.GetType())
         {
             return false;
         }
 
-        return this.Equals((StronglyTypedValue<T>)@object);
+        return this.Equals((StronglyTypedValue<T>)obj);
     }
 
     public override int GetHashCode()

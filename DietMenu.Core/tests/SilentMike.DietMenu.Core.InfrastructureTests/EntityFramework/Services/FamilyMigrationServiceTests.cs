@@ -400,7 +400,7 @@ public sealed class FamilyMigrationServiceTests
 
         this.mediator.Verify(service => service.Publish(It.IsAny<ImportedFamilyData>(), It.IsAny<CancellationToken>()), Times.Once());
 
-        var expectedException = new IngredientToImportInvalidType(familyFruit.IngredientId, familyFruit.Type, IngredientTypeNames.Fruit);
+        var expectedException = new IngredientToImportInvalidTypeException(familyFruit.IngredientId, familyFruit.Type, IngredientTypeNames.Fruit);
 
         var expectedResults = IngredientTypeNames.IngredientTypes
             .Select(ingredientType => new ImportFamilyDataResult

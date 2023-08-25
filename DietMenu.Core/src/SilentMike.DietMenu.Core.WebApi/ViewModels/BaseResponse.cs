@@ -1,6 +1,7 @@
-﻿namespace SilentMike.DietMenu.Core.Application.ViewModels;
+﻿namespace SilentMike.DietMenu.Core.WebApi.ViewModels;
 
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
 
 [ExcludeFromCodeCoverage]
 public sealed class BaseResponse<T>

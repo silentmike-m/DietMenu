@@ -1,7 +1,7 @@
 ﻿namespace SilentMike.DietMenu.Shared.Email.Models;
 
-public sealed record ImportedLibraryError
+public sealed record ImportFamilyDataError
 {
     public string Code { get; init; } = string.Empty;
-    public List<string> Messages { get; init; } = new();
+    public string Message { get; init; } = string.Empty;
 }

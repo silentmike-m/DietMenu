@@ -5,15 +5,15 @@ using SilentMike.DietMenu.Core.Infrastructure.Common;
 using SilentMike.DietMenu.Core.Infrastructure.Common.Constants;
 
 [Serializable]
-public sealed class IngredientToImportInvalidType : InfrastructureException
+public sealed class IngredientToImportInvalidTypeException : InfrastructureException
 {
     public override string Code => ErrorCodes.FAMILY_FILE_NOT_FOUND;
 
-    public IngredientToImportInvalidType(Guid ingredientId, string ingredientType, string targetIngredientType)
+    public IngredientToImportInvalidTypeException(Guid ingredientId, string ingredientType, string targetIngredientType)
         : base($"Ingredient with id '{ingredientId}' and type '{ingredientType}' is inconsistent with target '{targetIngredientType}'")
         => this.Id = ingredientId;
 
-    private IngredientToImportInvalidType(SerializationInfo info, StreamingContext context)
+    private IngredientToImportInvalidTypeException(SerializationInfo info, StreamingContext context)
         : base(info, context)
     {
     }

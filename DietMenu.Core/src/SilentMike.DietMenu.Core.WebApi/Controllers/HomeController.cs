@@ -1,9 +1,10 @@
 namespace SilentMike.DietMenu.Core.WebApi.Controllers;
 
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-[AllowAnonymous]
+[AllowAnonymous, ExcludeFromCodeCoverage]
 public sealed class HomeController : Controller
 {
     private readonly ILogger<HomeController> logger;
