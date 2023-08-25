@@ -7,7 +7,7 @@ public class FakeDietMenuDbContext : IDisposable
 {
     internal DietMenuDbContext? Context;
 
-    protected FakeDietMenuDbContext(params object[] entities)
+    internal FakeDietMenuDbContext(params object[] entities)
     {
         var dbName = Guid.NewGuid().ToString();
 
@@ -21,7 +21,7 @@ public class FakeDietMenuDbContext : IDisposable
 
         if (entities.Any())
         {
-            this.Context.AddRange(entities);
+            this.Context!.AddRange(entities);
             _ = this.Context.SaveChanges();
         }
     }

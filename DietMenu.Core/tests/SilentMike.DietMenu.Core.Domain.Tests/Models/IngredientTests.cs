@@ -11,15 +11,14 @@ public sealed class IngredientTests
     public void Should_Create_Ingredient()
     {
         //GIVEN
-        const decimal exchanger = 1;
+        const double exchanger = 1.0;
         var familyId = Guid.NewGuid();
-        var id = Guid.NewGuid();
         const string name = "new ingredient";
         var type = IngredientTypeNames.Fruit.ToLower();
         var unitSymbol = string.Empty;
 
         //WHEN
-        var result = new Ingredient(id, exchanger, familyId, name, type, unitSymbol);
+        var result = new Ingredient(exchanger, familyId, name, type, unitSymbol);
 
         //THEN
         result.Exchanger.Should()
@@ -28,10 +27,6 @@ public sealed class IngredientTests
 
         result.FamilyId.Should()
             .Be(familyId)
-            ;
-
-        result.Id.Should()
-            .Be(id)
             ;
 
         result.Name.Should()
@@ -45,22 +40,33 @@ public sealed class IngredientTests
         result.UnitSymbol.Should()
             .Be(unitSymbol)
             ;
+
+        result.IsDeleted.Should()
+            .BeFalse()
+            ;
+
+        result.IsDirty.Should()
+            .BeFalse()
+            ;
+
+        result.IsNew.Should()
+            .BeFalse()
+            ;
     }
 
     [TestMethod]
     public void Should_Set_Exchanger()
     {
         //GIVEN
-        const decimal exchanger = 1;
+        const double exchanger = 1.0;
         var familyId = Guid.NewGuid();
-        var id = Guid.NewGuid();
         const string name = "new ingredient";
         var type = IngredientTypeNames.Fruit;
         var unitSymbol = string.Empty;
 
-        var ingredient = new Ingredient(id, exchanger, familyId, name, type, unitSymbol);
+        var ingredient = new Ingredient(exchanger, familyId, name, type, unitSymbol);
 
-        const decimal newExchanger = 2;
+        const double newExchanger = 2.0;
 
         //WHEN
         ingredient.SetExchanger(newExchanger);
@@ -69,20 +75,31 @@ public sealed class IngredientTests
         ingredient.Exchanger.Should()
             .Be(newExchanger)
             ;
+
+        ingredient.IsDeleted.Should()
+            .BeFalse()
+            ;
+
+        ingredient.IsDirty.Should()
+            .BeTrue()
+            ;
+
+        ingredient.IsNew.Should()
+            .BeFalse()
+            ;
     }
 
     [TestMethod]
     public void Should_Set_Name()
     {
         //GIVEN
-        const decimal exchanger = 1;
+        const double exchanger = 1.0;
         var familyId = Guid.NewGuid();
-        var id = Guid.NewGuid();
         const string name = "new ingredient";
         var type = IngredientTypeNames.Fruit;
         var unitSymbol = string.Empty;
 
-        var ingredient = new Ingredient(id, exchanger, familyId, name, type, unitSymbol);
+        var ingredient = new Ingredient(exchanger, familyId, name, type, unitSymbol);
 
         const string newName = "new name";
 
@@ -93,27 +110,37 @@ public sealed class IngredientTests
         ingredient.Name.Should()
             .Be(newName)
             ;
+
+        ingredient.IsDeleted.Should()
+            .BeFalse()
+            ;
+
+        ingredient.IsDirty.Should()
+            .BeTrue()
+            ;
+
+        ingredient.IsNew.Should()
+            .BeFalse()
+            ;
     }
 
     [TestMethod]
     public void Should_Throw_Empty_Name_Exception_On_Create_When_Name_Is_Empty_String()
     {
         //GIVEN
-        const decimal exchanger = 1;
+        const double exchanger = 1.0;
         var familyId = Guid.NewGuid();
-        var id = Guid.NewGuid();
         const string name = "";
         var type = IngredientTypeNames.Fruit.ToLower();
         var unitSymbol = string.Empty;
 
         //WHEN
-        var action = () => new Ingredient(id, exchanger, familyId, name, type, unitSymbol);
+        var action = () => new Ingredient(exchanger, familyId, name, type, unitSymbol);
 
         //THEN
         action.Should()
             .Throw<IngredientEmptyNameException>()
             .Where(exception => exception.Code == ErrorCodes.INGREDIENT_EMPTY_NAME)
-            .Where(exception => exception.Id == id)
             ;
     }
 
@@ -121,21 +148,19 @@ public sealed class IngredientTests
     public void Should_Throw_Empty_Name_Exception_On_Create_When_Name_Is_White_Spaces()
     {
         //GIVEN
-        const decimal exchanger = 1;
+        const double exchanger = 1.0;
         var familyId = Guid.NewGuid();
-        var id = Guid.NewGuid();
         const string name = "   ";
         var type = IngredientTypeNames.Fruit.ToLower();
         var unitSymbol = string.Empty;
 
         //WHEN
-        var action = () => new Ingredient(id, exchanger, familyId, name, type, unitSymbol);
+        var action = () => new Ingredient(exchanger, familyId, name, type, unitSymbol);
 
         //THEN
         action.Should()
             .Throw<IngredientEmptyNameException>()
             .Where(exception => exception.Code == ErrorCodes.INGREDIENT_EMPTY_NAME)
-            .Where(exception => exception.Id == id)
             ;
     }
 
@@ -143,14 +168,13 @@ public sealed class IngredientTests
     public void Should_Throw_Empty_Name_Exception_On_Set_Name_When_Name_Is_Empty_String()
     {
         //GIVEN
-        const decimal exchanger = 1;
+        const double exchanger = 1.0;
         var familyId = Guid.NewGuid();
-        var id = Guid.NewGuid();
         const string name = "new ingredient";
         var type = IngredientTypeNames.Fruit;
         var unitSymbol = string.Empty;
 
-        var ingredient = new Ingredient(id, exchanger, familyId, name, type, unitSymbol);
+        var ingredient = new Ingredient(exchanger, familyId, name, type, unitSymbol);
 
         const string newName = "";
 
@@ -161,7 +185,6 @@ public sealed class IngredientTests
         action.Should()
             .Throw<IngredientEmptyNameException>()
             .Where(exception => exception.Code == ErrorCodes.INGREDIENT_EMPTY_NAME)
-            .Where(exception => exception.Id == id)
             ;
     }
 
@@ -169,14 +192,13 @@ public sealed class IngredientTests
     public void Should_Throw_Empty_Name_Exception_On_Set_Name_When_Name_Is_White_Spaces()
     {
         //GIVEN
-        const decimal exchanger = 1;
+        const double exchanger = 1.0;
         var familyId = Guid.NewGuid();
-        var id = Guid.NewGuid();
         const string name = "new ingredient";
         var type = IngredientTypeNames.Fruit;
         var unitSymbol = string.Empty;
 
-        var ingredient = new Ingredient(id, exchanger, familyId, name, type, unitSymbol);
+        var ingredient = new Ingredient(exchanger, familyId, name, type, unitSymbol);
 
         const string newName = "   ";
 
@@ -187,7 +209,6 @@ public sealed class IngredientTests
         action.Should()
             .Throw<IngredientEmptyNameException>()
             .Where(exception => exception.Code == ErrorCodes.INGREDIENT_EMPTY_NAME)
-            .Where(exception => exception.Id == id)
             ;
     }
 
@@ -195,21 +216,19 @@ public sealed class IngredientTests
     public void Should_Throw_Invalid_Exchanger_On_Create_When_Is_Less_Than_Zero()
     {
         //GIVEN
-        const decimal exchanger = -1;
+        const double exchanger = -1.0;
         var familyId = Guid.NewGuid();
-        var id = Guid.NewGuid();
         const string name = "ingredient name";
         var type = IngredientTypeNames.Fruit.ToLower();
         var unitSymbol = string.Empty;
 
         //WHEN
-        var action = () => new Ingredient(id, exchanger, familyId, name, type, unitSymbol);
+        var action = () => new Ingredient(exchanger, familyId, name, type, unitSymbol);
 
         //THEN
         action.Should()
             .Throw<IngredientInvalidExchangerException>()
             .Where(exception => exception.Code == ErrorCodes.INGREDIENT_INVALID_EXCHANGER)
-            .Where(exception => exception.Id == id)
             ;
     }
 
@@ -217,16 +236,15 @@ public sealed class IngredientTests
     public void Should_Throw_Invalid_Exchanger_On_Set_Exchanger_When_Is_Less_Than_Zero()
     {
         //GIVEN
-        const decimal exchanger = 1;
+        const double exchanger = 1.0;
         var familyId = Guid.NewGuid();
-        var id = Guid.NewGuid();
         const string name = "new ingredient";
         var type = IngredientTypeNames.Fruit;
         var unitSymbol = string.Empty;
 
-        var ingredient = new Ingredient(id, exchanger, familyId, name, type, unitSymbol);
+        var ingredient = new Ingredient(exchanger, familyId, name, type, unitSymbol);
 
-        const decimal newExchanger = -1;
+        const double newExchanger = -1.0;
 
         //WHEN
         var action = () => ingredient.SetExchanger(newExchanger);
@@ -235,7 +253,6 @@ public sealed class IngredientTests
         action.Should()
             .Throw<IngredientInvalidExchangerException>()
             .Where(exception => exception.Code == ErrorCodes.INGREDIENT_INVALID_EXCHANGER)
-            .Where(exception => exception.Id == id)
             ;
     }
 
@@ -243,21 +260,19 @@ public sealed class IngredientTests
     public void Should_Throw_Invalid_Type_On_Create_When_Is_Invalid()
     {
         //GIVEN
-        const decimal exchanger = 1;
+        const double exchanger = 1.0;
         var familyId = Guid.NewGuid();
-        var id = Guid.NewGuid();
         const string name = "ingredient name";
         var type = "invalid";
         var unitSymbol = string.Empty;
 
         //WHEN
-        var action = () => new Ingredient(id, exchanger, familyId, name, type, unitSymbol);
+        var action = () => new Ingredient(exchanger, familyId, name, type, unitSymbol);
 
         //THEN
         action.Should()
             .Throw<IngredientInvalidTypeException>()
             .Where(exception => exception.Code == ErrorCodes.INGREDIENT_INVALID_TYPE)
-            .Where(exception => exception.Id == id)
             ;
     }
 }

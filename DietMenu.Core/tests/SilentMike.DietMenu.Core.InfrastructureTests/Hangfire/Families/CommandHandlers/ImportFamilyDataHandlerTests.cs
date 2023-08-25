@@ -4,11 +4,29 @@ using global::Hangfire;
 using global::Hangfire.Common;
 using global::Hangfire.States;
 using SilentMike.DietMenu.Core.Application.Families.Commands;
+using SilentMike.DietMenu.Core.Infrastructure.Families.Interfaces;
 using SilentMike.DietMenu.Core.Infrastructure.Hangfire.Families.CommandHandlers;
 
 [TestClass]
 public sealed class ImportFamilyDataHandlerTests
 {
+    [TestMethod]
+    public async Task Should_Run_Family_Migration()
+    {
+        //GIVEN
+        var familyId = Guid.NewGuid();
+
+        var familyImportService = new Mock<IFamilyMigrationService>();
+
+        var job = new SilentMike.DietMenu.Core.Infrastructure.Hangfire.Families.Jobs.ImportFamilyData(familyImportService.Object);
+
+        //WHEN
+        await job.Run(familyId);
+
+        //THEN
+        familyImportService.Verify(service => service.ImportAsync(familyId, It.IsAny<CancellationToken>()), Times.Once);
+    }
+
     [TestMethod]
     public async Task Should_Run_Import_Family_Data_Job()
     {

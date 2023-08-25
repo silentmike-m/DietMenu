@@ -27,6 +27,7 @@
 
     <ItemGroup>
         <InternalsVisibleTo Include="SilentMike.DietMenu.Core.IntegrationTests" />
+        <InternalsVisibleTo Include="SilentMike.DietMenu.Core.WebApi.Tests" />
     </ItemGroup>
 
 

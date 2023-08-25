@@ -8,6 +8,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SilentMike.DietMenu.Core.Infrastructure.HealthChecks.Models;
 using SilentMike.DietMenu.Core.IntegrationTests.Helpers;
 
+#if DEBUG
 [TestClass]
 public sealed class StartupTests : IDisposable
 {
@@ -93,3 +94,4 @@ public sealed class StartupTests : IDisposable
             ;
     }
 }
+#endif

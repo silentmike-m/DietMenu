@@ -8,7 +8,9 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using SilentMike.DietMenu.Core.Application.Common;
 using SilentMike.DietMenu.Core.Application.Common.Constants;
 using SilentMike.DietMenu.Core.Application.Exceptions;
-using SilentMike.DietMenu.Core.Application.ViewModels;
+using SilentMike.DietMenu.Core.Domain.Common;
+using SilentMike.DietMenu.Core.Infrastructure.Common;
+using SilentMike.DietMenu.Core.WebApi.ViewModels;
 
 [ExcludeFromCodeCoverage]
 internal sealed class ApiExceptionFilterAttribute : ExceptionFilterAttribute
@@ -33,10 +35,31 @@ internal sealed class ApiExceptionFilterAttribute : ExceptionFilterAttribute
         {
             ValidationException => HandleValidationException,
             ApplicationException => HandleApplicationException,
+            DomainException => HandleDomainException,
+            InfrastructureException => HandleInfrastructureException,
             _ => new Action<ExceptionContext>(HandleUnknownException),
         };
 
         exceptionHandler.Invoke(context);
+    }
+
+    private static void FillContextResult(ExceptionContext context, string code, string message, object? response = null)
+    {
+        var resultResponse = new BaseResponse<object>
+        {
+            Code = code,
+            Error = message,
+            Response = response,
+        };
+
+        context.Result = new ObjectResult(resultResponse)
+        {
+            ContentTypes = new MediaTypeCollection
+            {
+                MediaTypeNames.Application.Json,
+            },
+            StatusCode = 500,
+        };
     }
 
     private static void HandleApplicationException(ExceptionContext context)
@@ -46,40 +69,38 @@ internal sealed class ApiExceptionFilterAttribute : ExceptionFilterAttribute
             throw new UnhandledErrorException();
         }
 
-        var response = new BaseResponse<object>
-        {
-            Code = exception.Code,
-            Error = exception.Message,
-        };
+        FillContextResult(context, exception.Code, exception.Message);
 
-        context.Result = new ObjectResult(response)
+        context.ExceptionHandled = true;
+    }
+
+    private static void HandleDomainException(ExceptionContext context)
+    {
+        if (context.Exception is not DomainException exception)
         {
-            ContentTypes = new MediaTypeCollection
-            {
-                MediaTypeNames.Application.Json,
-            },
-            StatusCode = 500,
-        };
+            throw new UnhandledErrorException();
+        }
+
+        FillContextResult(context, exception.Code, exception.Message);
+
+        context.ExceptionHandled = true;
+    }
+
+    private static void HandleInfrastructureException(ExceptionContext context)
+    {
+        if (context.Exception is not DomainException exception)
+        {
+            throw new UnhandledErrorException();
+        }
+
+        FillContextResult(context, exception.Code, exception.Message);
 
         context.ExceptionHandled = true;
     }
 
     private static void HandleUnknownException(ExceptionContext context)
     {
-        var response = new BaseResponse<object>
-        {
-            Code = ErrorCodes.UNKNOWN_ERROR,
-            Error = ErrorCodes.UNKNOWN_ERROR_MESSAGE,
-        };
-
-        context.Result = new ObjectResult(response)
-        {
-            ContentTypes = new MediaTypeCollection
-            {
-                MediaTypeNames.Application.Json,
-            },
-            StatusCode = 500,
-        };
+        FillContextResult(context, ErrorCodes.UNKNOWN_ERROR, ErrorCodes.UNKNOWN_ERROR_MESSAGE);
 
         context.ExceptionHandled = true;
     }
@@ -91,21 +112,7 @@ internal sealed class ApiExceptionFilterAttribute : ExceptionFilterAttribute
             throw new UnhandledErrorException();
         }
 
-        var response = new BaseResponse<object>
-        {
-            Code = exception.Code,
-            Error = exception.Message,
-            Response = exception.Errors,
-        };
-
-        context.Result = new ObjectResult(response)
-        {
-            ContentTypes = new MediaTypeCollection
-            {
-                MediaTypeNames.Application.Json,
-            },
-            StatusCode = 500,
-        };
+        FillContextResult(context, exception.Code, exception.Message, exception.Errors);
 
         context.ExceptionHandled = true;
     }

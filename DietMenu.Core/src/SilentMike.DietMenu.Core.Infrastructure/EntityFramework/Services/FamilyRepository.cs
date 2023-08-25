@@ -14,5 +14,5 @@ internal sealed class FamilyRepository : IFamilyRepository
     public async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default)
         => await this.context.Families
             .AsNoTracking()
-            .AnyAsync(family => family.InternalId == id, cancellationToken);
+            .AnyAsync(family => family.FamilyId == id, cancellationToken);
 }

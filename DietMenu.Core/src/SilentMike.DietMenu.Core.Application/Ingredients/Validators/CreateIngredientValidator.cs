@@ -10,7 +10,7 @@ public sealed class CreateIngredientValidator : AbstractValidator<CreateIngredie
     public CreateIngredientValidator()
     {
         this.RuleFor(request => request.Ingredient.Exchanger)
-            .GreaterThan(0)
+            .GreaterThanOrEqualTo(0)
             .WithErrorCode(ValidationErrorCodes.CREATE_INGREDIENT_INVALID_EXCHANGER)
             .WithMessage(ValidationErrorCodes.CREATE_INGREDIENT_INVALID_EXCHANGER_MESSAGE)
             ;
