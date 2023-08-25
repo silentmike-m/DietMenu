@@ -12,7 +12,6 @@
     <ItemGroup>
         <Using Include="MediatR" />
         <Using Include="Microsoft.Extensions.Logging" />
-        <Using Include="System.Text.Json.Serialization" />
         <Using Include="SilentMike.DietMenu.Core.Application.Common.Constants" />
     </ItemGroup>
 

@@ -2,8 +2,8 @@
 
 using SilentMike.DietMenu.Core.Application.Common.Constants;
 using SilentMike.DietMenu.Core.Application.Ingredients.Commands;
+using SilentMike.DietMenu.Core.Application.Ingredients.Models;
 using SilentMike.DietMenu.Core.Application.Ingredients.Validators;
-using SilentMike.DietMenu.Core.Application.Ingredients.ValueModels;
 using SilentMike.DietMenu.Core.Domain.Common.Constants;
 
 [TestClass]

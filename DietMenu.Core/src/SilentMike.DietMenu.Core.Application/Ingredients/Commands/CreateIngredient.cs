@@ -2,11 +2,11 @@
 
 using SilentMike.DietMenu.Core.Application.Common;
 using SilentMike.DietMenu.Core.Application.Common.Models;
-using SilentMike.DietMenu.Core.Application.Ingredients.ValueModels;
+using SilentMike.DietMenu.Core.Application.Ingredients.Models;
 
 public sealed record CreateIngredient : IRequest, IAuthRequest, IFamilyRequest
 {
-    [JsonIgnore] public IAuthData AuthData { get; set; } = new AuthData();
-    [JsonIgnore] public Guid FamilyId => this.AuthData.FamilyId;
-    [JsonPropertyName("ingredient")] public IngredientToCreate Ingredient { get; init; } = new();
+    public IAuthData AuthData { get; set; } = new AuthData();
+    public Guid FamilyId => this.AuthData.FamilyId;
+    public IngredientToCreate Ingredient { get; init; } = new();
 }
