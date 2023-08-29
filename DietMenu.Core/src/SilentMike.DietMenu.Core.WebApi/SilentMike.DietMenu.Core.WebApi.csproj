@@ -11,6 +11,7 @@
 
     <ItemGroup>
         <Using Include="MediatR" />
+        <Using Include="System.Text.Json.Serialization" />
         <Using Include="SilentMike.DietMenu.Core.Application.Shared" />
     </ItemGroup>
 

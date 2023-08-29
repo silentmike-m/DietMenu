@@ -1,10 +1,6 @@
 ﻿namespace SilentMike.DietMenu.Core.WebApi.ViewModels;
 
-using System.Diagnostics.CodeAnalysis;
-using System.Text.Json.Serialization;
-
-[ExcludeFromCodeCoverage]
-public sealed class BaseResponse<T>
+internal sealed class BaseResponse<T>
 {
     [JsonPropertyName("code")] public string Code { get; init; } = "OK";
     [JsonPropertyName("error")] public string? Error { get; init; } = default;

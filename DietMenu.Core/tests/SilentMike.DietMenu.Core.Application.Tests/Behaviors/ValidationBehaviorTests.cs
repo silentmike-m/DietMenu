@@ -3,8 +3,8 @@
 using FluentValidation;
 using SilentMike.DietMenu.Core.Application.Common.Behaviors;
 using SilentMike.DietMenu.Core.Application.Ingredients.Commands;
+using SilentMike.DietMenu.Core.Application.Ingredients.Models;
 using SilentMike.DietMenu.Core.Application.Ingredients.Validators;
-using SilentMike.DietMenu.Core.Application.Ingredients.ValueModels;
 using SilentMike.DietMenu.Core.Domain.Common.Constants;
 using ErrorCodes = SilentMike.DietMenu.Core.Application.Common.Constants.ErrorCodes;
 using ValidationException = SilentMike.DietMenu.Core.Application.Exceptions.ValidationException;

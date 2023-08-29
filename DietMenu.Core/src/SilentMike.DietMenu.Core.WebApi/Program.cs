@@ -1,4 +1,3 @@
-using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.HttpLogging;
 using Serilog;
 using SilentMike.DietMenu.Core.Application;
