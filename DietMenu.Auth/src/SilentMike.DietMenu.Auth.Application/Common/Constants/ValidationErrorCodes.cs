@@ -2,6 +2,8 @@
 
 public static class ValidationErrorCodes
 {
+    public static readonly string CREATE_FAMILY_EMAIL_INVALID_FORMAT = "CREATE_FAMILY_EMAIL_INVALID_FORMAT";
+    public static readonly string CREATE_FAMILY_EMAIL_INVALID_FORMAT_MESSAGE = "Family email must be in correct format";
     public static readonly string CREATE_FAMILY_EMPTY_NAME = "CREATE_FAMILY_EMPTY_NAME";
     public static readonly string CREATE_FAMILY_EMPTY_NAME_MESSAGE = "Family name can not be empty";
     public static readonly string CREATE_USER_EMAIL_INVALID_FORMAT = "CREATE_USER_EMAIL_INVALID_FORMAT";

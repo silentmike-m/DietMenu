@@ -6,6 +6,8 @@ using MediatR;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using SilentMike.DietMenu.Mailing.Application.Family.Commands;
+using SilentMike.DietMenu.Mailing.Application.Family.Models;
 using SilentMike.DietMenu.Mailing.Application.Identity.Commands;
 using SilentMike.DietMenu.Mailing.Infrastructure.Extensions;
 using SilentMike.DietMenu.Mailing.Infrastructure.MassTransit.Consumers;
@@ -100,13 +102,93 @@ public sealed class EmailDataMessageConsumerTests
         //THEN
         this.mediator.Verify(service => service.Send(It.IsAny<SendVerifyUserEmail>(), It.IsAny<CancellationToken>()), Times.Once);
 
-        var expectedRequest = new SendVerifyUserEmail
+        var expectedRequest = new SendResetPasswordEmail
         {
             Email = payload.Email,
             Url = payload.Url,
         };
 
         sendVerifyUserEmail.Should()
+            .NotBeNull()
+            .And
+            .BeEquivalentTo(expectedRequest)
+            ;
+    }
+
+    [TestMethod]
+    public async Task Should_Sent_Send_Imported_Family_Data_Email()
+    {
+        //GIVEN
+        SendImportedFamilyDataEmail? sendImportedFamilyDataEmail = null;
+
+        this.mediator
+            .Setup(service => service.Send(It.IsAny<SendImportedFamilyDataEmail>(), It.IsAny<CancellationToken>()))
+            .Callback<IRequest, CancellationToken>((request, _) => sendImportedFamilyDataEmail = request as SendImportedFamilyDataEmail);
+
+        var payloadResultError = new ImportFamilyDataError("error code", "error message");
+
+        var payloadResult = new ImportFamilyDataResult
+        {
+            DataArea = "ingredients",
+            Errors = new List<ImportFamilyDataError>
+            {
+                payloadResultError,
+            },
+        };
+
+        var payload = new ImportedFamilyDataPayload
+        {
+            ErrorCode = null,
+            ErrorMessage = null,
+            FamilyId = Guid.NewGuid(),
+            Results = new List<ImportFamilyDataResult>
+            {
+                payloadResult,
+            },
+        };
+
+        var payloadJson = payload.ToJson();
+
+        var message = Mock.Of<IEmailDataMessage>(dataMessage =>
+            dataMessage.Payload == payloadJson
+            && dataMessage.PayloadType == typeof(ImportedFamilyDataPayload).FullName);
+
+        this.context
+            .Setup(consumeContext => consumeContext.Message)
+            .Returns(message);
+
+        var consumer = new EmailDataMessageConsumer(this.logger, this.mediator.Object);
+
+        //WHEN
+        await consumer.Consume(this.context.Object);
+
+        //THEN
+        this.mediator.Verify(service => service.Send(It.IsAny<SendImportedFamilyDataEmail>(), It.IsAny<CancellationToken>()), Times.Once);
+
+        var expectedRequest = new SendImportedFamilyDataEmail
+        {
+            ErrorCode = payload.ErrorCode,
+            ErrorMessage = payload.ErrorMessage,
+            FamilyId = payload.FamilyId,
+            IsSuccess = false,
+            Results = new List<ImportedFamilyDataResult>
+            {
+                new()
+                {
+                    DataArea = payloadResult.DataArea,
+                    Errors = new List<ImportedFamilyDataError>
+                    {
+                        new()
+                        {
+                            Code = payloadResultError.Code,
+                            Message = payloadResultError.Message,
+                        },
+                    },
+                },
+            },
+        };
+
+        sendImportedFamilyDataEmail.Should()
             .NotBeNull()
             .And
             .BeEquivalentTo(expectedRequest)

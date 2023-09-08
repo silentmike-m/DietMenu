@@ -2,7 +2,7 @@
 
 using System.Runtime.Serialization;
 using FluentValidation.Results;
-using ApplicationException = SilentMike.DietMenu.Core.Application.Common.ApplicationException;
+using SilentMike.DietMenu.Core.Application.Common;
 
 [Serializable]
 public sealed class ValidationException : ApplicationException
@@ -20,7 +20,7 @@ public sealed class ValidationException : ApplicationException
                 failureGroup => failureGroup.ToArray()
             );
 
-        Errors = errors;
+        this.Errors = errors;
     }
 
     public ValidationException(string message, Exception? innerException = null)

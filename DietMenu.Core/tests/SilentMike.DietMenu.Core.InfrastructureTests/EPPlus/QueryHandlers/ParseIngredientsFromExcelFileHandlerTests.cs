@@ -17,11 +17,7 @@ public sealed class ParseIngredientsFromExcelFileHandlerTests
     {
         var payload = await File.ReadAllBytesAsync(RESOURCE_NAME);
 
-        var request = new ParseIngredientsFromExcelFile
-        {
-            IngredientType = IngredientTypeNames.ComplexCarbohydrate,
-            Payload = payload,
-        };
+        var request = new ParseIngredientsFromExcelFile(IngredientTypeNames.ComplexCarbohydrate, payload);
 
         var handler = new ParseIngredientsFromExcelFileHandler();
 
@@ -31,20 +27,8 @@ public sealed class ParseIngredientsFromExcelFileHandlerTests
         //THEN
         var expectedResult = new List<IngredientToImport>
         {
-            new()
-            {
-                Exchanger = 1.0,
-                Id = new Guid("46E7473C-9072-9CFD-3ED7-485AF9998E99"),
-                Name = "Amarantus",
-                UnitSymbol = "g",
-            },
-            new()
-            {
-                Exchanger = 4.1,
-                Id = new Guid("5CB3DB36-8733-1EBE-56AF-E7CD359A1499"),
-                Name = "Bataty",
-                UnitSymbol = "g",
-            },
+            new(Exchanger: 1.0, new Guid("46E7473C-9072-9CFD-3ED7-485AF9998E99"), "Amarantus", "g"),
+            new(Exchanger: 4.1, new Guid("5CB3DB36-8733-1EBE-56AF-E7CD359A1499"), "Bataty", "g"),
         };
 
         result.Should()
@@ -57,11 +41,7 @@ public sealed class ParseIngredientsFromExcelFileHandlerTests
     {
         var payload = await File.ReadAllBytesAsync(RESOURCE_NAME);
 
-        var request = new ParseIngredientsFromExcelFile
-        {
-            IngredientType = "fail",
-            Payload = payload,
-        };
+        var request = new ParseIngredientsFromExcelFile("fail", payload);
 
         var handler = new ParseIngredientsFromExcelFileHandler();
 

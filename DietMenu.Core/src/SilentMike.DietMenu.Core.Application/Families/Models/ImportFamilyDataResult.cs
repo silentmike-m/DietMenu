@@ -3,5 +3,5 @@
 public sealed record ImportFamilyDataResult
 {
     public string DataArea { get; init; } = string.Empty;
-    public IReadOnlyList<ImportFamilyDataError> Errors { get; set; } = new List<ImportFamilyDataError>();
+    public IReadOnlyList<ImportFamilyDataError> Errors { get; init; } = new List<ImportFamilyDataError>();
 }

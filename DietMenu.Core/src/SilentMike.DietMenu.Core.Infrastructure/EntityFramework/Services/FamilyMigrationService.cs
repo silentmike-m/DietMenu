@@ -115,11 +115,7 @@ internal sealed class FamilyMigrationService : IFamilyMigrationService
 
     private async Task<IReadOnlyList<IngredientToImport>> GetIngredientsToImport(string ingredientType, byte[] payload, CancellationToken cancellationToken)
     {
-        var request = new ParseIngredientsFromExcelFile
-        {
-            IngredientType = ingredientType,
-            Payload = payload,
-        };
+        var request = new ParseIngredientsFromExcelFile(ingredientType, payload);
 
         var result = await this.mediator.Send(request, cancellationToken);
 
@@ -135,7 +131,7 @@ internal sealed class FamilyMigrationService : IFamilyMigrationService
             return family;
         }
 
-        this.logger.LogInformation("Family has not been found");
+        this.logger.LogInformation("Family has not been found, a new one will be created");
 
         family = new FamilyEntity
         {
@@ -283,11 +279,7 @@ internal sealed class FamilyMigrationService : IFamilyMigrationService
             _ => (string.Empty, exception.Message),
         };
 
-        return new ImportFamilyDataError
-        {
-            Code = code,
-            Message = message,
-        };
+        return new ImportFamilyDataError(code, message);
     }
 
     private static void ValidateIngredientToImport(Guid familyId, IngredientToImport ingredientToImport, string ingredientType)

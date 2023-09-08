@@ -17,7 +17,7 @@ internal static class DependencyInjection
 
         services.AddMassTransit(configure =>
         {
-            configure.AddConsumer<GetFamilyOwnerEmailRequestConsumer>();
+            configure.AddConsumer<GetFamilyEmailRequestConsumer>();
 
             configure.UsingRabbitMq((context, cfg) =>
             {

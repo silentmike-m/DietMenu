@@ -1,8 +1,8 @@
-﻿namespace SilentMike.DietMenu.Mailing.Application.ViewModels;
+﻿namespace SilentMike.DietMenu.Mailing.WebApi.Models.ViewModels;
 
 using System.Text.Json.Serialization;
 
-public sealed class BaseResponse<T>
+internal sealed class BaseResponse<T>
 {
     [JsonPropertyName("code")] public string Code { get; init; } = "ok";
     [JsonPropertyName("error")] public string? Error { get; init; } = default;

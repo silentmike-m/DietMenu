@@ -12,7 +12,7 @@ using SilentMike.DietMenu.Mailing.Application.Emails.Services;
 using SilentMike.DietMenu.Mailing.Application.Extensions;
 using SilentMike.DietMenu.Mailing.Application.Family.CommandHandlers;
 using SilentMike.DietMenu.Mailing.Application.Family.Commands;
-using SilentMike.DietMenu.Mailing.Application.Family.ValueModels;
+using SilentMike.DietMenu.Mailing.Application.Family.Models;
 using SilentMike.DietMenu.Mailing.Application.Identity.Queries;
 using SilentMike.DietMenu.Mailing.Application.Services;
 
@@ -30,7 +30,6 @@ public sealed class SendImportedFamilyDataEmailHandlerTests
         const string errorCode = "error code";
         const string dataArea = "data name";
         const string errorMessageOne = "error message 'one'";
-        const string errorMessageTwo = "error message 'two'";
         const string familyUserEmail = "family@domain.com";
 
         var emailFactory = new EmailFactory(new XmlService());
@@ -42,31 +41,32 @@ public sealed class SendImportedFamilyDataEmailHandlerTests
             .Callback<IRequest, CancellationToken>((command, _) => sendEmailCommand = command as SendEmail);
 
         mediator
-            .Setup(service => service.Send(It.IsAny<GetFamilyUserEmail>(), It.IsAny<CancellationToken>()))
+            .Setup(service => service.Send(It.IsAny<GetFamilyEmail>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(familyUserEmail);
+
+        var results = new List<ImportedFamilyDataResult>
+        {
+            new()
+            {
+                DataArea = dataArea,
+                Errors = new List<ImportedFamilyDataError>
+                {
+                    new()
+                    {
+                        Code = errorCode,
+                        Message = errorMessageOne,
+                    },
+                },
+            },
+        };
 
         var request = new SendImportedFamilyDataEmail
         {
-            DataErrors = new List<ImportedFamilyDataAreaErrors>()
-            {
-                new()
-                {
-                    Errors = new List<ImportedFamilyDataError>()
-                    {
-                        new()
-                        {
-                            Code = errorCode,
-                            Messages = new List<string>
-                            {
-                                errorMessageOne,
-                                errorMessageTwo,
-                            },
-                        },
-                    },
-                    DataArea = dataArea,
-                },
-            },
+            ErrorCode = null,
+            ErrorMessage = null,
             IsSuccess = false,
+            FamilyId = Guid.NewGuid(),
+            Results = results,
         };
 
         var handler = new SendImportedFamilyDataEmailHandler(emailFactory, logger, mediator.Object);
@@ -75,6 +75,10 @@ public sealed class SendImportedFamilyDataEmailHandlerTests
         await handler.Handle(request, CancellationToken.None);
 
         //THEN
+        request.IsSuccess.Should()
+            .BeFalse()
+            ;
+
         sendEmailCommand.Should()
             .NotBeNull()
             ;
@@ -93,10 +97,6 @@ public sealed class SendImportedFamilyDataEmailHandlerTests
 
         sendEmailCommand.Email.TextMessage.Should()
             .Contain(errorMessageOne)
-            ;
-
-        sendEmailCommand.Email.TextMessage.Should()
-            .Contain(errorMessageTwo)
             ;
 
         sendEmailCommand.Email.TextMessage.Should()
@@ -119,10 +119,6 @@ public sealed class SendImportedFamilyDataEmailHandlerTests
             ;
 
         htmlDocument.DocumentNode.InnerHtml.Should()
-            .Contain(errorMessageTwo)
-            ;
-
-        htmlDocument.DocumentNode.InnerHtml.Should()
             .Contain(dataArea)
             ;
     }
@@ -133,10 +129,32 @@ public sealed class SendImportedFamilyDataEmailHandlerTests
         //GIVEN
         const string resourceName = "SilentMike.DietMenu.Mailing.Application.Resources.Family.ImportedFamilyDataTextEmail.xslt";
 
-        var command = new SendImportedFamilyDataEmail();
+        var results = new List<ImportedFamilyDataResult>
+        {
+            new()
+            {
+                DataArea = "dataArea",
+                Errors = new List<ImportedFamilyDataError>
+                {
+                    new()
+                    {
+                        Code = "errorCode",
+                        Message = "errorMessageOne",
+                    },
+                },
+            },
+        };
+
+        var request = new SendImportedFamilyDataEmail
+        {
+            ErrorCode = null,
+            ErrorMessage = null,
+            FamilyId = Guid.NewGuid(),
+            Results = results,
+        };
 
         var serializer = new XmlSerializer(typeof(SendImportedFamilyDataEmail));
-        var commandXml = serializer.Serialize(command);
+        var commandXml = serializer.Serialize(request);
         var xmlService = new XmlService();
         var htmlXsltString = await xmlService.GetXsltStringAsync(resourceName);
 

@@ -30,11 +30,7 @@ public sealed class ImportedFamilyDataHandlerTests
         harness.TestTimeout = TimeSpan.FromSeconds(5);
         await harness.Start();
 
-        var importedError = new ImportFamilyDataError
-        {
-            Code = "error",
-            Message = "message",
-        };
+        var importedError = new ImportFamilyDataError("error", "message");
 
         var importedFamilyDataResult = new ImportFamilyDataResult
         {

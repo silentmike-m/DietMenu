@@ -9,20 +9,20 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Using Include="MediatR"/>
-        <Using Include="SilentMike.DietMenu.Mailing.Application.Common.Constants"/>
-        <Using Include="SilentMike.DietMenu.Mailing.Application.Shared"/>
+        <Using Include="MediatR" />
+        <Using Include="SilentMike.DietMenu.Mailing.Application.Common.Constants" />
+        <Using Include="SilentMike.DietMenu.Mailing.Application.Shared" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Serilog.AspNetCore" Version="7.0.0"/>
-        <PackageReference Include="Serilog.Expressions" Version="3.4.1"/>
-        <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0"/>
-        <PackageReference Include="Serilog.Sinks.Seq" Version="5.2.2"/>
+        <PackageReference Include="Serilog.AspNetCore" Version="7.0.0" />
+        <PackageReference Include="Serilog.Expressions" Version="3.4.1" />
+        <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
+        <PackageReference Include="Serilog.Sinks.Seq" Version="5.2.2" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\SilentMike.DietMenu.Mailing.Infrastructure\SilentMike.DietMenu.Mailing.Infrastructure.csproj"/>
+        <ProjectReference Include="..\SilentMike.DietMenu.Mailing.Infrastructure\SilentMike.DietMenu.Mailing.Infrastructure.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -32,7 +32,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <InternalsVisibleTo Include="SilentMike.DietMenu.Mailing.IntegrationTests"/>
+        <InternalsVisibleTo Include="SilentMike.DietMenu.Mailing.IntegrationTests" />
     </ItemGroup>
+
 
 </Project>

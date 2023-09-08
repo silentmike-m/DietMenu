@@ -31,22 +31,16 @@ internal sealed class SendImportedFamilyDataEmailHandler : IRequestHandler<SendI
 
         this.logger.LogInformation("Try to prepare family data imported email");
 
-        var getFamilyUserEmail = new GetFamilyUserEmail
-        {
-            FamilyId = request.FamilyId,
-        };
+        var getFamilyEmail = new GetFamilyEmail(request.FamilyId);
 
-        var familyUserEmail = await this.mediator.Send(getFamilyUserEmail, cancellationToken);
+        var familyEmail = await this.mediator.Send(getFamilyEmail, cancellationToken);
 
         var serializer = new XmlSerializer(typeof(SendImportedFamilyDataEmail));
         var requestXml = serializer.Serialize(request);
 
-        var email = await this.emailFactory.CreateEmailAsync(familyUserEmail, requestXml, EmailSubjects.IMPORTED_FAMILY_DATA_EMAIL_SUBJECT, XSLT_HTML_RESOURCE_NAME, XSLT_PLAIN_TEXT_RESOURCE_NAME, cancellationToken);
+        var email = await this.emailFactory.CreateEmailAsync(familyEmail, requestXml, EmailSubjects.IMPORTED_FAMILY_DATA_EMAIL_SUBJECT, XSLT_HTML_RESOURCE_NAME, XSLT_PLAIN_TEXT_RESOURCE_NAME, cancellationToken);
 
-        var command = new SendEmail
-        {
-            Email = email,
-        };
+        var command = new SendEmail(email);
 
         await this.mediator.Send(command, cancellationToken);
     }

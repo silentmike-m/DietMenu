@@ -9,6 +9,7 @@ internal sealed class FamilyProfiles : Profile
     public FamilyProfiles()
     {
         this.CreateMap<Dto, Entity>()
+            .ForMember(target => target.Email, options => options.MapFrom(source => source.Email))
             .ForMember(target => target.Id, options => options.MapFrom(source => source.Id))
             .ForMember(target => target.Name, options => options.MapFrom(source => source.Name))
             ;

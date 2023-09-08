@@ -19,7 +19,7 @@ using SilentMike.DietMenu.Auth.Infrastructure.Exceptions.Users;
 [TestClass]
 public sealed class CreateUserHandlerTests
 {
-    private static readonly FamilyEntity EXISTING_FAMILY = new(Guid.NewGuid(), "existing family");
+    private static readonly FamilyEntity EXISTING_FAMILY = new(Guid.NewGuid(), "family@domain.com", "existing family");
     private static readonly UserEntity EXISTING_USER = new("user@domain.com", Guid.NewGuid(), "first name", "last name", Guid.NewGuid());
 
     private readonly Mock<IFamilyRepository> familyRepository = new();

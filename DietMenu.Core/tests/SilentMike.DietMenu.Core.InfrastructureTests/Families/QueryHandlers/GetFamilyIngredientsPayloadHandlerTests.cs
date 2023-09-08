@@ -18,10 +18,7 @@ public sealed class GetFamilyIngredientsPayloadHandlerTests
         //GIVEN
         var fileProvider = new EmbeddedFileProvider(Assembly.GetAssembly(typeof(GetFamilyIngredientsPayloadHandler))!);
 
-        var request = new GetFamilyIngredientsPayload
-        {
-            FamilyId = Guid.NewGuid(),
-        };
+        var request = new GetFamilyIngredientsPayload();
 
         var handler = new GetFamilyIngredientsPayloadHandler(fileProvider, this.logger);
 
@@ -40,10 +37,7 @@ public sealed class GetFamilyIngredientsPayloadHandlerTests
         //GIVEN
         var fileProvider = new PhysicalFileProvider(Directory.GetDirectoryRoot(Directory.GetCurrentDirectory()));
 
-        var request = new GetFamilyIngredientsPayload
-        {
-            FamilyId = Guid.NewGuid(),
-        };
+        var request = new GetFamilyIngredientsPayload();
 
         var handler = new GetFamilyIngredientsPayloadHandler(fileProvider, this.logger);
 
@@ -54,7 +48,6 @@ public sealed class GetFamilyIngredientsPayloadHandlerTests
         await action.Should()
                 .ThrowAsync<FamilyFileNotFoundException>()
                 .Where(exception => exception.Code == ErrorCodes.FAMILY_FILE_NOT_FOUND)
-                .Where(exception => exception.Id == request.FamilyId)
             ;
     }
 }

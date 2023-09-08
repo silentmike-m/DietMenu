@@ -9,48 +9,31 @@ using SilentMike.DietMenu.Auth.Domain.Exceptions;
 [TestClass]
 public sealed class FamilyEntityTests
 {
-    [TestMethod]
-    public void Should_Set_Family_Name()
-    {
-        //GIVEN
-        const string newName = "new Name";
-
-        var family = new FamilyEntity(Guid.NewGuid(), "name");
-
-        //WHEN
-        family.SetName(newName);
-
-        //THEN
-        family.Name.Should()
-            .Be(newName)
-            ;
-    }
-
-    [TestMethod]
-    public void Should_Throw_Family_Empty_Name_Exception_When_Name_Is_Empty_String()
+    [DataTestMethod, DataRow(""), DataRow(" ")]
+    public void Should_Throw_Family_Empty_Email_Exception_When_Email_Is_Empty(string email)
     {
         //GIVEN
         var id = Guid.NewGuid();
 
         //WHEN
-        var action = () => new FamilyEntity(id, "");
+        var action = () => new FamilyEntity(id, email, "family");
 
         //THEN
         action.Should()
-            .Throw<FamilyEmptyNameException>()
-            .Where(exception => exception.Code == ErrorCodes.FAMILY_EMPTY_NAME)
+            .Throw<FamilyEmptyEmailException>()
+            .Where(exception => exception.Code == ErrorCodes.FAMILY_EMPTY_EMAIL)
             .Where(exception => exception.Id == id)
             ;
     }
 
-    [TestMethod]
-    public void Should_Throw_Family_Empty_Name_Exception_When_Name_Is_White_Spaces()
+    [DataTestMethod, DataRow(""), DataRow(" ")]
+    public void Should_Throw_Family_Empty_Name_Exception_When_Name_Is_Empty(string name)
     {
         //GIVEN
         var id = Guid.NewGuid();
 
         //WHEN
-        var action = () => new FamilyEntity(id, "    ");
+        var action = () => new FamilyEntity(id, "family@domain.com", name);
 
         //THEN
         action.Should()

@@ -75,14 +75,14 @@ public sealed class SendResetPasswordEmailHandlerTests
         //GIVEN
         const string plainTextResourceName = "SilentMike.DietMenu.Mailing.Application.Resources.Identity.ResetPasswordPlainTextEmail.xslt";
 
-        var command = new SendResetPasswordEmail
+        var request = new SendResetPasswordEmail
         {
             Email = "test_email",
             Url = "url",
         };
 
         var serializer = new XmlSerializer(typeof(SendResetPasswordEmail));
-        var commandXml = serializer.Serialize(command);
+        var commandXml = serializer.Serialize(request);
         var xmlService = new XmlService();
         var htmlXsltString = await xmlService.GetXsltStringAsync(plainTextResourceName);
 

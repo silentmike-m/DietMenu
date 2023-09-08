@@ -42,13 +42,7 @@ internal sealed class ParseIngredientsFromExcelFileHandler : IRequestHandler<Par
             var unitSymbol = worksheet.Cells[currentRowIndex, UNIT_SYMBOL_COLUMN].Value.ToEmptyString();
             var exchanger = worksheet.Cells[currentRowIndex, EXCHANGER_COLUMN].Value.ToDouble(EXCHANGER_DEFAULT_VALUE);
 
-            var ingredient = new IngredientToImport
-            {
-                Exchanger = exchanger,
-                Id = id,
-                Name = name,
-                UnitSymbol = unitSymbol,
-            };
+            var ingredient = new IngredientToImport(exchanger, id, name, unitSymbol);
 
             ingredients.Add(ingredient);
 

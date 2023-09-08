@@ -54,6 +54,7 @@ internal sealed class FamilyRepository : IFamilyRepository
         {
             entity = new Family
             {
+                Email = family.Email,
                 Id = family.Id,
                 Name = family.Name,
             };
@@ -62,6 +63,7 @@ internal sealed class FamilyRepository : IFamilyRepository
         }
         else
         {
+            entity.Email = family.Email;
             entity.Name = family.Name;
             this.context.Families.Update(entity);
         }

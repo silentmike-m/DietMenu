@@ -6,7 +6,7 @@ using SilentMike.DietMenu.Core.Application.Ingredients.Models;
 
 public sealed record CreateIngredient : IRequest, IAuthRequest, IFamilyRequest
 {
-    public IAuthData AuthData { get; set; } = new AuthData();
+    public IAuthData AuthData { get; init; } = new AuthData();
     public Guid FamilyId => this.AuthData.FamilyId;
-    public IngredientToCreate Ingredient { get; init; } = new();
+    public IngredientToCreate Ingredient { get; init; } = new(Exchanger: default, string.Empty, string.Empty);
 }

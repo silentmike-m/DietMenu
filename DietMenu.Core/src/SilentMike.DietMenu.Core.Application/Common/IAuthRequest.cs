@@ -2,5 +2,5 @@
 
 public interface IAuthRequest
 {
-    IAuthData AuthData { get; set; }
+    IAuthData AuthData { get; }
 }

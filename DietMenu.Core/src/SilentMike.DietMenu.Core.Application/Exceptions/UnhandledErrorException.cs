@@ -1,7 +1,7 @@
 ﻿namespace SilentMike.DietMenu.Core.Application.Exceptions;
 
 using System.Runtime.Serialization;
-using ApplicationException = SilentMike.DietMenu.Core.Application.Common.ApplicationException;
+using SilentMike.DietMenu.Core.Application.Common;
 
 [Serializable]
 public sealed class UnhandledErrorException : ApplicationException

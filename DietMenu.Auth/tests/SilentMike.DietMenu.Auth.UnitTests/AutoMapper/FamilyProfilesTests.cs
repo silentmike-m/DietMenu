@@ -12,6 +12,7 @@ public sealed class FamilyProfilesTests
 {
     private static Family DTO_FAMILY = new()
     {
+        Email = "family@domain.com",
         Id = Guid.NewGuid(),
         Key = 2,
         Name = "dto family name",
@@ -34,7 +35,7 @@ public sealed class FamilyProfilesTests
         var result = this.mapper.Map<FamilyEntity>(DTO_FAMILY);
 
         //THEN
-        var expectedResult = new FamilyEntity(DTO_FAMILY.Id, DTO_FAMILY.Name);
+        var expectedResult = new FamilyEntity(DTO_FAMILY.Id, DTO_FAMILY.Email, DTO_FAMILY.Name);
 
         result.Should()
             .BeEquivalentTo(expectedResult)

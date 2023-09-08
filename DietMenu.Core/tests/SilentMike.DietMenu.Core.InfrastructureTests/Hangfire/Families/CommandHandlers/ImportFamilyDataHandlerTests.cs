@@ -33,10 +33,7 @@ public sealed class ImportFamilyDataHandlerTests
         //GIVEN
         var jobClient = new Mock<IBackgroundJobClient>();
 
-        var request = new ImportFamilyData
-        {
-            FamilyId = Guid.NewGuid(),
-        };
+        var request = new ImportFamilyData(Guid.NewGuid());
 
         var handler = new ImportFamilyDataHandler(jobClient.Object);
 
