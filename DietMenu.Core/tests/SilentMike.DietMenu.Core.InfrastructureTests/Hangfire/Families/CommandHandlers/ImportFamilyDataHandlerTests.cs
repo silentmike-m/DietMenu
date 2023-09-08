@@ -16,33 +16,32 @@ public sealed class ImportFamilyDataHandlerTests
         //GIVEN
         var familyId = Guid.NewGuid();
 
-        var familyImportService = new Mock<IFamilyMigrationService>();
+        var familyImportService = Substitute.For<IFamilyMigrationService>();
 
-        var job = new SilentMike.DietMenu.Core.Infrastructure.Hangfire.Families.Jobs.ImportFamilyData(familyImportService.Object);
+        var job = new SilentMike.DietMenu.Core.Infrastructure.Hangfire.Families.Jobs.ImportFamilyData(familyImportService);
 
         //WHEN
         await job.Run(familyId);
 
         //THEN
-        familyImportService.Verify(service => service.ImportAsync(familyId, It.IsAny<CancellationToken>()), Times.Once);
+        _ = familyImportService.Received(1).ImportAsync(familyId, Arg.Any<CancellationToken>());
     }
 
     [TestMethod]
     public async Task Should_Run_Import_Family_Data_Job()
     {
         //GIVEN
-        var jobClient = new Mock<IBackgroundJobClient>();
+        var jobClient = Substitute.For<IBackgroundJobClient>();
 
         var request = new ImportFamilyData(Guid.NewGuid());
 
-        var handler = new ImportFamilyDataHandler(jobClient.Object);
+        var handler = new ImportFamilyDataHandler(jobClient);
 
         //WHEN
         await handler.Handle(request, CancellationToken.None);
 
         //THEN
-        jobClient.Verify(backgroundJobClient => backgroundJobClient
-                .Create(It.Is<Job>(job => job.Type == typeof(SilentMike.DietMenu.Core.Infrastructure.Hangfire.Families.Jobs.ImportFamilyData) && job.Args[0].ToString() == request.FamilyId.ToString()), It.IsAny<EnqueuedState>()), Times.Once
-        );
+        _ = jobClient.Received(1)
+            .Create(Arg.Is<Job>(job => job.Type == typeof(SilentMike.DietMenu.Core.Infrastructure.Hangfire.Families.Jobs.ImportFamilyData) && job.Args[0].ToString() == request.FamilyId.ToString()), Arg.Any<EnqueuedState>());
     }
 }

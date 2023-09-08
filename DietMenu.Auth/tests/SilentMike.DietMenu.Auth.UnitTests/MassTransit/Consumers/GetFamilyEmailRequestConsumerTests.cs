@@ -1,11 +1,6 @@
 ﻿namespace SilentMike.DietMenu.Auth.UnitTests.MassTransit.Consumers;
 
-using FluentAssertions;
 using global::MassTransit;
-using MediatR;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using SilentMike.DietMenu.Auth.Application.Families.Queries;
 using SilentMike.DietMenu.Auth.Infrastructure.MassTransit.Consumers;
 using SilentMike.DietMenu.Auth.Infrastructure.MassTransit.Models;
@@ -15,7 +10,7 @@ using SilentMike.DietMenu.Shared.Identity.Interfaces;
 public sealed class GetFamilyEmailRequestConsumerTests
 {
     private readonly NullLogger<GetFamilyEmailRequestConsumer> logger = new();
-    private readonly Mock<ISender> mediator = new();
+    private readonly ISender mediator = Substitute.For<ISender>();
 
     [TestMethod]
     public async Task Should_Return_Family_Email()
@@ -29,29 +24,28 @@ public sealed class GetFamilyEmailRequestConsumerTests
         IGetFamilyEmailResponse? getFamilyOwnerEmailResponse = null;
 
         this.mediator
-            .Setup(service => service.Send(It.IsAny<GetFamilyEmail>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(familyEmail)
-            .Callback<IRequest<string>, CancellationToken>((request, _) => getFamilyOwnerRequest = request as GetFamilyEmail);
+            .Send(Arg.Do<GetFamilyEmail>(request => getFamilyOwnerRequest = request), Arg.Any<CancellationToken>())
+            .Returns(familyEmail);
 
-        var message = Mock.Of<IGetFamilyEmailRequest>(message => message.FamilyId == familyId);
+        var message = Substitute.For<IGetFamilyEmailRequest>();
+        message.FamilyId.Returns(familyId);
 
-        var context = new Mock<ConsumeContext<IGetFamilyEmailRequest>> { };
+        var context = Substitute.For<ConsumeContext<IGetFamilyEmailRequest>>();
 
         context
-            .Setup(service => service.Message)
+            .Message
             .Returns(message);
 
-        context
-            .Setup(service => service.RespondAsync(It.IsAny<IGetFamilyEmailResponse>()))
-            .Callback<IGetFamilyEmailResponse>((response) => getFamilyOwnerEmailResponse = response);
+        await context
+            .RespondAsync(Arg.Do<IGetFamilyEmailResponse>(response => getFamilyOwnerEmailResponse = response));
 
-        var consumer = new GetFamilyEmailRequestConsumer(this.logger, this.mediator.Object);
+        var consumer = new GetFamilyEmailRequestConsumer(this.logger, this.mediator);
 
         //WHEN
-        await consumer.Consume(context.Object);
+        await consumer.Consume(context);
 
         //THEN
-        this.mediator.Verify(service => service.Send(It.IsAny<GetFamilyEmail>(), It.IsAny<CancellationToken>()), Times.Once);
+        _ = this.mediator.Received(1).Send(Arg.Any<GetFamilyEmail>(), Arg.Any<CancellationToken>());
 
         var expectedRequest = new GetFamilyEmail
         {

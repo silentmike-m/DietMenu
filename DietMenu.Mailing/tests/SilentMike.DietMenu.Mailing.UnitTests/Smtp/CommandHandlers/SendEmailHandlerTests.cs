@@ -1,11 +1,7 @@
 ﻿namespace SilentMike.DietMenu.Mailing.UnitTests.Smtp.CommandHandlers;
 
-using FluentAssertions;
-using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MimeKit;
-using Moq;
 using SilentMike.DietMenu.Mailing.Application.Emails.Commands;
 using SilentMike.DietMenu.Mailing.Application.Emails.Models;
 using SilentMike.DietMenu.Mailing.Infrastructure.Smtp;
@@ -18,7 +14,7 @@ public sealed class SendEmailHandlerTests
     private const string FROM = "receiver@domain.com";
 
     private readonly NullLogger<SendEmailHandler> logger = new();
-    private readonly Mock<IMailService> mailService = new();
+    private readonly IMailService mailService = Substitute.For<IMailService>();
     private readonly IOptions<SmtpOptions> options;
 
     public SendEmailHandlerTests()
@@ -33,9 +29,8 @@ public sealed class SendEmailHandlerTests
         //GIVEN
         MimeMessage? sentMessage = null;
 
-        this.mailService
-            .Setup(service => service.SendEmailAsync(It.IsAny<MimeMessage>(), It.IsAny<CancellationToken>()))
-            .Callback<MimeMessage, CancellationToken>((message, _) => sentMessage = message);
+        await this.mailService
+            .SendEmailAsync(Arg.Do<MimeMessage>(message => sentMessage = message), Arg.Any<CancellationToken>());
 
         var request = new SendEmail
         (
@@ -48,13 +43,13 @@ public sealed class SendEmailHandlerTests
             )
         );
 
-        var handler = new SendEmailHandler(this.logger, this.mailService.Object, this.options);
+        var handler = new SendEmailHandler(this.logger, this.mailService, this.options);
 
         //WHEN
         await handler.Handle(request, CancellationToken.None);
 
         //THEN
-        this.mailService.Verify(service => service.SendEmailAsync(It.IsAny<MimeMessage>(), It.IsAny<CancellationToken>()), Times.Once);
+        _ = this.mailService.Received(1).SendEmailAsync(Arg.Any<MimeMessage>(), Arg.Any<CancellationToken>());
 
         sentMessage.Should()
             .NotBeNull()
@@ -103,7 +98,7 @@ public sealed class SendEmailHandlerTests
             )
         );
 
-        var handler = new SendEmailHandler(this.logger, this.mailService.Object, this.options);
+        var handler = new SendEmailHandler(this.logger, this.mailService, this.options);
 
         //WHEN
         cancellationTokenSource.Cancel();

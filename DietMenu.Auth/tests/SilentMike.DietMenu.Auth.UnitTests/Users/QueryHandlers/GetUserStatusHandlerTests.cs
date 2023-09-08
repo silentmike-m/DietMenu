@@ -1,10 +1,6 @@
 ﻿namespace SilentMike.DietMenu.Auth.UnitTests.Users.QueryHandlers;
 
-using FluentAssertions;
-using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using SilentMike.DietMenu.Auth.Application.Common.Constants;
 using SilentMike.DietMenu.Auth.Application.Exceptions.Users;
 using SilentMike.DietMenu.Auth.Application.Users.Queries;
@@ -37,9 +33,9 @@ public sealed class GetUserStatusHandlerTests
         };
 
         var userManager = new FakeUserManagerBuilder()
-            .With(userManager => userManager.Setup(
-                    service => service.FindByEmailAsync(user.Email))
-                .ReturnsAsync(user)
+            .With(userManager => userManager
+                .FindByEmailAsync(user.Email)
+                .Returns(user)
             )
             .Build();
 
@@ -48,7 +44,7 @@ public sealed class GetUserStatusHandlerTests
             Email = user.Email,
         };
 
-        var handler = new GetUserStatusHandler(this.logger, identityOptions, userManager.Object);
+        var handler = new GetUserStatusHandler(this.logger, identityOptions, userManager);
 
         //GIVEN
         var result = await handler.Handle(request, CancellationToken.None);
@@ -85,9 +81,9 @@ public sealed class GetUserStatusHandlerTests
         };
 
         var userManager = new FakeUserManagerBuilder()
-            .With(userManager => userManager.Setup(
-                    service => service.FindByEmailAsync(user.Email))
-                .ReturnsAsync(user)
+            .With(userManager => userManager
+                .FindByEmailAsync(user.Email)
+                .Returns(user)
             )
             .Build();
 
@@ -96,7 +92,7 @@ public sealed class GetUserStatusHandlerTests
             Email = user.Email,
         };
 
-        var handler = new GetUserStatusHandler(this.logger, identityOptions, userManager.Object);
+        var handler = new GetUserStatusHandler(this.logger, identityOptions, userManager);
 
         //GIVEN
         var result = await handler.Handle(request, CancellationToken.None);
@@ -133,9 +129,9 @@ public sealed class GetUserStatusHandlerTests
         };
 
         var userManager = new FakeUserManagerBuilder()
-            .With(userManager => userManager.Setup(
-                    service => service.FindByEmailAsync(user.Email))
-                .ReturnsAsync(user)
+            .With(userManager => userManager
+                .FindByEmailAsync(user.Email)
+                .Returns(user)
             )
             .Build();
 
@@ -144,7 +140,7 @@ public sealed class GetUserStatusHandlerTests
             Email = user.Email,
         };
 
-        var handler = new GetUserStatusHandler(this.logger, identityOptions, userManager.Object);
+        var handler = new GetUserStatusHandler(this.logger, identityOptions, userManager);
 
         //GIVEN
         var result = await handler.Handle(request, CancellationToken.None);
@@ -177,7 +173,7 @@ public sealed class GetUserStatusHandlerTests
             Email = "user@domain.com",
         };
 
-        var handler = new GetUserStatusHandler(this.logger, identityOptions, userManager.Object);
+        var handler = new GetUserStatusHandler(this.logger, identityOptions, userManager);
 
         //WHEN
         var action = async () => await handler.Handle(request, CancellationToken.None);

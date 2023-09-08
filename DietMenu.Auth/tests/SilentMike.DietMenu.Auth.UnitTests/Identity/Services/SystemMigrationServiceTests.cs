@@ -1,11 +1,7 @@
 ﻿namespace SilentMike.DietMenu.Auth.UnitTests.Identity.Services;
 
-using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using SilentMike.DietMenu.Auth.Domain.Common.Constants;
 using SilentMike.DietMenu.Auth.Domain.Enums;
 using SilentMike.DietMenu.Auth.Infrastructure.Identity;
@@ -33,12 +29,11 @@ public sealed class SystemMigrationServiceTests : FakeDietMenuDbContext
 
         var userManager = new FakeUserManagerBuilder()
             .With(manager => manager
-                .Setup(service => service.CreateAsync(It.IsAny<User>(), DEFAULT_SYSTEM_USER_PASSWORD))
-                .Callback<User, string>((user, _) => createdUser = user)
+                .CreateAsync(Arg.Do<User>(user => createdUser = user), DEFAULT_SYSTEM_USER_PASSWORD)
             )
             .Build();
 
-        var service = new SystemMigrationService(this.Context!, identityOptions, this.logger, userManager.Object);
+        var service = new SystemMigrationService(this.Context!, identityOptions, this.logger, userManager);
 
         //WHEN
         await service.MigrateSystemAsync(CancellationToken.None);
@@ -84,12 +79,11 @@ public sealed class SystemMigrationServiceTests : FakeDietMenuDbContext
 
         var userManager = new FakeUserManagerBuilder()
             .With(manager => manager
-                .Setup(service => service.CreateAsync(It.IsAny<User>(), identityOptions.Value.SystemUserPassword))
-                .Callback<User, string>((user, _) => createdUser = user)
+                .CreateAsync(Arg.Do<User>(user => createdUser = user), identityOptions.Value.SystemUserPassword)
             )
             .Build();
 
-        var service = new SystemMigrationService(this.Context!, identityOptions, this.logger, userManager.Object);
+        var service = new SystemMigrationService(this.Context!, identityOptions, this.logger, userManager);
 
         //WHEN
         await service.MigrateSystemAsync(CancellationToken.None);

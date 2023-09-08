@@ -1,10 +1,6 @@
 ﻿namespace SilentMike.DietMenu.Auth.UnitTests.Auth.CommandHandlers;
 
-using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using SilentMike.DietMenu.Auth.Application.Auth.Commands;
 using SilentMike.DietMenu.Auth.Application.Common.Constants;
 using SilentMike.DietMenu.Auth.Application.Exceptions.Users;
@@ -34,17 +30,11 @@ public sealed class PasswordSignInUserHandlerTests
         };
 
         var userManager = new FakeUserManagerBuilder()
-            .With(manager => manager
-                .Setup(service => service.FindByEmailAsync(EMAIL))
-                .ReturnsAsync(user)
-            )
+            .With(manager => manager.FindByEmailAsync(EMAIL).Returns(user))
             .Build();
 
-        var signInManager = new FakeSignInManagerBuilder(userManager.Object)
-            .With(manager => manager
-                .Setup(service => service.PasswordSignInAsync(EMAIL, PASSWORD, REMEMBER, false))
-                .ReturnsAsync(signInResult)
-            )
+        var signInManager = new FakeSignInManagerBuilder(userManager)
+            .With(manager => manager.PasswordSignInAsync(EMAIL, PASSWORD, REMEMBER, lockoutOnFailure: false).Returns(signInResult))
             .Build();
 
         var request = new PasswordSignInUser
@@ -54,7 +44,7 @@ public sealed class PasswordSignInUserHandlerTests
             Remember = REMEMBER,
         };
 
-        var handler = new PasswordSignInUserHandler(this.logger, signInManager.Object);
+        var handler = new PasswordSignInUserHandler(this.logger, signInManager);
 
         //WHEN
         var action = async () => await handler.Handle(request, CancellationToken.None);
@@ -78,15 +68,15 @@ public sealed class PasswordSignInUserHandlerTests
 
         var userManager = new FakeUserManagerBuilder()
             .With(manager => manager
-                .Setup(service => service.FindByEmailAsync(EMAIL))
-                .ReturnsAsync(user)
+                .FindByEmailAsync(EMAIL)
+                .Returns(user)
             )
             .Build();
 
-        var signInManager = new FakeSignInManagerBuilder(userManager.Object)
+        var signInManager = new FakeSignInManagerBuilder(userManager)
             .With(manager => manager
-                .Setup(service => service.PasswordSignInAsync(EMAIL, PASSWORD, REMEMBER, false))
-                .ReturnsAsync(signInResult)
+                .PasswordSignInAsync(EMAIL, PASSWORD, REMEMBER, lockoutOnFailure: false)
+                .Returns(signInResult)
             )
             .Build();
 
@@ -97,7 +87,7 @@ public sealed class PasswordSignInUserHandlerTests
             Remember = REMEMBER,
         };
 
-        var handler = new PasswordSignInUserHandler(this.logger, signInManager.Object);
+        var handler = new PasswordSignInUserHandler(this.logger, signInManager);
 
         //WHEN
         var action = async () => await handler.Handle(request, CancellationToken.None);
@@ -117,15 +107,15 @@ public sealed class PasswordSignInUserHandlerTests
 
         var userManager = new FakeUserManagerBuilder()
             .With(userManager => userManager
-                .Setup(service => service.FindByEmailAsync(EMAIL))
+                .FindByEmailAsync(EMAIL)
                 .Returns(Task.FromResult((User?)null)!)
             )
             .Build();
 
-        var signInManager = new FakeSignInManagerBuilder(userManager.Object)
+        var signInManager = new FakeSignInManagerBuilder(userManager)
             .With(manager => manager
-                .Setup(service => service.PasswordSignInAsync(EMAIL, PASSWORD, REMEMBER, false))
-                .ReturnsAsync(signInResult)
+                .PasswordSignInAsync(EMAIL, PASSWORD, REMEMBER, lockoutOnFailure: false)
+                .Returns(signInResult)
             )
             .Build();
 
@@ -136,7 +126,7 @@ public sealed class PasswordSignInUserHandlerTests
             Remember = REMEMBER,
         };
 
-        var handler = new PasswordSignInUserHandler(this.logger, signInManager.Object);
+        var handler = new PasswordSignInUserHandler(this.logger, signInManager);
 
         //WHEN
         var action = async () => await handler.Handle(request, CancellationToken.None);

@@ -1,7 +1,5 @@
 ﻿namespace SilentMike.DietMenu.Auth.UnitTests.Users.Validators;
 
-using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SilentMike.DietMenu.Auth.Application.Common.Constants;
 using SilentMike.DietMenu.Auth.Application.Users.Commands;
 using SilentMike.DietMenu.Auth.Application.Users.Validators;

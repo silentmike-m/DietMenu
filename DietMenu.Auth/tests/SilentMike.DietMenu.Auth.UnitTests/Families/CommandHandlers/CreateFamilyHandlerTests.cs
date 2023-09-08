@@ -1,10 +1,5 @@
 ﻿namespace SilentMike.DietMenu.Auth.UnitTests.Families.CommandHandlers;
 
-using FluentAssertions;
-using MediatR;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using SilentMike.DietMenu.Auth.Application.Common.Constants;
 using SilentMike.DietMenu.Auth.Application.Exceptions.Families;
 using SilentMike.DietMenu.Auth.Application.Families.CommandHandlers;
@@ -17,8 +12,8 @@ using SilentMike.DietMenu.Auth.Domain.Services;
 public sealed class CreateFamilyHandlerTests
 {
     private readonly NullLogger<CreateFamilyHandler> logger = new();
-    private readonly Mock<IMediator> mediator = new();
-    private readonly Mock<IFamilyRepository> repository = new();
+    private readonly IMediator mediator = Substitute.For<IMediator>();
+    private readonly IFamilyRepository repository = Substitute.For<IFamilyRepository>();
 
     [TestMethod]
     public async Task Should_Create_Family()
@@ -27,13 +22,11 @@ public sealed class CreateFamilyHandlerTests
         CreatedFamily? createdFamilyNotification = null;
         FamilyEntity? familyToSave = null;
 
-        this.mediator
-            .Setup(service => service.Publish(It.IsAny<CreatedFamily>(), It.IsAny<CancellationToken>()))
-            .Callback<CreatedFamily, CancellationToken>((notification, _) => createdFamilyNotification = notification);
+        await this.mediator
+            .Publish(Arg.Do<CreatedFamily>(notification => createdFamilyNotification = notification), Arg.Any<CancellationToken>());
 
-        this.repository
-            .Setup(service => service.SaveAsync(It.IsAny<FamilyEntity>(), It.IsAny<CancellationToken>()))
-            .Callback<FamilyEntity, CancellationToken>((family, _) => familyToSave = family);
+        await this.repository
+            .SaveAsync(Arg.Do<FamilyEntity>(family => familyToSave = family), Arg.Any<CancellationToken>());
 
         var request = new CreateFamily
         {
@@ -42,13 +35,13 @@ public sealed class CreateFamilyHandlerTests
             Name = "family name",
         };
 
-        var handler = new CreateFamilyHandler(this.logger, this.mediator.Object, this.repository.Object);
+        var handler = new CreateFamilyHandler(this.logger, this.mediator, this.repository);
 
         //WHEN
         await handler.Handle(request, CancellationToken.None);
 
         //THEN
-        this.repository.Verify(service => service.SaveAsync(It.IsAny<FamilyEntity>(), It.IsAny<CancellationToken>()), Times.Once);
+        _ = this.repository.Received(1).SaveAsync(Arg.Any<FamilyEntity>(), Arg.Any<CancellationToken>());
 
         var expectedResult = new FamilyEntity(request.Id, request.Email, request.Name);
 
@@ -58,7 +51,7 @@ public sealed class CreateFamilyHandlerTests
             .BeEquivalentTo(expectedResult)
             ;
 
-        this.mediator.Verify(service => service.Publish(It.IsAny<CreatedFamily>(), It.IsAny<CancellationToken>()), Times.Once);
+        _ = this.mediator.Received(1).Publish(Arg.Any<CreatedFamily>(), Arg.Any<CancellationToken>());
 
         var expectedNotification = new CreatedFamily
         {
@@ -79,15 +72,15 @@ public sealed class CreateFamilyHandlerTests
         var family = new FamilyEntity(Guid.NewGuid(), "family@domain.com", "family");
 
         this.repository
-            .Setup(service => service.GetByIdAsync(family.Id, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(family);
+            .GetByIdAsync(family.Id, Arg.Any<CancellationToken>())
+            .Returns(family);
 
         var request = new CreateFamily
         {
             Id = family.Id,
         };
 
-        var handler = new CreateFamilyHandler(this.logger, this.mediator.Object, this.repository.Object);
+        var handler = new CreateFamilyHandler(this.logger, this.mediator, this.repository);
 
         //WHEN
         var action = async () => await handler.Handle(request, CancellationToken.None);
@@ -99,8 +92,8 @@ public sealed class CreateFamilyHandlerTests
                 .Where(exception => exception.Id == family.Id)
             ;
 
-        this.repository.Verify(service => service.SaveAsync(It.IsAny<FamilyEntity>(), It.IsAny<CancellationToken>()), Times.Never);
+        _ = this.repository.Received(0).SaveAsync(Arg.Any<FamilyEntity>(), Arg.Any<CancellationToken>());
 
-        this.mediator.Verify(service => service.Publish(It.IsAny<CreatedFamily>(), It.IsAny<CancellationToken>()), Times.Never);
+        _ = this.mediator.Received(0).Publish(Arg.Any<CreatedFamily>(), Arg.Any<CancellationToken>());
     }
 }

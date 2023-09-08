@@ -13,7 +13,7 @@ public sealed class AuthorizationBehaviorTests
     private const string INVALID_ID = "00000000-0000-0000-0000-000000000000";
     private const string VALID_ID = "ceb8dd06-79e7-4bc1-81db-52aecbc6c132";
 
-    private readonly Mock<IAuthService> currentUserService = new();
+    private readonly IAuthService currentUserService = Substitute.For<IAuthService>();
 
     [TestMethod]
     public async Task Should_Not_Throw_Exception_When_Auth_Data_Are_Valid()
@@ -23,12 +23,12 @@ public sealed class AuthorizationBehaviorTests
         var userId = new Guid(VALID_ID);
 
         this.currentUserService
-            .Setup(service => service.CurrentUser)
+            .CurrentUser
             .Returns((familyId, userId));
 
         var request = new CreateIngredient();
 
-        var behavior = new AuthorizationBehavior<CreateIngredient, Unit>(this.currentUserService.Object);
+        var behavior = new AuthorizationBehavior<CreateIngredient, Unit>(this.currentUserService);
 
         //WHEN
         var action = async () => await behavior.Handle(request, () => Task.FromResult(Unit.Value), CancellationToken.None);
@@ -48,7 +48,7 @@ public sealed class AuthorizationBehaviorTests
             .BeEquivalentTo(expectedAuthData)
             ;
 
-        this.currentUserService.Verify(service => service.CurrentUser, Times.Once);
+        _ = this.currentUserService.Received(1).CurrentUser;
     }
 
     [TestMethod]
@@ -64,13 +64,13 @@ public sealed class AuthorizationBehaviorTests
             },
         };
 
-        var behavior = new AuthorizationBehavior<CreateIngredient, Unit>(this.currentUserService.Object);
+        var behavior = new AuthorizationBehavior<CreateIngredient, Unit>(this.currentUserService);
 
         //WHEN
         await behavior.Handle(request, () => Task.FromResult(Unit.Value), CancellationToken.None);
 
         //THEN
-        this.currentUserService.Verify(service => service.CurrentUser, Times.Never);
+        _ = this.currentUserService.Received(0).CurrentUser;
     }
 
     [DataRow(VALID_ID, INVALID_ID), DataRow(INVALID_ID, VALID_ID), DataTestMethod]
@@ -81,12 +81,12 @@ public sealed class AuthorizationBehaviorTests
         var userId = new Guid(userIdString);
 
         this.currentUserService
-            .Setup(service => service.CurrentUser)
+            .CurrentUser
             .Returns((familyId, userId));
 
         var request = new CreateIngredient();
 
-        var behavior = new AuthorizationBehavior<CreateIngredient, Unit>(this.currentUserService.Object);
+        var behavior = new AuthorizationBehavior<CreateIngredient, Unit>(this.currentUserService);
 
         //WHEN
         var action = async () => await behavior.Handle(request, () => Task.FromResult(Unit.Value), CancellationToken.None);
@@ -98,7 +98,7 @@ public sealed class AuthorizationBehaviorTests
                 .Where(exception => exception.Code == ErrorCodes.UNAUTHORIZED)
             ;
 
-        this.currentUserService.Verify(service => service.CurrentUser, Times.Once);
+        _ = this.currentUserService.Received(1).CurrentUser;
     }
 
     [DataRow(VALID_ID, INVALID_ID), DataRow(INVALID_ID, VALID_ID), DataTestMethod]
@@ -109,7 +109,7 @@ public sealed class AuthorizationBehaviorTests
         var userId = new Guid(userIdString);
 
         this.currentUserService
-            .Setup(service => service.CurrentUser)
+            .CurrentUser
             .Returns((new Guid(VALID_ID), new Guid(VALID_ID)));
 
         var request = new CreateIngredient
@@ -121,12 +121,12 @@ public sealed class AuthorizationBehaviorTests
             },
         };
 
-        var behavior = new AuthorizationBehavior<CreateIngredient, Unit>(this.currentUserService.Object);
+        var behavior = new AuthorizationBehavior<CreateIngredient, Unit>(this.currentUserService);
 
         //WHEN
         await behavior.Handle(request, () => Task.FromResult(Unit.Value), CancellationToken.None);
 
         //THEN
-        this.currentUserService.Verify(service => service.CurrentUser, Times.Once);
+        _ = this.currentUserService.Received(1).CurrentUser;
     }
 }

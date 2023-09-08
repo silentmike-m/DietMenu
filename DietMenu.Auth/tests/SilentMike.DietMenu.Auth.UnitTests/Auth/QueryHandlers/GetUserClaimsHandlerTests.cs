@@ -1,10 +1,6 @@
 ﻿namespace SilentMike.DietMenu.Auth.UnitTests.Auth.QueryHandlers;
 
 using System.IdentityModel.Tokens.Jwt;
-using FluentAssertions;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using SilentMike.DietMenu.Auth.Application.Auth.Queries;
 using SilentMike.DietMenu.Auth.Application.Auth.ViewModels;
 using SilentMike.DietMenu.Auth.Application.Common.Constants;
@@ -24,14 +20,14 @@ public sealed class GetUserClaimsHandlerTests
     };
 
     private readonly NullLogger<GetUserClaimsHandler> logger = new();
-    private readonly Mock<FakeUserManager> userManager;
+    private readonly FakeUserManager userManager;
 
     public GetUserClaimsHandlerTests()
     {
         this.userManager = new FakeUserManagerBuilder()
             .With(manager => manager
-                .Setup(service => service.FindByEmailAsync(USER.Email))
-                .ReturnsAsync(USER)
+                .FindByEmailAsync(USER.Email)
+                .Returns(USER)
             )
             .Build();
     }
@@ -45,7 +41,7 @@ public sealed class GetUserClaimsHandlerTests
             Email = USER.Email,
         };
 
-        var handler = new GetUserClaimsHandler(this.logger, this.userManager.Object);
+        var handler = new GetUserClaimsHandler(this.logger, this.userManager);
 
         //WHEN
         var result = await handler.Handle(request, CancellationToken.None);
@@ -81,7 +77,7 @@ public sealed class GetUserClaimsHandlerTests
             Email = "fake@domai.com",
         };
 
-        var handler = new GetUserClaimsHandler(this.logger, this.userManager.Object);
+        var handler = new GetUserClaimsHandler(this.logger, this.userManager);
 
         //WHEN
         var action = async () => await handler.Handle(request, CancellationToken.None);

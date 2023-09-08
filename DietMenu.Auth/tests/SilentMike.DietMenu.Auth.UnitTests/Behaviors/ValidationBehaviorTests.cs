@@ -1,9 +1,6 @@
 ﻿namespace SilentMike.DietMenu.Auth.UnitTests.Behaviors;
 
-using FluentAssertions;
 using FluentValidation;
-using MediatR;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SilentMike.DietMenu.Auth.Application.Common.Behaviors;
 using SilentMike.DietMenu.Auth.Application.Families.Commands;
 using SilentMike.DietMenu.Auth.Application.Families.Validators;

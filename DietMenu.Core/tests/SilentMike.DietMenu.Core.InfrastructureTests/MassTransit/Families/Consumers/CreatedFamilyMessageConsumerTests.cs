@@ -9,7 +9,7 @@ using SilentMike.DietMenu.Shared.Core.Interfaces;
 public sealed class CreatedFamilyMessageConsumerTests
 {
     private readonly NullLogger<CreatedFamilyMessageConsumer> logger = new();
-    private readonly Mock<ISender> mediator = new();
+    private readonly ISender mediator = Substitute.For<ISender>();
 
     [TestMethod]
     public async Task Should_Send_Create_Family_Request()
@@ -19,25 +19,22 @@ public sealed class CreatedFamilyMessageConsumerTests
 
         ImportFamilyData? importFamilyDataRequest = null;
 
-        this.mediator
-            .Setup(service => service.Send(It.IsAny<ImportFamilyData>(), It.IsAny<CancellationToken>()))
-            .Callback<ImportFamilyData, CancellationToken>((request, _) => importFamilyDataRequest = request);
+        await this.mediator
+            .Send(Arg.Do<ImportFamilyData>(request => importFamilyDataRequest = request), Arg.Any<CancellationToken>());
 
-        var message = Mock.Of<ICreatedFamilyMessage>(message => message.Id == familyId);
+        var message = Substitute.For<ICreatedFamilyMessage>();
+        message.Id.Returns(familyId);
 
-        var context = new Mock<ConsumeContext<ICreatedFamilyMessage>> { };
+        var context = Substitute.For<ConsumeContext<ICreatedFamilyMessage>>();
+        context.Message.Returns(message);
 
-        context
-            .Setup(service => service.Message)
-            .Returns(message);
-
-        var consumer = new CreatedFamilyMessageConsumer(this.logger, this.mediator.Object);
+        var consumer = new CreatedFamilyMessageConsumer(this.logger, this.mediator);
 
         //WHEN
-        await consumer.Consume(context.Object);
+        await consumer.Consume(context);
 
         //THEN
-        this.mediator.Verify(service => service.Send(It.IsAny<ImportFamilyData>(), It.IsAny<CancellationToken>()), Times.Once);
+        _ = this.mediator.Received(1).Send(Arg.Any<ImportFamilyData>(), Arg.Any<CancellationToken>());
 
         var expectedRequest = new ImportFamilyData(familyId);
 

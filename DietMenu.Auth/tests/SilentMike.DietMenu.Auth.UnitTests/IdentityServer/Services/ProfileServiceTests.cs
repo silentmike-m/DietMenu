@@ -1,13 +1,8 @@
 ﻿namespace SilentMike.DietMenu.Auth.UnitTests.IdentityServer.Services;
 
 using System.Security.Claims;
-using FluentAssertions;
 using IdentityServer4.Models;
-using MediatR;
-using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.IdentityModel.JsonWebTokens;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using SilentMike.DietMenu.Auth.Application.Auth.Events;
 using SilentMike.DietMenu.Auth.Application.Auth.Queries;
 using SilentMike.DietMenu.Auth.Application.Auth.ViewModels;
@@ -25,7 +20,7 @@ public sealed class ProfileServiceTests
     private const string USER_ROLE = "user_role";
 
     private readonly NullLogger<ProfileService> logger = new();
-    private readonly Mock<IMediator> mediator = new();
+    private readonly IMediator mediator = Substitute.For<IMediator>();
 
     [TestMethod]
     public async Task Should_Add_User_Claim_On_Get_Profile_Data()
@@ -46,15 +41,15 @@ public sealed class ProfileServiceTests
         };
 
         this.mediator
-            .Setup(service => service.Send(It.IsAny<GetUserClaims>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((GetUserClaims request, CancellationToken _) => request.Email == USER_EMAIL
-                ? userClaims
-                : new UserClaims()
-            );
+            .Send(Arg.Is<GetUserClaims>(request => request.Email == USER_EMAIL), Arg.Any<CancellationToken>())
+            .Returns(userClaims);
 
         this.mediator
-            .Setup(service => service.Publish(It.IsAny<UserLoggedIn>(), It.IsAny<CancellationToken>()))
-            .Callback<UserLoggedIn, CancellationToken>((notification, _) => userLoggedInNotification = notification);
+            .Send(Arg.Is<GetUserClaims>(request => request.Email != USER_EMAIL), Arg.Any<CancellationToken>())
+            .Returns(new UserClaims());
+
+        await this.mediator
+            .Publish(Arg.Do<UserLoggedIn>(notification => userLoggedInNotification = notification), Arg.Any<CancellationToken>());
 
         var emailClaim = new Claim(JwtRegisteredClaimNames.Email, USER_EMAIL);
 
@@ -65,7 +60,7 @@ public sealed class ProfileServiceTests
             Subject = new ClaimsPrincipal(claimsIdentity),
         };
 
-        var profileService = new ProfileService(this.logger, this.mediator.Object);
+        var profileService = new ProfileService(this.logger, this.mediator);
 
         //WHEN
         await profileService.GetProfileDataAsync(context);
@@ -77,7 +72,7 @@ public sealed class ProfileServiceTests
                 .Contain(claim => claim.Type == userClaim.Key && claim.Value == userClaim.Value);
         }
 
-        this.mediator.Verify(service => service.Publish(It.IsAny<UserLoggedIn>(), It.IsAny<CancellationToken>()), Times.Once);
+        _ = this.mediator.Received(1).Publish(Arg.Any<UserLoggedIn>(), Arg.Any<CancellationToken>());
 
         var expectedNotification = new UserLoggedIn
         {
@@ -102,8 +97,8 @@ public sealed class ProfileServiceTests
         };
 
         this.mediator
-            .Setup(service => service.Send(It.IsAny<GetUserStatus>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(userStatus);
+            .Send(Arg.Any<GetUserStatus>(), Arg.Any<CancellationToken>())
+            .Returns(userStatus);
 
         var emailClaim = new Claim(JwtRegisteredClaimNames.Email, USER_EMAIL);
 
@@ -111,9 +106,9 @@ public sealed class ProfileServiceTests
 
         var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
-        var context = new IsActiveContext(claimsPrincipal, new Mock<Client>().Object, "test");
+        var context = new IsActiveContext(claimsPrincipal, Substitute.For<Client>(), "test");
 
-        var profileService = new ProfileService(this.logger, this.mediator.Object);
+        var profileService = new ProfileService(this.logger, this.mediator);
 
         //WHEN
         await profileService.IsActiveAsync(context);
@@ -135,8 +130,8 @@ public sealed class ProfileServiceTests
         };
 
         this.mediator
-            .Setup(service => service.Send(It.IsAny<GetUserStatus>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(userStatus);
+            .Send(Arg.Any<GetUserStatus>(), Arg.Any<CancellationToken>())
+            .Returns(userStatus);
 
         var emailClaim = new Claim(JwtRegisteredClaimNames.Email, USER_EMAIL);
 
@@ -144,9 +139,9 @@ public sealed class ProfileServiceTests
 
         var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
-        var context = new IsActiveContext(claimsPrincipal, new Mock<Client>().Object, "test");
+        var context = new IsActiveContext(claimsPrincipal, Substitute.For<Client>(), "test");
 
-        var profileService = new ProfileService(this.logger, this.mediator.Object);
+        var profileService = new ProfileService(this.logger, this.mediator);
 
         //WHEN
         await profileService.IsActiveAsync(context);
@@ -168,8 +163,8 @@ public sealed class ProfileServiceTests
         };
 
         this.mediator
-            .Setup(service => service.Send(It.IsAny<GetUserStatus>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(userStatus);
+            .Send(Arg.Any<GetUserStatus>(), Arg.Any<CancellationToken>())
+            .Returns(userStatus);
 
         var emailClaim = new Claim(JwtRegisteredClaimNames.Email, USER_EMAIL);
 
@@ -177,9 +172,9 @@ public sealed class ProfileServiceTests
 
         var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
-        var context = new IsActiveContext(claimsPrincipal, new Mock<Client>().Object, "test");
+        var context = new IsActiveContext(claimsPrincipal, Substitute.For<Client>(), "test");
 
-        var profileService = new ProfileService(this.logger, this.mediator.Object);
+        var profileService = new ProfileService(this.logger, this.mediator);
 
         //WHEN
         await profileService.IsActiveAsync(context);

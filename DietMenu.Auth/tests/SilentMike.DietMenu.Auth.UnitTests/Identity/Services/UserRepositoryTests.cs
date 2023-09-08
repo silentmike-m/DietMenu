@@ -1,11 +1,8 @@
 ﻿namespace SilentMike.DietMenu.Auth.UnitTests.Identity.Services;
 
 using System.Reflection;
-using FluentAssertions;
 using global::AutoMapper;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using SilentMike.DietMenu.Auth.Domain.Entities;
 using SilentMike.DietMenu.Auth.Infrastructure;
 using SilentMike.DietMenu.Auth.Infrastructure.Common.Constants;
@@ -47,12 +44,11 @@ public sealed class UserRepositoryTests : FakeDietMenuDbContext
 
         var userManager = new FakeUserManagerBuilder()
             .With(userManager => userManager
-                .Setup(service => service.CreateAsync(It.IsAny<User>(), It.IsAny<string>()))
-                .Callback<User, string>((user, _) => createdUser = user)
-                .ReturnsAsync(identityResult))
+                .CreateAsync(Arg.Do<User>(user => createdUser = user), Arg.Any<string>())
+                .Returns(identityResult))
             .Build();
 
-        var service = new UserRepository(this.Context!, this.mapper, userManager.Object);
+        var service = new UserRepository(this.Context!, this.mapper, userManager);
 
         //WHEN
         await service.CreateUserAsync(password, userToCreate, CancellationToken.None);
@@ -99,12 +95,12 @@ public sealed class UserRepositoryTests : FakeDietMenuDbContext
 
         var userManager = new FakeUserManagerBuilder()
             .With(userManager => userManager
-                .Setup(service => service.FindByEmailAsync(user.Email))
-                .ReturnsAsync(user)
+                .FindByEmailAsync(user.Email)
+                .Returns(user)
             )
             .Build();
 
-        var service = new UserRepository(this.Context!, this.mapper, userManager.Object);
+        var service = new UserRepository(this.Context!, this.mapper, userManager);
 
         //WHEN
         var result = await service.GetByEmailAsync("email@domain.com", CancellationToken.None);
@@ -136,12 +132,12 @@ public sealed class UserRepositoryTests : FakeDietMenuDbContext
 
         var userManager = new FakeUserManagerBuilder()
             .With(userManager => userManager
-                .Setup(service => service.FindByIdAsync(user.Id))
-                .ReturnsAsync(user)
+                .FindByIdAsync(user.Id)
+                .Returns(user)
             )
             .Build();
 
-        var service = new UserRepository(this.Context!, this.mapper, userManager.Object);
+        var service = new UserRepository(this.Context!, this.mapper, userManager);
 
         //WHEN
         var result = await service.GetByIdAsync(Guid.NewGuid(), CancellationToken.None);
@@ -172,12 +168,12 @@ public sealed class UserRepositoryTests : FakeDietMenuDbContext
 
         var userManager = new FakeUserManagerBuilder()
             .With(userManager => userManager
-                .Setup(service => service.FindByEmailAsync(user.Email))
-                .ReturnsAsync(user)
+                .FindByEmailAsync(user.Email)
+                .Returns(user)
             )
             .Build();
 
-        var service = new UserRepository(this.Context!, this.mapper, userManager.Object);
+        var service = new UserRepository(this.Context!, this.mapper, userManager);
 
         //WHEN
         var result = await service.GetByEmailAsync(user.Email, CancellationToken.None);
@@ -214,12 +210,12 @@ public sealed class UserRepositoryTests : FakeDietMenuDbContext
 
         var userManager = new FakeUserManagerBuilder()
             .With(userManager => userManager
-                .Setup(service => service.FindByIdAsync(user.Id))
-                .ReturnsAsync(user)
+                .FindByIdAsync(user.Id)
+                .Returns(user)
             )
             .Build();
 
-        var service = new UserRepository(this.Context!, this.mapper, userManager.Object);
+        var service = new UserRepository(this.Context!, this.mapper, userManager);
 
         //WHEN
         var result = await service.GetByIdAsync(userId, CancellationToken.None);
@@ -252,11 +248,11 @@ public sealed class UserRepositoryTests : FakeDietMenuDbContext
 
         var userManager = new FakeUserManagerBuilder()
             .With(userManager => userManager
-                .Setup(service => service.CreateAsync(It.IsAny<User>(), It.IsAny<string>()))
-                .ReturnsAsync(identityResult))
+                .CreateAsync(Arg.Any<User>(), Arg.Any<string>())
+                .Returns(identityResult))
             .Build();
 
-        var service = new UserRepository(this.Context!, this.mapper, userManager.Object);
+        var service = new UserRepository(this.Context!, this.mapper, userManager);
 
         //WHEN
         var action = async () => await service.CreateUserAsync(password, userToCreate, CancellationToken.None);

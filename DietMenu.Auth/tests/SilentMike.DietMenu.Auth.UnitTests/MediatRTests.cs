@@ -1,9 +1,6 @@
 ﻿namespace SilentMike.DietMenu.Auth.UnitTests;
 
 using System.Reflection;
-using FluentAssertions;
-using MediatR;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 [TestClass]
 public sealed class MediatRTests
@@ -101,7 +98,7 @@ public sealed class MediatRTests
         foreach (var requestType in requestTypes)
         {
             handlerTypes.Should().ContainSingle(type =>
-                type.GetInterfaces().Any(j => j.GenericTypeArguments.Any(ta => ta == requestType)), $"Missing handler for request {requestType}");
+                    type.GetInterfaces().Any(j => j.GenericTypeArguments.Any(ta => ta == requestType)), $"Missing handler for request {requestType}");
         }
     }
 }

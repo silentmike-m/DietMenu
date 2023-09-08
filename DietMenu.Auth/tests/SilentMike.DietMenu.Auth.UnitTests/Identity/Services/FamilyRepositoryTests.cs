@@ -1,10 +1,8 @@
 ﻿namespace SilentMike.DietMenu.Auth.UnitTests.Identity.Services;
 
 using System.Reflection;
-using FluentAssertions;
 using global::AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SilentMike.DietMenu.Auth.Domain.Entities;
 using SilentMike.DietMenu.Auth.Infrastructure;
 using SilentMike.DietMenu.Auth.Infrastructure.Identity.Models;

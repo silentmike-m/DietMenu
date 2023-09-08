@@ -1,7 +1,5 @@
 ﻿namespace SilentMike.DietMenu.Auth.UnitTests.Extensions;
 
-using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SilentMike.DietMenu.Auth.Application.Common.Extensions;
 
 [TestClass]

@@ -1,13 +1,9 @@
 ﻿namespace SilentMike.DietMenu.Auth.UnitTests.MassTransit.Email.EventHandlers;
 
-using FluentAssertions;
 using global::MassTransit;
 using global::MassTransit.Testing;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using SilentMike.DietMenu.Auth.Application.Users.Events;
 using SilentMike.DietMenu.Auth.Infrastructure.Extensions;
 using SilentMike.DietMenu.Auth.Infrastructure.Identity.Interfaces;
@@ -25,23 +21,22 @@ public sealed class GeneratedResetPasswordTokenHandlerTests
     private const string TOKEN = "reset_password_token";
     private const string URL = "reset.password.domain.com";
 
-    private readonly Mock<IIdentityPageUrlService> identityPageUrlService = new();
-    private readonly IOptions<IdentityServerOptions> identityServerOptions;
-    private readonly NullLogger<GeneratedResetPasswordTokenHandler> logger = new();
+    private readonly IIdentityPageUrlService identityPageUrlService = Substitute.For<IIdentityPageUrlService>();
 
-    public GeneratedResetPasswordTokenHandlerTests()
-        => this.identityServerOptions = Options.Create(new IdentityServerOptions
-        {
-            DefaultClientUri = DEFAULT_CLIENT_URI,
-            IssuerUri = ISSUER_URI,
-        });
+    private readonly IOptions<IdentityServerOptions> identityServerOptions = Options.Create(new IdentityServerOptions
+    {
+        DefaultClientUri = DEFAULT_CLIENT_URI,
+        IssuerUri = ISSUER_URI,
+    });
+
+    private readonly NullLogger<GeneratedResetPasswordTokenHandler> logger = new();
 
     [TestMethod]
     public async Task Should_Send_Reset_User_Password_Email_Message()
     {
         //GIVEN
         this.identityPageUrlService
-            .Setup(service => service.GetResetUserPasswordPageUrl(new Uri(ISSUER_URI), new Uri(DEFAULT_CLIENT_URI), It.IsAny<string>()))
+            .GetResetUserPasswordPageUrl(new Uri(ISSUER_URI), new Uri(DEFAULT_CLIENT_URI), Arg.Any<string>())
             .Returns(URL);
 
         await using var provider = new ServiceCollection()
@@ -59,7 +54,7 @@ public sealed class GeneratedResetPasswordTokenHandlerTests
             Token = TOKEN,
         };
 
-        var handler = new GeneratedResetPasswordTokenHandler(harness.Bus, this.identityPageUrlService.Object, this.identityServerOptions, this.logger);
+        var handler = new GeneratedResetPasswordTokenHandler(harness.Bus, this.identityPageUrlService, this.identityServerOptions, this.logger);
 
         //WHEN
         await handler.Handle(notification, CancellationToken.None);

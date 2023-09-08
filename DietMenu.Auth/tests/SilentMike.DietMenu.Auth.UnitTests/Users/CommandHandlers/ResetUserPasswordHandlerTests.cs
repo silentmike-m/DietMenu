@@ -1,10 +1,6 @@
 ﻿namespace SilentMike.DietMenu.Auth.UnitTests.Users.CommandHandlers;
 
-using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using SilentMike.DietMenu.Auth.Application.Common.Constants;
 using SilentMike.DietMenu.Auth.Application.Exceptions.Users;
 using SilentMike.DietMenu.Auth.Application.Users.Commands;
@@ -34,12 +30,12 @@ public sealed class ResetUserPasswordHandlerTests
 
         var userManager = new FakeUserManagerBuilder()
             .With(manager => manager
-                .Setup(service => service.FindByEmailAsync(USER_EMAIL))
-                .ReturnsAsync(user)
+                .FindByEmailAsync(USER_EMAIL)
+                .Returns(user)
             )
             .With(manager => manager
-                .Setup(service => service.ResetPasswordAsync(It.IsAny<User>(), RESET_PASSWORD_TOKEN, NEW_PASSWORD))
-                .ReturnsAsync(IdentityResult.Success)
+                .ResetPasswordAsync(Arg.Any<User>(), RESET_PASSWORD_TOKEN, NEW_PASSWORD)
+                .Returns(IdentityResult.Success)
             )
             .Build();
 
@@ -50,7 +46,7 @@ public sealed class ResetUserPasswordHandlerTests
             Token = RESET_PASSWORD_TOKEN,
         };
 
-        var handler = new ResetUserPasswordHandler(this.logger, userManager.Object);
+        var handler = new ResetUserPasswordHandler(this.logger, userManager);
 
 //WHEN
         var action = async () => await handler.Handle(request, CancellationToken.None);
@@ -81,12 +77,12 @@ public sealed class ResetUserPasswordHandlerTests
 
         var userManager = new FakeUserManagerBuilder()
             .With(manager => manager
-                .Setup(service => service.FindByEmailAsync(USER_EMAIL))
-                .ReturnsAsync(user)
+                .FindByEmailAsync(USER_EMAIL)
+                .Returns(user)
             )
             .With(manager => manager
-                .Setup(service => service.ResetPasswordAsync(It.IsAny<User>(), RESET_PASSWORD_TOKEN, NEW_PASSWORD))
-                .ReturnsAsync(identityResult)
+                .ResetPasswordAsync(Arg.Any<User>(), RESET_PASSWORD_TOKEN, NEW_PASSWORD)
+                .Returns(identityResult)
             )
             .Build();
 
@@ -97,7 +93,7 @@ public sealed class ResetUserPasswordHandlerTests
             Token = RESET_PASSWORD_TOKEN,
         };
 
-        var handler = new ResetUserPasswordHandler(this.logger, userManager.Object);
+        var handler = new ResetUserPasswordHandler(this.logger, userManager);
 
         //WHEN
         var action = async () => await handler.Handle(request, CancellationToken.None);
@@ -122,8 +118,8 @@ public sealed class ResetUserPasswordHandlerTests
 
         var userManager = new FakeUserManagerBuilder()
             .With(manager => manager
-                .Setup(service => service.FindByEmailAsync(USER_EMAIL))
-                .ReturnsAsync(user)
+                .FindByEmailAsync(USER_EMAIL)
+                .Returns(user)
             )
             .Build();
 
@@ -132,7 +128,7 @@ public sealed class ResetUserPasswordHandlerTests
             Email = "fake@domain.com",
         };
 
-        var handler = new ResetUserPasswordHandler(this.logger, userManager.Object);
+        var handler = new ResetUserPasswordHandler(this.logger, userManager);
 
         //WHEN
         var action = async () => await handler.Handle(request, CancellationToken.None);

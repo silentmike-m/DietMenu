@@ -1,10 +1,5 @@
 ﻿namespace SilentMike.DietMenu.Auth.UnitTests.Users.CommandHandlers;
 
-using FluentAssertions;
-using MediatR;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using SilentMike.DietMenu.Auth.Application.Common.Constants;
 using SilentMike.DietMenu.Auth.Application.Exceptions.Families;
 using SilentMike.DietMenu.Auth.Application.Exceptions.Users;
@@ -22,26 +17,26 @@ public sealed class CreateUserHandlerTests
     private static readonly FamilyEntity EXISTING_FAMILY = new(Guid.NewGuid(), "family@domain.com", "existing family");
     private static readonly UserEntity EXISTING_USER = new("user@domain.com", Guid.NewGuid(), "first name", "last name", Guid.NewGuid());
 
-    private readonly Mock<IFamilyRepository> familyRepository = new();
+    private readonly IFamilyRepository familyRepository = Substitute.For<IFamilyRepository>();
     private readonly NullLogger<CreateUserHandler> logger = new();
-    private readonly Mock<IPublisher> mediator = new();
-    private readonly Mock<IUserRepository> userService = new();
+    private readonly IPublisher mediator = Substitute.For<IPublisher>();
+    private readonly IUserRepository userRepository = Substitute.For<IUserRepository>();
 
     public CreateUserHandlerTests()
     {
         this.familyRepository
-            .Setup(service => service.GetByIdAsync(EXISTING_FAMILY.Id, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(EXISTING_FAMILY)
+            .GetByIdAsync(EXISTING_FAMILY.Id, Arg.Any<CancellationToken>())
+            .Returns(EXISTING_FAMILY)
             ;
 
-        this.userService
-            .Setup(service => service.GetByIdAsync(EXISTING_USER.Id, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(EXISTING_USER)
+        this.userRepository
+            .GetByIdAsync(EXISTING_USER.Id, Arg.Any<CancellationToken>())
+            .Returns(EXISTING_USER)
             ;
 
-        this.userService
-            .Setup(service => service.GetByEmailAsync(EXISTING_USER.Email, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(EXISTING_USER)
+        this.userRepository
+            .GetByEmailAsync(EXISTING_USER.Email, Arg.Any<CancellationToken>())
+            .Returns(EXISTING_USER)
             ;
     }
 
@@ -53,17 +48,11 @@ public sealed class CreateUserHandlerTests
         CreatedUser? createdUserNotification = null;
         UserEntity? createdUser = null;
 
-        this.mediator
-            .Setup(service => service.Publish(It.IsAny<CreatedUser>(), It.IsAny<CancellationToken>()))
-            .Callback<CreatedUser, CancellationToken>((notification, _) => createdUserNotification = notification);
+        await this.mediator
+            .Publish(Arg.Do<CreatedUser>(notification => createdUserNotification = notification), Arg.Any<CancellationToken>());
 
-        this.userService
-            .Setup(service => service.CreateUserAsync(It.IsAny<string>(), It.IsAny<UserEntity>(), It.IsAny<CancellationToken>()))
-            .Callback<string, UserEntity, CancellationToken>((password, user, _) =>
-            {
-                createdPassword = password;
-                createdUser = user;
-            });
+        await this.userRepository
+            .CreateUserAsync(Arg.Do<string>(password => createdPassword = password), Arg.Do<UserEntity>(user => createdUser = user), Arg.Any<CancellationToken>());
 
         var userToCreate = new UserToCreate
         {
@@ -80,7 +69,7 @@ public sealed class CreateUserHandlerTests
             User = userToCreate,
         };
 
-        var handler = new CreateUserHandler(this.familyRepository.Object, this.logger, this.mediator.Object, this.userService.Object);
+        var handler = new CreateUserHandler(this.familyRepository, this.logger, this.mediator, this.userRepository);
 
         //WHEN
         await handler.Handle(request, CancellationToken.None);
@@ -98,7 +87,7 @@ public sealed class CreateUserHandlerTests
             .BeEquivalentTo(expectedUser)
             ;
 
-        this.mediator.Verify(service => service.Publish(It.IsAny<CreatedUser>(), It.IsAny<CancellationToken>()), Times.Once);
+        _ = this.mediator.Received(1).Publish(Arg.Any<CreatedUser>(), Arg.Any<CancellationToken>());
 
         var expectedNotification = new CreatedUser
         {
@@ -129,16 +118,16 @@ public sealed class CreateUserHandlerTests
 
         var exception = new CreateUserException(userToCreate.Email, "error");
 
-        this.userService
-            .Setup(service => service.CreateUserAsync(It.IsAny<string>(), It.IsAny<UserEntity>(), It.IsAny<CancellationToken>()))
-            .Throws(exception);
+        this.userRepository
+            .CreateUserAsync(Arg.Any<string>(), Arg.Any<UserEntity>(), Arg.Any<CancellationToken>())
+            .Returns(Task.FromException(exception));
 
         var request = new CreateUser
         {
             User = userToCreate,
         };
 
-        var handler = new CreateUserHandler(this.familyRepository.Object, this.logger, this.mediator.Object, this.userService.Object);
+        var handler = new CreateUserHandler(this.familyRepository, this.logger, this.mediator, this.userRepository);
 
         //WHEN
         var action = async () => await handler.Handle(request, CancellationToken.None);
@@ -148,7 +137,7 @@ public sealed class CreateUserHandlerTests
                 .ThrowAsync<CreateUserException>()
             ;
 
-        this.mediator.Verify(service => service.Publish(It.IsAny<CreatedUser>(), It.IsAny<CancellationToken>()), Times.Never);
+        _ = this.mediator.Received(0).Publish(Arg.Any<CreatedUser>(), Arg.Any<CancellationToken>());
     }
 
     [TestMethod]
@@ -170,7 +159,7 @@ public sealed class CreateUserHandlerTests
             User = userToCreate,
         };
 
-        var handler = new CreateUserHandler(this.familyRepository.Object, this.logger, this.mediator.Object, this.userService.Object);
+        var handler = new CreateUserHandler(this.familyRepository, this.logger, this.mediator, this.userRepository);
 
         //WHEN
         var action = async () => await handler.Handle(request, CancellationToken.None);
@@ -182,7 +171,7 @@ public sealed class CreateUserHandlerTests
                 .Where(exception => exception.Id == userToCreate.FamilyId)
             ;
 
-        this.mediator.Verify(service => service.Publish(It.IsAny<CreatedUser>(), It.IsAny<CancellationToken>()), Times.Never);
+        _ = this.mediator.Received(0).Publish(Arg.Any<CreatedUser>(), Arg.Any<CancellationToken>());
     }
 
     [TestMethod]
@@ -204,7 +193,7 @@ public sealed class CreateUserHandlerTests
             User = userToCreate,
         };
 
-        var handler = new CreateUserHandler(this.familyRepository.Object, this.logger, this.mediator.Object, this.userService.Object);
+        var handler = new CreateUserHandler(this.familyRepository, this.logger, this.mediator, this.userRepository);
 
         //WHEN
         var action = async () => await handler.Handle(request, CancellationToken.None);
@@ -216,7 +205,7 @@ public sealed class CreateUserHandlerTests
                 .WithMessage($"*{userToCreate.Email}*")
             ;
 
-        this.mediator.Verify(service => service.Publish(It.IsAny<CreatedUser>(), It.IsAny<CancellationToken>()), Times.Never);
+        _ = this.mediator.Received(0).Publish(Arg.Any<CreatedUser>(), Arg.Any<CancellationToken>());
     }
 
     [TestMethod]
@@ -238,7 +227,7 @@ public sealed class CreateUserHandlerTests
             User = userToCreate,
         };
 
-        var handler = new CreateUserHandler(this.familyRepository.Object, this.logger, this.mediator.Object, this.userService.Object);
+        var handler = new CreateUserHandler(this.familyRepository, this.logger, this.mediator, this.userRepository);
 
         //WHEN
         var action = async () => await handler.Handle(request, CancellationToken.None);
@@ -250,6 +239,6 @@ public sealed class CreateUserHandlerTests
                 .Where(exception => exception.Id == userToCreate.Id)
             ;
 
-        this.mediator.Verify(service => service.Publish(It.IsAny<CreatedUser>(), It.IsAny<CancellationToken>()), Times.Never);
+        _ = this.mediator.Received(0).Publish(Arg.Any<CreatedUser>(), Arg.Any<CancellationToken>());
     }
 }

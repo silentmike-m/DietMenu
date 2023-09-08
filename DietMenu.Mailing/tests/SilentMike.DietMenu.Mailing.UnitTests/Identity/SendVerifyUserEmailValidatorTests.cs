@@ -1,7 +1,5 @@
 ﻿namespace SilentMike.DietMenu.Mailing.UnitTests.Identity;
 
-using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SilentMike.DietMenu.Mailing.Application.Common.Constants;
 using SilentMike.DietMenu.Mailing.Application.Identity.Commands;
 using SilentMike.DietMenu.Mailing.Application.Identity.Validators;

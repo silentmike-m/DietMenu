@@ -1,7 +1,5 @@
 ﻿namespace SilentMike.DietMenu.Auth.UnitTests.Domain;
 
-using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SilentMike.DietMenu.Auth.Domain.Common.Constants;
 using SilentMike.DietMenu.Auth.Domain.Entities;
 using SilentMike.DietMenu.Auth.Domain.Exceptions;

@@ -1,9 +1,5 @@
 ﻿namespace SilentMike.DietMenu.Auth.UnitTests.Behaviors;
 
-using FluentAssertions;
-using MediatR;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using SilentMike.DietMenu.Auth.Application.Common;
 using SilentMike.DietMenu.Auth.Application.Common.Behaviors;
 using SilentMike.DietMenu.Auth.Application.Common.Models;
@@ -13,7 +9,7 @@ using SilentMike.DietMenu.Auth.Application.Families.Commands;
 [TestClass]
 public sealed class AuthorizationBehaviorTests
 {
-    private readonly Mock<ICurrentRequestService> currentRequestService = new();
+    private readonly ICurrentRequestService currentRequestService = Substitute.For<ICurrentRequestService>();
 
     [TestMethod]
     public async Task Should_Not_Call_Current_Request_Service_When_FamilyId_And_UserId_Are_Not_Empty()
@@ -28,13 +24,13 @@ public sealed class AuthorizationBehaviorTests
             },
         };
 
-        var behavior = new AuthorizationBehavior<CreateFamily, Unit>(this.currentRequestService.Object);
+        var behavior = new AuthorizationBehavior<CreateFamily, Unit>(this.currentRequestService);
 
         //WHEN
         await behavior.Handle(request, () => Task.FromResult(Unit.Value), CancellationToken.None);
 
         //THEN
-        this.currentRequestService.Verify(service => service.CurrentUser, Times.Never);
+        _ = this.currentRequestService.Received(0).CurrentUser;
     }
 
     [TestMethod]
@@ -45,12 +41,12 @@ public sealed class AuthorizationBehaviorTests
         var userId = Guid.NewGuid();
 
         this.currentRequestService
-            .Setup(service => service.CurrentUser)
+            .CurrentUser
             .Returns((familyId, userId));
 
         var request = new CreateFamily();
 
-        var behavior = new AuthorizationBehavior<CreateFamily, Unit>(this.currentRequestService.Object);
+        var behavior = new AuthorizationBehavior<CreateFamily, Unit>(this.currentRequestService);
 
         //WHEN
         var action = async () => await behavior.Handle(request, () => Task.FromResult(Unit.Value), CancellationToken.None);
@@ -77,12 +73,12 @@ public sealed class AuthorizationBehaviorTests
         var userId = Guid.NewGuid();
 
         this.currentRequestService
-            .Setup(service => service.CurrentUser)
+            .CurrentUser
             .Returns((familyId, userId));
 
         var request = new CreateFamily();
 
-        var behavior = new AuthorizationBehavior<CreateFamily, Unit>(this.currentRequestService.Object);
+        var behavior = new AuthorizationBehavior<CreateFamily, Unit>(this.currentRequestService);
 
         //WHEN
         var action = async () => await behavior.Handle(request, () => Task.FromResult(Unit.Value), CancellationToken.None);
@@ -101,12 +97,12 @@ public sealed class AuthorizationBehaviorTests
         var userId = Guid.Empty;
 
         this.currentRequestService
-            .Setup(service => service.CurrentUser)
+            .CurrentUser
             .Returns((familyId, userId));
 
         var request = new CreateFamily();
 
-        var behavior = new AuthorizationBehavior<CreateFamily, Unit>(this.currentRequestService.Object);
+        var behavior = new AuthorizationBehavior<CreateFamily, Unit>(this.currentRequestService);
 
         //WHEN
         var action = async () => await behavior.Handle(request, () => Task.FromResult(Unit.Value), CancellationToken.None);
