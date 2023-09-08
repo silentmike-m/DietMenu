@@ -2,7 +2,7 @@
 
 using SilentMike.DietMenu.Shared.Identity.Interfaces;
 
-internal sealed record GetFamilyUserEmailRequest : IGetFamilyUserEmailRequest
+internal sealed record GetFamilyEmailRequest : IGetFamilyEmailRequest
 {
     public Guid FamilyId { get; init; } = Guid.Empty;
 }

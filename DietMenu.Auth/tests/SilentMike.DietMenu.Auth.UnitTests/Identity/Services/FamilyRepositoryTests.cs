@@ -16,12 +16,14 @@ public sealed class FamilyRepositoryTests : FakeDietMenuDbContext
 {
     private static readonly Family EXISTING_FAMILY = new()
     {
+        Email = "family@domain.com",
         Id = Guid.NewGuid(),
         Name = "family name",
     };
 
     private static readonly Family EXISTING_FAMILY_TO_UPDATE = new()
     {
+        Email = "family@toupdate.com",
         Id = Guid.NewGuid(),
         Name = "family name to update",
     };
@@ -39,7 +41,7 @@ public sealed class FamilyRepositoryTests : FakeDietMenuDbContext
     public async Task Should_Create_Family_On_Save_When_Family_Not_Exists()
     {
         //GIVEN
-        var entity = new FamilyEntity(Guid.NewGuid(), "new family name");
+        var entity = new FamilyEntity(Guid.NewGuid(), "family@domain.com", "new family name");
 
         var repository = new FamilyRepository(this.Context!, this.mapper);
 
@@ -51,6 +53,7 @@ public sealed class FamilyRepositoryTests : FakeDietMenuDbContext
 
         var expectedResult = new Family
         {
+            Email = entity.Email,
             Id = entity.Id,
             Name = entity.Name,
         };
@@ -72,7 +75,7 @@ public sealed class FamilyRepositoryTests : FakeDietMenuDbContext
         var result = await repository.GetByIdAsync(EXISTING_FAMILY.Id, CancellationToken.None);
 
         //THEN
-        var expectedResult = new FamilyEntity(EXISTING_FAMILY.Id, EXISTING_FAMILY.Name);
+        var expectedResult = new FamilyEntity(EXISTING_FAMILY.Id, EXISTING_FAMILY.Email, EXISTING_FAMILY.Name);
 
         result.Should()
             .NotBeNull()
@@ -91,7 +94,7 @@ public sealed class FamilyRepositoryTests : FakeDietMenuDbContext
         var result = await repository.GetByNameAsync(EXISTING_FAMILY.Name, CancellationToken.None);
 
         //THEN
-        var expectedResult = new FamilyEntity(EXISTING_FAMILY.Id, EXISTING_FAMILY.Name);
+        var expectedResult = new FamilyEntity(EXISTING_FAMILY.Id, EXISTING_FAMILY.Email, EXISTING_FAMILY.Name);
 
         result.Should()
             .NotBeNull()
@@ -134,7 +137,7 @@ public sealed class FamilyRepositoryTests : FakeDietMenuDbContext
     public async Task Should_Update_Family_On_Save_When_Family_Exists()
     {
         //GIVEN
-        var entity = new FamilyEntity(EXISTING_FAMILY_TO_UPDATE.Id, "new family name");
+        var entity = new FamilyEntity(EXISTING_FAMILY_TO_UPDATE.Id, "new@email.com", "new family name");
 
         var repository = new FamilyRepository(this.Context!, this.mapper);
 
@@ -146,6 +149,7 @@ public sealed class FamilyRepositoryTests : FakeDietMenuDbContext
 
         var expectedResult = new Family
         {
+            Email = entity.Email,
             Key = EXISTING_FAMILY_TO_UPDATE.Key,
             Id = entity.Id,
             Name = entity.Name,

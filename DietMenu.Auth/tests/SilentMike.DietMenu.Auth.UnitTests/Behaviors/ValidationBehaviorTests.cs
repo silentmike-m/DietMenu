@@ -18,6 +18,7 @@ public sealed class ValidationBehaviorTests
         //GIVEN
         var request = new CreateFamily
         {
+            Email = "family@domain.com",
             Name = "family name",
         };
 

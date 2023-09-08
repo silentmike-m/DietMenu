@@ -37,6 +37,7 @@ public sealed class CreateFamilyHandlerTests
 
         var request = new CreateFamily
         {
+            Email = "family@domain.com",
             Id = Guid.NewGuid(),
             Name = "family name",
         };
@@ -49,7 +50,7 @@ public sealed class CreateFamilyHandlerTests
         //THEN
         this.repository.Verify(service => service.SaveAsync(It.IsAny<FamilyEntity>(), It.IsAny<CancellationToken>()), Times.Once);
 
-        var expectedResult = new FamilyEntity(request.Id, request.Name);
+        var expectedResult = new FamilyEntity(request.Id, request.Email, request.Name);
 
         familyToSave.Should()
             .NotBeNull()
@@ -75,7 +76,7 @@ public sealed class CreateFamilyHandlerTests
     public async Task Should_Throw_Family_Already_Exists_Exception_When_Family_With_Same_Id_Already_Exists()
     {
         //GIVEN
-        var family = new FamilyEntity(Guid.NewGuid(), "family");
+        var family = new FamilyEntity(Guid.NewGuid(), "family@domain.com", "family");
 
         this.repository
             .Setup(service => service.GetByIdAsync(family.Id, It.IsAny<CancellationToken>()))

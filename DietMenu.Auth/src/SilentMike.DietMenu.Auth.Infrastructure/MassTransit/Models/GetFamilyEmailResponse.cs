@@ -2,9 +2,8 @@
 
 using SilentMike.DietMenu.Shared.Identity.Interfaces;
 
-internal sealed record GetFamilyOwnerEmailResponse : IGetFamilyOwnerEmailResponse
+internal sealed record GetFamilyEmailResponse : IGetFamilyEmailResponse
 {
     public string Email { get; init; } = string.Empty;
     public Guid FamilyId { get; init; } = Guid.Empty;
-    public Guid UserId { get; init; } = Guid.Empty;
 }

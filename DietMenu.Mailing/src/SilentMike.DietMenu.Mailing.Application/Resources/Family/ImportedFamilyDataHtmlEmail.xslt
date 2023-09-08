@@ -102,11 +102,6 @@
                         <div class="content-text">
                             <p>Hello,</p>
                             <p>Family data have been imported.</p>
-                            <p>Server:
-                                <strong>
-                                    <xsl:value-of select="Server" />
-                                </strong>
-                            </p>
                             <p>FamilyId:
                                 <strong>
                                     <xsl:value-of select="FamilyId" />

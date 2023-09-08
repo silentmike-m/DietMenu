@@ -12,7 +12,7 @@ using SilentMike.DietMenu.Auth.Infrastructure.Identity.Data;
 namespace SilentMike.DietMenu.Auth.Infrastructure.Identity.Migrations
 {
     [DbContext(typeof(DietMenuDbContext))]
-    [Migration("20230803100908_Init")]
+    [Migration("20230908094626_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -166,6 +166,10 @@ namespace SilentMike.DietMenu.Auth.Infrastructure.Identity.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Key"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");

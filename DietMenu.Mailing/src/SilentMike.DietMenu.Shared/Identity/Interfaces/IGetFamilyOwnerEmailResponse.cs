@@ -1,6 +1,7 @@
 ﻿namespace SilentMike.DietMenu.Shared.Identity.Interfaces;
 
-public interface IGetFamilyUserEmailRequest
+public interface IGetFamilyEmailResponse
 {
+    string Email { get; }
     Guid FamilyId { get; }
 }

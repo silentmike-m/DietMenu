@@ -41,7 +41,7 @@ public sealed class SendImportedFamilyDataEmailHandlerTests
             .Callback<IRequest, CancellationToken>((command, _) => sendEmailCommand = command as SendEmail);
 
         mediator
-            .Setup(service => service.Send(It.IsAny<GetFamilyUserEmail>(), It.IsAny<CancellationToken>()))
+            .Setup(service => service.Send(It.IsAny<GetFamilyEmail>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(familyUserEmail);
 
         var results = new List<ImportedFamilyDataResult>

@@ -7,18 +7,18 @@ using SilentMike.DietMenu.Auth.Application.Families.Queries;
 using SilentMike.DietMenu.Auth.Infrastructure.MassTransit.Models;
 using SilentMike.DietMenu.Shared.Identity.Interfaces;
 
-internal sealed class GetFamilyOwnerEmailRequestConsumer : IConsumer<IGetFamilyOwnerEmailRequest>
+internal sealed class GetFamilyEmailRequestConsumer : IConsumer<IGetFamilyEmailRequest>
 {
-    private readonly ILogger<GetFamilyOwnerEmailRequestConsumer> logger;
+    private readonly ILogger<GetFamilyEmailRequestConsumer> logger;
     private readonly ISender mediator;
 
-    public GetFamilyOwnerEmailRequestConsumer(ILogger<GetFamilyOwnerEmailRequestConsumer> logger, ISender mediator)
+    public GetFamilyEmailRequestConsumer(ILogger<GetFamilyEmailRequestConsumer> logger, ISender mediator)
     {
         this.logger = logger;
         this.mediator = mediator;
     }
 
-    public async Task Consume(ConsumeContext<IGetFamilyOwnerEmailRequest> context)
+    public async Task Consume(ConsumeContext<IGetFamilyEmailRequest> context)
     {
         using var loggerScope = this.logger.BeginPropertyScope(
             ("FamilyId", context.Message.FamilyId)
@@ -26,20 +26,19 @@ internal sealed class GetFamilyOwnerEmailRequestConsumer : IConsumer<IGetFamilyO
 
         this.logger.LogInformation("Received get family owner request");
 
-        var request = new GetFamilyOwner
+        var request = new GetFamilyEmail
         {
             FamilyId = context.Message.FamilyId,
         };
 
-        var familyOwner = await this.mediator.Send(request, context.CancellationToken);
+        var familyEmail = await this.mediator.Send(request, context.CancellationToken);
 
-        var response = new GetFamilyOwnerEmailResponse
+        var response = new GetFamilyEmailResponse
         {
-            Email = familyOwner.Email,
+            Email = familyEmail,
             FamilyId = context.Message.FamilyId,
-            UserId = familyOwner.UserId,
         };
 
-        await context.RespondAsync<IGetFamilyOwnerEmailResponse>(response);
+        await context.RespondAsync<IGetFamilyEmailResponse>(response);
     }
 }

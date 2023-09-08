@@ -20,7 +20,7 @@ internal static class DependencyInjection
         {
             configure.AddConsumer<EmailDataMessageConsumer>();
 
-            configure.AddRequestClient<IGetFamilyUserEmailRequest>();
+            configure.AddRequestClient<IGetFamilyEmailRequest>();
 
             configure.UsingRabbitMq((context, cfg) =>
             {

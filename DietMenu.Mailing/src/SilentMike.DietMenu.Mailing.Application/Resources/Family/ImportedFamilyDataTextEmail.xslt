@@ -8,8 +8,6 @@
         <xsl:text>&#10;</xsl:text>
         <xsl:text>Family data have been imported.</xsl:text>
         <xsl:text>&#10;</xsl:text>
-        <xsl:text>Server: </xsl:text><xsl:value-of select="Server" />
-        <xsl:text>&#10;</xsl:text>
         <xsl:text>FamilyId: </xsl:text><xsl:value-of select="FamilyId" />
         <xsl:text>&#10;</xsl:text>
         <xsl:text>Status:</xsl:text>

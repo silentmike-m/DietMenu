@@ -20,6 +20,6 @@ internal sealed class FamilyConfiguration : IEntityTypeConfiguration<FamilyEntit
                 ingredientsVersion => JsonSerializer.Serialize(ingredientsVersion, new JsonSerializerOptions()),
                 ingredientsVersion => JsonSerializer.Deserialize<Dictionary<string, string>>(ingredientsVersion, new JsonSerializerOptions())!
             )
-            .HasColumnType("json");
+            .HasColumnType("nvarchar(max)");
     }
 }

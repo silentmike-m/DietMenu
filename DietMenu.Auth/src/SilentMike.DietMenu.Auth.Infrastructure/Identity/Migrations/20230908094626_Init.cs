@@ -36,6 +36,7 @@ namespace SilentMike.DietMenu.Auth.Infrastructure.Identity.Migrations
                 {
                     Key = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },

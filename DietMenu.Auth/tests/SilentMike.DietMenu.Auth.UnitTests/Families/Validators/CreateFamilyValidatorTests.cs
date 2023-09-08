@@ -9,13 +9,14 @@ using SilentMike.DietMenu.Auth.Application.Families.Validators;
 [TestClass]
 public sealed class CreateFamilyValidatorTests
 {
-    [TestMethod]
-    public async Task Should_Fail_Validation_When_Name_Is_Empty_Spaces()
+    [DataTestMethod, DataRow(""), DataRow("   "), DataRow("family domain com")]
+    public async Task Should_Fail_Validation_When_Email_Has_Wrong_Format(string email)
     {
         //GIVEN
         var request = new CreateFamily
         {
-            Name = "   ",
+            Email = email,
+            Name = "family",
         };
 
         var validator = new CreateFamilyValidator();
@@ -28,8 +29,8 @@ public sealed class CreateFamilyValidatorTests
             .HaveCount(1)
             .And
             .Contain(error =>
-                error.ErrorCode == ValidationErrorCodes.CREATE_FAMILY_EMPTY_NAME
-                && error.ErrorMessage == ValidationErrorCodes.CREATE_FAMILY_EMPTY_NAME_MESSAGE
+                error.ErrorCode == ValidationErrorCodes.CREATE_FAMILY_EMAIL_INVALID_FORMAT
+                && error.ErrorMessage == ValidationErrorCodes.CREATE_FAMILY_EMAIL_INVALID_FORMAT_MESSAGE
             )
             ;
 
@@ -38,13 +39,14 @@ public sealed class CreateFamilyValidatorTests
             ;
     }
 
-    [TestMethod]
-    public async Task Should_Fail_Validation_When_Name_Is_Empty_String()
+    [DataTestMethod, DataRow(""), DataRow("   ")]
+    public async Task Should_Fail_Validation_When_Name_Is_Empty_Spaces(string name)
     {
         //GIVEN
         var request = new CreateFamily
         {
-            Name = "",
+            Email = "family@domain.com",
+            Name = name,
         };
 
         var validator = new CreateFamilyValidator();
@@ -73,6 +75,7 @@ public sealed class CreateFamilyValidatorTests
         //GIVEN
         var request = new CreateFamily
         {
+            Email = "family@domain.com",
             Name = "family name",
         };
 

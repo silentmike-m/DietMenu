@@ -164,6 +164,10 @@ namespace SilentMike.DietMenu.Auth.Infrastructure.Identity.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Key"));
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
