@@ -1,10 +1,5 @@
 ﻿namespace SilentMike.DietMenu.Auth.UnitTests.Users.CommandHandlers;
 
-using FluentAssertions;
-using MediatR;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using SilentMike.DietMenu.Auth.Application.Common.Constants;
 using SilentMike.DietMenu.Auth.Application.Exceptions.Users;
 using SilentMike.DietMenu.Auth.Application.Users.Commands;
@@ -19,7 +14,7 @@ public sealed class GenerateEmailConfirmationTokenHandlerTests
     private static readonly Guid USER_ID = Guid.NewGuid();
 
     private readonly NullLogger<GenerateEmailConfirmationTokenHandler> logger = new();
-    private readonly Mock<IPublisher> mediator = new();
+    private readonly IPublisher mediator = Substitute.For<IPublisher>();
 
     [TestMethod]
     public async Task Should_Generate_Token()
@@ -27,9 +22,8 @@ public sealed class GenerateEmailConfirmationTokenHandlerTests
         //GIVEN
         GeneratedEmailConfirmationToken? generatedEmailConfirmationTokenNotification = null;
 
-        this.mediator
-            .Setup(service => service.Publish(It.IsAny<GeneratedEmailConfirmationToken>(), It.IsAny<CancellationToken>()))
-            .Callback<GeneratedEmailConfirmationToken, CancellationToken>((notification, _) => generatedEmailConfirmationTokenNotification = notification);
+        await this.mediator
+            .Publish(Arg.Do<GeneratedEmailConfirmationToken>(notification => generatedEmailConfirmationTokenNotification = notification), Arg.Any<CancellationToken>());
 
         const string token = "email_confirmation_token";
 
@@ -41,12 +35,12 @@ public sealed class GenerateEmailConfirmationTokenHandlerTests
 
         var userManager = new FakeUserManagerBuilder()
             .With(manager => manager
-                .Setup(service => service.FindByEmailAsync(user.Email))
-                .ReturnsAsync(user)
+                .FindByEmailAsync(user.Email)
+                .Returns(user)
             )
             .With(manager => manager
-                .Setup(service => service.GenerateEmailConfirmationTokenAsync(It.IsAny<User>()))
-                .ReturnsAsync(token)
+                .GenerateEmailConfirmationTokenAsync(Arg.Any<User>())
+                .Returns(token)
             )
             .Build();
 
@@ -55,13 +49,13 @@ public sealed class GenerateEmailConfirmationTokenHandlerTests
             Email = user.Email,
         };
 
-        var handler = new GenerateEmailConfirmationTokenHandler(this.logger, this.mediator.Object, userManager.Object);
+        var handler = new GenerateEmailConfirmationTokenHandler(this.logger, this.mediator, userManager);
 
         //WHEN
         await handler.Handle(request, CancellationToken.None);
 
         //THEN
-        this.mediator.Verify(service => service.Publish(It.IsAny<GeneratedEmailConfirmationToken>(), It.IsAny<CancellationToken>()), Times.Once);
+        _ = this.mediator.Received(1).Publish(Arg.Any<GeneratedEmailConfirmationToken>(), Arg.Any<CancellationToken>());
 
         var expectedNotification = new GeneratedEmailConfirmationToken
         {
@@ -89,8 +83,12 @@ public sealed class GenerateEmailConfirmationTokenHandlerTests
 
         var userManager = new FakeUserManagerBuilder()
             .With(manager => manager
-                .Setup(service => service.FindByEmailAsync(user.Email))
-                .ReturnsAsync(user)
+                .FindByEmailAsync(user.Email)
+                .Returns(user)
+            )
+            .With(manager => manager
+                .GenerateEmailConfirmationTokenAsync(Arg.Any<User>())
+                .Returns((string?)null)
             )
             .Build();
 
@@ -99,17 +97,16 @@ public sealed class GenerateEmailConfirmationTokenHandlerTests
             Email = user.Email,
         };
 
-        var handler = new GenerateEmailConfirmationTokenHandler(this.logger, this.mediator.Object, userManager.Object);
+        var handler = new GenerateEmailConfirmationTokenHandler(this.logger, this.mediator, userManager);
 
         //WHEN
         var action = async () => await handler.Handle(request, CancellationToken.None);
 
         //THEN
         await action.Should()
-                .NotThrowAsync()
-            ;
+            .NotThrowAsync();
 
-        this.mediator.Verify(service => service.Publish(It.IsAny<INotification>(), It.IsAny<CancellationToken>()), Times.Never);
+        _ = this.mediator.Received(0).Publish(Arg.Any<GeneratedEmailConfirmationToken>(), Arg.Any<CancellationToken>());
     }
 
     [TestMethod]
@@ -124,8 +121,8 @@ public sealed class GenerateEmailConfirmationTokenHandlerTests
 
         var userManager = new FakeUserManagerBuilder()
             .With(manager => manager
-                .Setup(service => service.FindByEmailAsync(user.Email))
-                .ReturnsAsync(user)
+                .FindByEmailAsync(user.Email)
+                .Returns(user)
             )
             .Build();
 
@@ -134,7 +131,7 @@ public sealed class GenerateEmailConfirmationTokenHandlerTests
             Email = "fake@domain.com",
         };
 
-        var handler = new GenerateEmailConfirmationTokenHandler(this.logger, this.mediator.Object, userManager.Object);
+        var handler = new GenerateEmailConfirmationTokenHandler(this.logger, this.mediator, userManager);
 
         //WHEN
         var action = async () => await handler.Handle(request, CancellationToken.None);
@@ -145,6 +142,6 @@ public sealed class GenerateEmailConfirmationTokenHandlerTests
                 .Where(exception => exception.Code == ErrorCodes.USER_NOT_FOUND)
             ;
 
-        this.mediator.Verify(service => service.Publish(It.IsAny<INotification>(), It.IsAny<CancellationToken>()), Times.Never);
+        _ = this.mediator.Received(0).Publish(Arg.Any<GeneratedEmailConfirmationToken>(), Arg.Any<CancellationToken>());
     }
 }

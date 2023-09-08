@@ -1,9 +1,5 @@
 ﻿namespace SilentMike.DietMenu.Auth.UnitTests.Users.CommandHandlers;
 
-using FluentAssertions;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using SilentMike.DietMenu.Auth.Application.Common;
 using SilentMike.DietMenu.Auth.Application.Common.Constants;
 using SilentMike.DietMenu.Auth.Application.Exceptions.Users;
@@ -17,13 +13,13 @@ public sealed class UpdateUserLastLoginDateHandlerTests
 {
     private static readonly DateTime DATE = new(year: 2023, month: 8, day: 1, hour: 11, minute: 47, second: 15, millisecond: 16, DateTimeKind.Utc);
 
-    private readonly Mock<IDateTimeService> dateTimeService = new();
+    private readonly IDateTimeService dateTimeService = Substitute.For<IDateTimeService>();
     private readonly NullLogger<UpdateUserLastLoginDateHandler> logger = new();
 
     public UpdateUserLastLoginDateHandlerTests()
     {
         this.dateTimeService
-            .Setup(service => service.GetNow())
+            .GetNow()
             .Returns(DATE);
     }
 
@@ -35,8 +31,8 @@ public sealed class UpdateUserLastLoginDateHandlerTests
 
         var userManager = new FakeUserManagerBuilder()
             .With(userManager => userManager
-                .Setup(service => service.FindByIdAsync(userId.ToString()))
-                .ReturnsAsync(new User()))
+                .FindByIdAsync(userId.ToString())
+                .Returns(new User()))
             .Build();
 
         var request = new UpdateUserLastLoginDate
@@ -44,7 +40,7 @@ public sealed class UpdateUserLastLoginDateHandlerTests
             UserId = Guid.NewGuid(),
         };
 
-        var handler = new UpdateUserLastLoginDateHandler(this.dateTimeService.Object, this.logger, userManager.Object);
+        var handler = new UpdateUserLastLoginDateHandler(this.dateTimeService, this.logger, userManager);
 
         //WHEN
         var action = async () => await handler.Handle(request, CancellationToken.None);
@@ -73,13 +69,12 @@ public sealed class UpdateUserLastLoginDateHandlerTests
 
         var userManager = new FakeUserManagerBuilder()
             .With(userManager => userManager
-                .Setup(service => service.FindByIdAsync(userId.ToString()))
-                .ReturnsAsync(user)
+                .FindByIdAsync(userId.ToString())
+                .Returns(user)
             )
             .With(
                 userManager => userManager
-                    .Setup(service => service.UpdateAsync(It.IsAny<User>()))
-                    .Callback<User>((userToUpdate) => updatedUser = userToUpdate)
+                    .UpdateAsync(Arg.Do<User>(userToUpdate => updatedUser = userToUpdate))
             )
             .Build();
 
@@ -88,13 +83,13 @@ public sealed class UpdateUserLastLoginDateHandlerTests
             UserId = userId,
         };
 
-        var handler = new UpdateUserLastLoginDateHandler(this.dateTimeService.Object, this.logger, userManager.Object);
+        var handler = new UpdateUserLastLoginDateHandler(this.dateTimeService, this.logger, userManager);
 
         //WHEN
         await handler.Handle(request, CancellationToken.None);
 
         //THEN
-        userManager.Verify(service => service.UpdateAsync(It.IsAny<User>()), Times.Once);
+        _ = userManager.Received(1).UpdateAsync(Arg.Any<User>());
 
         updatedUser.Should()
             .NotBeNull()

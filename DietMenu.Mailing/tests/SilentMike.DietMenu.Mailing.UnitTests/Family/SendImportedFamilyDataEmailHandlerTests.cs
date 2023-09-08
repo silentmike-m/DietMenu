@@ -1,12 +1,7 @@
 ﻿namespace SilentMike.DietMenu.Mailing.UnitTests.Family;
 
 using System.Xml.Serialization;
-using FluentAssertions;
 using HtmlAgilityPack;
-using MediatR;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using SilentMike.DietMenu.Mailing.Application.Emails.Commands;
 using SilentMike.DietMenu.Mailing.Application.Emails.Services;
 using SilentMike.DietMenu.Mailing.Application.Extensions;
@@ -24,9 +19,9 @@ public sealed class SendImportedFamilyDataEmailHandlerTests
     [TestMethod]
     public async Task Should_SendProper_Imported_Family_Libraries_Email()
     {
-        SendEmail? sendEmailCommand = null;
-
         //GIVEN
+        SendEmail? sendEmailRequest = null;
+
         const string errorCode = "error code";
         const string dataArea = "data name";
         const string errorMessageOne = "error message 'one'";
@@ -34,15 +29,14 @@ public sealed class SendImportedFamilyDataEmailHandlerTests
 
         var emailFactory = new EmailFactory(new XmlService());
         var logger = new NullLogger<SendImportedFamilyDataEmailHandler>();
-        var mediator = new Mock<IMediator>();
+        var mediator = Substitute.For<IMediator>();
+
+        await mediator
+            .Send(Arg.Do<SendEmail>(request => sendEmailRequest = request), Arg.Any<CancellationToken>());
 
         mediator
-            .Setup(service => service.Send(It.IsAny<SendEmail>(), It.IsAny<CancellationToken>()))
-            .Callback<IRequest, CancellationToken>((command, _) => sendEmailCommand = command as SendEmail);
-
-        mediator
-            .Setup(service => service.Send(It.IsAny<GetFamilyEmail>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(familyUserEmail);
+            .Send(Arg.Any<GetFamilyEmail>(), Arg.Any<CancellationToken>())
+            .Returns(familyUserEmail);
 
         var results = new List<ImportedFamilyDataResult>
         {
@@ -69,7 +63,7 @@ public sealed class SendImportedFamilyDataEmailHandlerTests
             Results = results,
         };
 
-        var handler = new SendImportedFamilyDataEmailHandler(emailFactory, logger, mediator.Object);
+        var handler = new SendImportedFamilyDataEmailHandler(emailFactory, logger, mediator);
 
         //WHEN
         await handler.Handle(request, CancellationToken.None);
@@ -79,32 +73,32 @@ public sealed class SendImportedFamilyDataEmailHandlerTests
             .BeFalse()
             ;
 
-        sendEmailCommand.Should()
+        sendEmailRequest.Should()
             .NotBeNull()
             ;
 
-        sendEmailCommand!.Email.Subject.Should()
+        sendEmailRequest!.Email.Subject.Should()
             .Be(EMAIL_SUBJECT)
             ;
 
-        sendEmailCommand.Email.Receiver.Should()
+        sendEmailRequest.Email.Receiver.Should()
             .Be(familyUserEmail)
             ;
 
-        sendEmailCommand.Email.TextMessage.Should()
+        sendEmailRequest.Email.TextMessage.Should()
             .Contain(errorCode)
             ;
 
-        sendEmailCommand.Email.TextMessage.Should()
+        sendEmailRequest.Email.TextMessage.Should()
             .Contain(errorMessageOne)
             ;
 
-        sendEmailCommand.Email.TextMessage.Should()
+        sendEmailRequest.Email.TextMessage.Should()
             .Contain(dataArea)
             ;
 
         var htmlDocument = new HtmlDocument();
-        htmlDocument.LoadHtml(sendEmailCommand.Email.HtmlMessage);
+        htmlDocument.LoadHtml(sendEmailRequest.Email.HtmlMessage);
 
         htmlDocument.ParseErrors.Should()
             .BeNullOrEmpty()

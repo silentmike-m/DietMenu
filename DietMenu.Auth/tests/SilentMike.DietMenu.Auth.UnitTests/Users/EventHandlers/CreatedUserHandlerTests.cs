@@ -1,11 +1,6 @@
 ﻿namespace SilentMike.DietMenu.Auth.UnitTests.Users.EventHandlers;
 
-using FluentAssertions;
-using MediatR;
-using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using SilentMike.DietMenu.Auth.Application.Users.Commands;
 using SilentMike.DietMenu.Auth.Application.Users.Events;
 using SilentMike.DietMenu.Auth.Infrastructure.Identity;
@@ -15,7 +10,7 @@ using SilentMike.DietMenu.Auth.Infrastructure.Users.EventHandlers;
 public sealed class CreatedUserHandlerTests
 {
     private readonly NullLogger<CreatedUserHandler> logger = new();
-    private readonly Mock<ISender> mediator = new();
+    private readonly ISender mediator = Substitute.For<ISender>();
 
     [TestMethod]
     public async Task Should_Not_Sent_Generate_Email_Confirmation_Token_When_Not_Require_Account_Confirmation()
@@ -33,12 +28,12 @@ public sealed class CreatedUserHandlerTests
             Id = Guid.NewGuid(),
         };
 
-        var handler = new CreatedUserHandler(identityOptions, this.logger, this.mediator.Object);
+        var handler = new CreatedUserHandler(identityOptions, this.logger, this.mediator);
 
         //THEN
         await handler.Handle(notification, CancellationToken.None);
 
-        this.mediator.Verify(service => service.Send(It.IsAny<GenerateEmailConfirmationToken>(), It.IsAny<CancellationToken>()), Times.Never);
+        _ = this.mediator.Received(0).Send(Arg.Any<GenerateEmailConfirmationToken>(), Arg.Any<CancellationToken>());
     }
 
     [TestMethod]
@@ -47,9 +42,8 @@ public sealed class CreatedUserHandlerTests
         //GIVEN
         GenerateEmailConfirmationToken? generateEmailConfirmationTokenRequest = null;
 
-        this.mediator
-            .Setup(service => service.Send(It.IsAny<GenerateEmailConfirmationToken>(), It.IsAny<CancellationToken>()))
-            .Callback<GenerateEmailConfirmationToken, CancellationToken>((request, _) => generateEmailConfirmationTokenRequest = request);
+        await this.mediator
+            .Send(Arg.Do<GenerateEmailConfirmationToken>(request => generateEmailConfirmationTokenRequest = request), Arg.Any<CancellationToken>());
 
         var options = new IdentityOptions
         {
@@ -63,12 +57,12 @@ public sealed class CreatedUserHandlerTests
             Id = Guid.NewGuid(),
         };
 
-        var handler = new CreatedUserHandler(identityOptions, this.logger, this.mediator.Object);
+        var handler = new CreatedUserHandler(identityOptions, this.logger, this.mediator);
 
         //THEN
         await handler.Handle(notification, CancellationToken.None);
 
-        this.mediator.Verify(service => service.Send(It.IsAny<GenerateEmailConfirmationToken>(), It.IsAny<CancellationToken>()), Times.Once);
+        _ = this.mediator.Received(1).Send(Arg.Any<GenerateEmailConfirmationToken>(), Arg.Any<CancellationToken>());
 
         var expectedRequest = new GenerateEmailConfirmationToken
         {

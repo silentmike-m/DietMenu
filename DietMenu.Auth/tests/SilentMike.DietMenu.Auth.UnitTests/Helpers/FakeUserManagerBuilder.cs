@@ -1,14 +1,12 @@
 ﻿namespace SilentMike.DietMenu.Auth.UnitTests.Helpers;
 
-using Moq;
-
 internal class FakeUserManagerBuilder
 {
-    private readonly Mock<FakeUserManager> mock = new();
+    private readonly FakeUserManager mock = Substitute.For<FakeUserManager>();
 
-    public Mock<FakeUserManager> Build() => this.mock;
+    public FakeUserManager Build() => this.mock;
 
-    public FakeUserManagerBuilder With(Action<Mock<FakeUserManager>> action)
+    public FakeUserManagerBuilder With(Action<FakeUserManager> action)
     {
         action(this.mock);
 

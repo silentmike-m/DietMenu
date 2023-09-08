@@ -1,5 +1,6 @@
 ﻿namespace SilentMike.DietMenu.Core.InfrastructureTests.EntityFramework.Services;
 
+using NSubstitute.ExceptionExtensions;
 using SilentMike.DietMenu.Core.Application.Common.Extensions;
 using SilentMike.DietMenu.Core.Application.Families.Events;
 using SilentMike.DietMenu.Core.Application.Families.Models;
@@ -18,7 +19,7 @@ using SilentMike.DietMenu.Core.InfrastructureTests.Helpers;
 public sealed class FamilyMigrationServiceTests
 {
     private readonly NullLogger<FamilyMigrationService> logger = new();
-    private readonly Mock<IMediator> mediator = new();
+    private readonly IMediator mediator = Substitute.For<IMediator>();
 
     [TestMethod]
     public async Task Should_Create_Family_And_Import_Ingredients()
@@ -46,13 +47,15 @@ public sealed class FamilyMigrationServiceTests
         }.GetHashString();
 
         this.mediator
-            .Setup(service => service.Send(It.IsAny<GetFamilyIngredientsPayload>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(payload);
+            .Send(Arg.Any<GetFamilyIngredientsPayload>(), Arg.Any<CancellationToken>())
+            .Returns(payload);
 
         this.mediator
-            .Setup(service => service.Send(It.IsAny<ParseIngredientsFromExcelFile>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((ParseIngredientsFromExcelFile request, CancellationToken _) =>
+            .Send(Arg.Any<ParseIngredientsFromExcelFile>(), Arg.Any<CancellationToken>())
+            .Returns(callInfo =>
             {
+                var request = (ParseIngredientsFromExcelFile)callInfo[0];
+
                 if (request.Payload != payload)
                 {
                     throw new ArgumentException();
@@ -77,21 +80,20 @@ public sealed class FamilyMigrationServiceTests
                 return new List<IngredientToImport>();
             });
 
-        this.mediator
-            .Setup(service => service.Publish(It.IsAny<ImportedFamilyData>(), It.IsAny<CancellationToken>()))
-            .Callback<ImportedFamilyData, CancellationToken>((notification, _) => importedFamilyData = notification);
+        await this.mediator
+            .Publish(Arg.Do<ImportedFamilyData>(request => importedFamilyData = request), Arg.Any<CancellationToken>());
 
         using var context = new FakeDietMenuDbContext();
 
-        var migrationService = new FamilyMigrationService(context.Context!, this.logger, this.mediator.Object);
+        var migrationService = new FamilyMigrationService(context.Context!, this.logger, this.mediator);
 
         //WHEN
         await migrationService.ImportAsync(familyId, CancellationToken.None);
 
         //THEN
-        this.mediator.Verify(service => service.Send(It.IsAny<GetFamilyIngredientsPayload>(), It.IsAny<CancellationToken>()), Times.Once);
+        _ = this.mediator.Received(1).Send(Arg.Any<GetFamilyIngredientsPayload>(), Arg.Any<CancellationToken>());
 
-        this.mediator.Verify(service => service.Publish(It.IsAny<ImportedFamilyData>(), It.IsAny<CancellationToken>()), Times.Once());
+        _ = this.mediator.Received(1).Publish(Arg.Any<ImportedFamilyData>(), Arg.Any<CancellationToken>());
 
         var expectedResults = IngredientTypeNames.IngredientTypes
             .Select(ingredientType => new ImportFamilyDataResult
@@ -193,24 +195,23 @@ public sealed class FamilyMigrationServiceTests
         var exception = new FamilyFileNotFoundException("file name");
 
         this.mediator
-            .Setup(service => service.Send(It.IsAny<GetFamilyIngredientsPayload>(), It.IsAny<CancellationToken>()))
+            .Send(Arg.Any<GetFamilyIngredientsPayload>(), Arg.Any<CancellationToken>())
             .ThrowsAsync(exception);
 
-        this.mediator
-            .Setup(service => service.Publish(It.IsAny<ImportedFamilyData>(), It.IsAny<CancellationToken>()))
-            .Callback<ImportedFamilyData, CancellationToken>((notification, _) => importedFamilyData = notification);
+        await this.mediator
+            .Publish(Arg.Do<ImportedFamilyData>(notification => importedFamilyData = notification), Arg.Any<CancellationToken>());
 
         using var context = new FakeDietMenuDbContext();
 
-        var migrationService = new FamilyMigrationService(context.Context!, this.logger, this.mediator.Object);
+        var migrationService = new FamilyMigrationService(context.Context!, this.logger, this.mediator);
 
         //WHEN
         await migrationService.ImportAsync(familyId, CancellationToken.None);
 
         //THEN
-        this.mediator.Verify(service => service.Send(It.IsAny<GetFamilyIngredientsPayload>(), It.IsAny<CancellationToken>()), Times.Once);
+        _ = this.mediator.Received(1).Send(Arg.Any<GetFamilyIngredientsPayload>(), Arg.Any<CancellationToken>());
 
-        this.mediator.Verify(service => service.Publish(It.IsAny<ImportedFamilyData>(), It.IsAny<CancellationToken>()), Times.Once());
+        _ = this.mediator.Received(1).Publish(Arg.Any<ImportedFamilyData>(), Arg.Any<CancellationToken>());
 
         var expectedNotification = new ImportedFamilyData
         {
@@ -243,13 +244,15 @@ public sealed class FamilyMigrationServiceTests
         var exception = new WorksheetNotFoundException(ingredientInvalidType);
 
         this.mediator
-            .Setup(service => service.Send(It.IsAny<GetFamilyIngredientsPayload>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(payload);
+            .Send(Arg.Any<GetFamilyIngredientsPayload>(), Arg.Any<CancellationToken>())
+            .Returns(payload);
 
         this.mediator
-            .Setup(service => service.Send(It.IsAny<ParseIngredientsFromExcelFile>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((ParseIngredientsFromExcelFile request, CancellationToken _) =>
+            .Send(Arg.Any<ParseIngredientsFromExcelFile>(), Arg.Any<CancellationToken>())
+            .Returns(callInfo =>
             {
+                var request = (ParseIngredientsFromExcelFile)callInfo[0];
+
                 if (request.Payload != payload)
                 {
                     throw new ArgumentException();
@@ -263,21 +266,20 @@ public sealed class FamilyMigrationServiceTests
                 return new List<IngredientToImport>();
             });
 
-        this.mediator
-            .Setup(service => service.Publish(It.IsAny<ImportedFamilyData>(), It.IsAny<CancellationToken>()))
-            .Callback<ImportedFamilyData, CancellationToken>((notification, _) => importedFamilyData = notification);
+        await this.mediator
+            .Publish(Arg.Do<ImportedFamilyData>(notification => importedFamilyData = notification), Arg.Any<CancellationToken>());
 
         using var context = new FakeDietMenuDbContext();
 
-        var migrationService = new FamilyMigrationService(context.Context!, this.logger, this.mediator.Object);
+        var migrationService = new FamilyMigrationService(context.Context!, this.logger, this.mediator);
 
         //WHEN
         await migrationService.ImportAsync(familyId, CancellationToken.None);
 
         //THEN
-        this.mediator.Verify(service => service.Send(It.IsAny<GetFamilyIngredientsPayload>(), It.IsAny<CancellationToken>()), Times.Once);
+        _ = this.mediator.Received(1).Send(Arg.Any<GetFamilyIngredientsPayload>(), Arg.Any<CancellationToken>());
 
-        this.mediator.Verify(service => service.Publish(It.IsAny<ImportedFamilyData>(), It.IsAny<CancellationToken>()), Times.Once());
+        _ = this.mediator.Received(1).Publish(Arg.Any<ImportedFamilyData>(), Arg.Any<CancellationToken>());
 
         var expectedResults = IngredientTypeNames.IngredientTypes
             .Select(ingredientType => new ImportFamilyDataResult
@@ -339,13 +341,15 @@ public sealed class FamilyMigrationServiceTests
         var fruitToImport = new IngredientToImport(Exchanger: 1.5, familyFruit.IngredientId, "fruit 2", "g");
 
         this.mediator
-            .Setup(service => service.Send(It.IsAny<GetFamilyIngredientsPayload>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(payload);
+            .Send(Arg.Any<GetFamilyIngredientsPayload>(), Arg.Any<CancellationToken>())
+            .Returns(payload);
 
         this.mediator
-            .Setup(service => service.Send(It.IsAny<ParseIngredientsFromExcelFile>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((ParseIngredientsFromExcelFile request, CancellationToken _) =>
+            .Send(Arg.Any<ParseIngredientsFromExcelFile>(), Arg.Any<CancellationToken>())
+            .Returns(callInfo =>
             {
+                var request = (ParseIngredientsFromExcelFile)callInfo[0];
+
                 if (request.Payload != payload)
                 {
                     throw new ArgumentException();
@@ -362,21 +366,20 @@ public sealed class FamilyMigrationServiceTests
                 return new List<IngredientToImport>();
             });
 
-        this.mediator
-            .Setup(service => service.Publish(It.IsAny<ImportedFamilyData>(), It.IsAny<CancellationToken>()))
-            .Callback<ImportedFamilyData, CancellationToken>((notification, _) => importedFamilyData = notification);
+        await this.mediator
+            .Publish(Arg.Do<ImportedFamilyData>(notification => importedFamilyData = notification), Arg.Any<CancellationToken>());
 
         using var context = new FakeDietMenuDbContext(family, familyFruit);
 
-        var migrationService = new FamilyMigrationService(context.Context!, this.logger, this.mediator.Object);
+        var migrationService = new FamilyMigrationService(context.Context!, this.logger, this.mediator);
 
         //WHEN
         await migrationService.ImportAsync(familyId, CancellationToken.None);
 
         //THEN
-        this.mediator.Verify(service => service.Send(It.IsAny<GetFamilyIngredientsPayload>(), It.IsAny<CancellationToken>()), Times.Once);
+        _ = this.mediator.Received(1).Send(Arg.Any<GetFamilyIngredientsPayload>(), Arg.Any<CancellationToken>());
 
-        this.mediator.Verify(service => service.Publish(It.IsAny<ImportedFamilyData>(), It.IsAny<CancellationToken>()), Times.Once());
+        _ = this.mediator.Received(1).Publish(Arg.Any<ImportedFamilyData>(), Arg.Any<CancellationToken>());
 
         var expectedException = new IngredientToImportInvalidTypeException(familyFruit.IngredientId, familyFruit.Type, IngredientTypeNames.Fruit);
 
@@ -436,13 +439,15 @@ public sealed class FamilyMigrationServiceTests
         var fruitToImport = new IngredientToImport(Exchanger: 1.5, familyFruit.IngredientId, "fruit 2", "g");
 
         this.mediator
-            .Setup(service => service.Send(It.IsAny<GetFamilyIngredientsPayload>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(payload);
+            .Send(Arg.Any<GetFamilyIngredientsPayload>(), Arg.Any<CancellationToken>())
+            .Returns(payload);
 
         this.mediator
-            .Setup(service => service.Send(It.IsAny<ParseIngredientsFromExcelFile>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((ParseIngredientsFromExcelFile request, CancellationToken _) =>
+            .Send(Arg.Any<ParseIngredientsFromExcelFile>(), Arg.Any<CancellationToken>())
+            .Returns(callInfo =>
             {
+                var request = (ParseIngredientsFromExcelFile)callInfo[0];
+
                 if (request.Payload != payload)
                 {
                     throw new ArgumentException();
@@ -459,21 +464,20 @@ public sealed class FamilyMigrationServiceTests
                 return new List<IngredientToImport>();
             });
 
-        this.mediator
-            .Setup(service => service.Publish(It.IsAny<ImportedFamilyData>(), It.IsAny<CancellationToken>()))
-            .Callback<ImportedFamilyData, CancellationToken>((notification, _) => importedFamilyData = notification);
+        await this.mediator
+            .Publish(Arg.Do<ImportedFamilyData>(notification => importedFamilyData = notification), Arg.Any<CancellationToken>());
 
         using var context = new FakeDietMenuDbContext(family, familyFruit);
 
-        var migrationService = new FamilyMigrationService(context.Context!, this.logger, this.mediator.Object);
+        var migrationService = new FamilyMigrationService(context.Context!, this.logger, this.mediator);
 
         //WHEN
         await migrationService.ImportAsync(familyId, CancellationToken.None);
 
         //THEN
-        this.mediator.Verify(service => service.Send(It.IsAny<GetFamilyIngredientsPayload>(), It.IsAny<CancellationToken>()), Times.Once);
+        _ = this.mediator.Received(1).Send(Arg.Any<GetFamilyIngredientsPayload>(), Arg.Any<CancellationToken>());
 
-        this.mediator.Verify(service => service.Publish(It.IsAny<ImportedFamilyData>(), It.IsAny<CancellationToken>()), Times.Once());
+        _ = this.mediator.Received(1).Publish(Arg.Any<ImportedFamilyData>(), Arg.Any<CancellationToken>());
 
         var expectedException = new IngredientToImportIsNotSystemException(familyFruit.IngredientId);
 
@@ -562,13 +566,15 @@ public sealed class FamilyMigrationServiceTests
         }.GetHashString();
 
         this.mediator
-            .Setup(service => service.Send(It.IsAny<GetFamilyIngredientsPayload>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(payload);
+            .Send(Arg.Any<GetFamilyIngredientsPayload>(), Arg.Any<CancellationToken>())
+            .Returns(payload);
 
         this.mediator
-            .Setup(service => service.Send(It.IsAny<ParseIngredientsFromExcelFile>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((ParseIngredientsFromExcelFile request, CancellationToken _) =>
+            .Send(Arg.Any<ParseIngredientsFromExcelFile>(), Arg.Any<CancellationToken>())
+            .Returns(callInfo =>
             {
+                var request = (ParseIngredientsFromExcelFile)callInfo[0];
+
                 if (request.Payload != payload)
                 {
                     throw new ArgumentException();
@@ -585,21 +591,20 @@ public sealed class FamilyMigrationServiceTests
                 return new List<IngredientToImport>();
             });
 
-        this.mediator
-            .Setup(service => service.Publish(It.IsAny<ImportedFamilyData>(), It.IsAny<CancellationToken>()))
-            .Callback<ImportedFamilyData, CancellationToken>((notification, _) => importedFamilyData = notification);
+        await this.mediator
+            .Publish(Arg.Do<ImportedFamilyData>(notification => importedFamilyData = notification), Arg.Any<CancellationToken>());
 
         using var context = new FakeDietMenuDbContext(family, familyFruit, familyHealthFat);
 
-        var migrationService = new FamilyMigrationService(context.Context!, this.logger, this.mediator.Object);
+        var migrationService = new FamilyMigrationService(context.Context!, this.logger, this.mediator);
 
         //WHEN
         await migrationService.ImportAsync(familyId, CancellationToken.None);
 
         //THEN
-        this.mediator.Verify(service => service.Send(It.IsAny<GetFamilyIngredientsPayload>(), It.IsAny<CancellationToken>()), Times.Once);
+        _ = this.mediator.Received(1).Send(Arg.Any<GetFamilyIngredientsPayload>(), Arg.Any<CancellationToken>());
 
-        this.mediator.Verify(service => service.Publish(It.IsAny<ImportedFamilyData>(), It.IsAny<CancellationToken>()), Times.Once());
+        _ = this.mediator.Received(1).Publish(Arg.Any<ImportedFamilyData>(), Arg.Any<CancellationToken>());
 
         var expectedResults = IngredientTypeNames.IngredientTypes
             .Select(ingredientType => new ImportFamilyDataResult

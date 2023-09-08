@@ -10,7 +10,7 @@ using SilentMike.DietMenu.Core.Domain.Services;
 [TestClass]
 public sealed class FamilyRequestBehaviorTests
 {
-    private readonly Mock<IFamilyRepository> familyRepository = new();
+    private readonly IFamilyRepository familyRepository = Substitute.For<IFamilyRepository>();
 
     [TestMethod]
     public async Task Should_Not_Throw_Exception_When_Family_Exists()
@@ -19,9 +19,8 @@ public sealed class FamilyRequestBehaviorTests
         var familyId = Guid.NewGuid();
 
         this.familyRepository
-            .Setup(service => service.ExistsAsync(familyId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(true)
-            ;
+            .ExistsAsync(familyId, Arg.Any<CancellationToken>())
+            .Returns(true);
 
         var request = new CreateIngredient
         {
@@ -31,7 +30,7 @@ public sealed class FamilyRequestBehaviorTests
             },
         };
 
-        var behavior = new FamilyRequestBehavior<CreateIngredient, Unit>(this.familyRepository.Object);
+        var behavior = new FamilyRequestBehavior<CreateIngredient, Unit>(this.familyRepository);
 
         //WHEN
         var action = async () => await behavior.Handle(request, () => Task.FromResult(Unit.Value), CancellationToken.None);
@@ -48,9 +47,8 @@ public sealed class FamilyRequestBehaviorTests
         var familyId = Guid.NewGuid();
 
         this.familyRepository
-            .Setup(service => service.ExistsAsync(familyId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(false)
-            ;
+            .ExistsAsync(familyId, Arg.Any<CancellationToken>())
+            .Returns(false);
 
         var request = new CreateIngredient
         {
@@ -60,7 +58,7 @@ public sealed class FamilyRequestBehaviorTests
             },
         };
 
-        var behavior = new FamilyRequestBehavior<CreateIngredient, Unit>(this.familyRepository.Object);
+        var behavior = new FamilyRequestBehavior<CreateIngredient, Unit>(this.familyRepository);
 
         //WHEN
         var action = async () => await behavior.Handle(request, () => Task.FromResult(Unit.Value), CancellationToken.None);

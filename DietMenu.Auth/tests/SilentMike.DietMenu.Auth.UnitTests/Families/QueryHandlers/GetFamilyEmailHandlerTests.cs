@@ -1,8 +1,5 @@
 ﻿namespace SilentMike.DietMenu.Auth.UnitTests.Families.QueryHandlers;
 
-using FluentAssertions;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SilentMike.DietMenu.Auth.Application.Common.Constants;
 using SilentMike.DietMenu.Auth.Application.Exceptions.Families;
 using SilentMike.DietMenu.Auth.Application.Families.Queries;

@@ -1,8 +1,6 @@
 ﻿namespace SilentMike.DietMenu.Auth.UnitTests.AutoMapper;
 
-using FluentAssertions;
 using global::AutoMapper;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SilentMike.DietMenu.Auth.Domain.Entities;
 using SilentMike.DietMenu.Auth.Infrastructure.AutoMapper.Profiles;
 using SilentMike.DietMenu.Auth.Infrastructure.Identity.Models;

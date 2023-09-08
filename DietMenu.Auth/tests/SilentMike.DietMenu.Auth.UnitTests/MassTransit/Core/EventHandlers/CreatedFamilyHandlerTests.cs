@@ -1,11 +1,8 @@
 ﻿namespace SilentMike.DietMenu.Auth.UnitTests.MassTransit.Core.EventHandlers;
 
-using FluentAssertions;
 using global::MassTransit;
 using global::MassTransit.Testing;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SilentMike.DietMenu.Auth.Application.Families.Events;
 using SilentMike.DietMenu.Auth.Infrastructure.MassTransit.Core.EventHandlers;
 using SilentMike.DietMenu.Auth.Infrastructure.MassTransit.Core.Models;

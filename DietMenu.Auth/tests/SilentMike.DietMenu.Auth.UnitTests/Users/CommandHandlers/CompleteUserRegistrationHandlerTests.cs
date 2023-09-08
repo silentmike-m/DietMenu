@@ -1,10 +1,6 @@
 ﻿namespace SilentMike.DietMenu.Auth.UnitTests.Users.CommandHandlers;
 
-using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using SilentMike.DietMenu.Auth.Application.Common.Constants;
 using SilentMike.DietMenu.Auth.Application.Exceptions.Users;
 using SilentMike.DietMenu.Auth.Application.Users.Commands;
@@ -33,20 +29,20 @@ public sealed class CompleteUserRegistrationHandlerTests
 
         var userManager = new FakeUserManagerBuilder()
             .With(manager => manager
-                .Setup(service => service.FindByIdAsync(user.Id))
-                .ReturnsAsync(user)
+                .FindByIdAsync(user.Id)
+                .Returns(user)
             )
             .With(manager => manager
-                .Setup(service => service.ConfirmEmailAsync(It.IsAny<User>(), CONFIRM_EMAIL_TOKEN))
-                .ReturnsAsync(IdentityResult.Success)
+                .ConfirmEmailAsync(Arg.Any<User>(), CONFIRM_EMAIL_TOKEN)
+                .Returns(IdentityResult.Success)
             )
             .With(manager => manager
-                .Setup(service => service.GeneratePasswordResetTokenAsync(It.IsAny<User>()))
-                .ReturnsAsync(RESET_PASSWORD_TOKEN)
+                .GeneratePasswordResetTokenAsync(Arg.Any<User>())
+                .Returns(RESET_PASSWORD_TOKEN)
             )
             .With(manager => manager
-                .Setup(service => service.ResetPasswordAsync(It.IsAny<User>(), RESET_PASSWORD_TOKEN, NEW_PASSWORD))
-                .ReturnsAsync(IdentityResult.Success)
+                .ResetPasswordAsync(Arg.Any<User>(), RESET_PASSWORD_TOKEN, NEW_PASSWORD)
+                .Returns(IdentityResult.Success)
             )
             .Build();
 
@@ -57,7 +53,7 @@ public sealed class CompleteUserRegistrationHandlerTests
             Token = CONFIRM_EMAIL_TOKEN,
         };
 
-        var handler = new CompleteUserRegistrationHandler(this.logger, userManager.Object);
+        var handler = new CompleteUserRegistrationHandler(this.logger, userManager);
 
         //WHEN
         var action = async () => await handler.Handle(request, CancellationToken.None);
@@ -87,12 +83,12 @@ public sealed class CompleteUserRegistrationHandlerTests
 
         var userManager = new FakeUserManagerBuilder()
             .With(manager => manager
-                .Setup(service => service.FindByIdAsync(user.Id))
-                .ReturnsAsync(user)
+                .FindByIdAsync(user.Id)
+                .Returns(user)
             )
             .With(manager => manager
-                .Setup(service => service.ConfirmEmailAsync(It.IsAny<User>(), CONFIRM_EMAIL_TOKEN))
-                .ReturnsAsync(identityResult)
+                .ConfirmEmailAsync(Arg.Any<User>(), CONFIRM_EMAIL_TOKEN)
+                .Returns(identityResult)
             )
             .Build();
 
@@ -102,7 +98,7 @@ public sealed class CompleteUserRegistrationHandlerTests
             Token = CONFIRM_EMAIL_TOKEN,
         };
 
-        var handler = new CompleteUserRegistrationHandler(this.logger, userManager.Object);
+        var handler = new CompleteUserRegistrationHandler(this.logger, userManager);
 
         //WHEN
         var action = async () => await handler.Handle(request, CancellationToken.None);
@@ -134,20 +130,20 @@ public sealed class CompleteUserRegistrationHandlerTests
 
         var userManager = new FakeUserManagerBuilder()
             .With(manager => manager
-                .Setup(service => service.FindByIdAsync(user.Id))
-                .ReturnsAsync(user)
+                .FindByIdAsync(user.Id)
+                .Returns(user)
             )
             .With(manager => manager
-                .Setup(service => service.ConfirmEmailAsync(It.IsAny<User>(), CONFIRM_EMAIL_TOKEN))
-                .ReturnsAsync(IdentityResult.Success)
+                .ConfirmEmailAsync(Arg.Any<User>(), CONFIRM_EMAIL_TOKEN)
+                .Returns(IdentityResult.Success)
             )
             .With(manager => manager
-                .Setup(service => service.GeneratePasswordResetTokenAsync(It.IsAny<User>()))
-                .ReturnsAsync(RESET_PASSWORD_TOKEN)
+                .GeneratePasswordResetTokenAsync(Arg.Any<User>())
+                .Returns(RESET_PASSWORD_TOKEN)
             )
             .With(manager => manager
-                .Setup(service => service.ResetPasswordAsync(It.IsAny<User>(), RESET_PASSWORD_TOKEN, NEW_PASSWORD))
-                .ReturnsAsync(identityResult)
+                .ResetPasswordAsync(Arg.Any<User>(), RESET_PASSWORD_TOKEN, NEW_PASSWORD)
+                .Returns(identityResult)
             )
             .Build();
 
@@ -158,7 +154,7 @@ public sealed class CompleteUserRegistrationHandlerTests
             Token = CONFIRM_EMAIL_TOKEN,
         };
 
-        var handler = new CompleteUserRegistrationHandler(this.logger, userManager.Object);
+        var handler = new CompleteUserRegistrationHandler(this.logger, userManager);
 
         //WHEN
         var action = async () => await handler.Handle(request, CancellationToken.None);
@@ -182,8 +178,8 @@ public sealed class CompleteUserRegistrationHandlerTests
 
         var userManager = new FakeUserManagerBuilder()
             .With(manager => manager
-                .Setup(service => service.FindByIdAsync(user.Id))
-                .ReturnsAsync(user)
+                .FindByIdAsync(user.Id)
+                .Returns(user)
             )
             .Build();
 
@@ -192,7 +188,7 @@ public sealed class CompleteUserRegistrationHandlerTests
             Id = Guid.NewGuid(),
         };
 
-        var handler = new CompleteUserRegistrationHandler(this.logger, userManager.Object);
+        var handler = new CompleteUserRegistrationHandler(this.logger, userManager);
 
         //WHEN
         var action = async () => await handler.Handle(request, CancellationToken.None);

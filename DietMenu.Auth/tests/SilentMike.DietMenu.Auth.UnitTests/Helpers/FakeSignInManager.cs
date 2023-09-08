@@ -3,9 +3,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
-using Moq;
 using SilentMike.DietMenu.Auth.Infrastructure.Identity.Models;
 
 internal class FakeSignInManager : SignInManager<User>
@@ -13,12 +11,12 @@ internal class FakeSignInManager : SignInManager<User>
     public FakeSignInManager(FakeUserManager userManager)
         : base(
             userManager,
-            new Mock<IHttpContextAccessor>().Object,
-            new Mock<IUserClaimsPrincipalFactory<User>>().Object,
-            new Mock<IOptions<IdentityOptions>>().Object,
+            Substitute.For<IHttpContextAccessor>(),
+            Substitute.For<IUserClaimsPrincipalFactory<User>>(),
+            Substitute.For<IOptions<IdentityOptions>>(),
             new NullLogger<SignInManager<User>>(),
-            new Mock<IAuthenticationSchemeProvider>().Object,
-            new Mock<IUserConfirmation<User>>().Object)
+            Substitute.For<IAuthenticationSchemeProvider>(),
+            Substitute.For<IUserConfirmation<User>>())
     {
     }
 }

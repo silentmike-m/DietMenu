@@ -1,11 +1,9 @@
 ﻿namespace SilentMike.DietMenu.Auth.UnitTests.MassTransit;
 
 using System.Reflection;
-using FluentAssertions;
 using global::MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SilentMike.DietMenu.Auth.Infrastructure.MassTransit;
 
 [TestClass]

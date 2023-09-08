@@ -1,12 +1,7 @@
 ﻿namespace SilentMike.DietMenu.Mailing.UnitTests.Identity;
 
 using System.Xml.Serialization;
-using FluentAssertions;
 using HtmlAgilityPack;
-using MediatR;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using SilentMike.DietMenu.Mailing.Application.Emails.Commands;
 using SilentMike.DietMenu.Mailing.Application.Emails.Services;
 using SilentMike.DietMenu.Mailing.Application.Extensions;
@@ -20,16 +15,15 @@ public sealed class SendResetPasswordEmailHandlerTests
     [TestMethod]
     public async Task Should_Send_Proper_Email()
     {
-        SendEmail? sendEmailCommand = null;
-
         //GIVEN
+        SendEmail? sendEmailRequest = null;
+
         var emailFactory = new EmailFactory(new XmlService());
         var logger = new NullLogger<SendResetPasswordEmailHandler>();
-        var mediator = new Mock<IMediator>();
+        var mediator = Substitute.For<IMediator>();
 
-        mediator
-            .Setup(service => service.Send(It.IsAny<SendEmail>(), It.IsAny<CancellationToken>()))
-            .Callback<IRequest, CancellationToken>((command, _) => sendEmailCommand = command as SendEmail);
+        await mediator
+            .Send(Arg.Do<SendEmail>(request => sendEmailRequest = request), Arg.Any<CancellationToken>());
 
         var request = new SendResetPasswordEmail
         {
@@ -37,22 +31,22 @@ public sealed class SendResetPasswordEmailHandlerTests
             Url = "url",
         };
 
-        var handler = new SendResetPasswordEmailHandler(emailFactory, logger, mediator.Object);
+        var handler = new SendResetPasswordEmailHandler(emailFactory, logger, mediator);
 
         //WHEN
         await handler.Handle(request, CancellationToken.None);
 
         //THEN
-        sendEmailCommand.Should()
+        sendEmailRequest.Should()
             .NotBeNull()
             ;
 
-        sendEmailCommand!.Email.Receiver.Should()
+        sendEmailRequest!.Email.Receiver.Should()
             .Be(request.Email)
             ;
 
         var htmlDocument = new HtmlDocument();
-        htmlDocument.LoadHtml(sendEmailCommand.Email.HtmlMessage);
+        htmlDocument.LoadHtml(sendEmailRequest.Email.HtmlMessage);
 
         htmlDocument.ParseErrors.Should()
             .BeNullOrEmpty()

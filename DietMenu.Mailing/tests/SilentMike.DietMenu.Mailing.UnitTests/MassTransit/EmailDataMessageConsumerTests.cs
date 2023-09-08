@@ -1,11 +1,6 @@
 ﻿namespace SilentMike.DietMenu.Mailing.UnitTests.MassTransit;
 
-using FluentAssertions;
 using global::MassTransit;
-using MediatR;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using SilentMike.DietMenu.Mailing.Application.Family.Commands;
 using SilentMike.DietMenu.Mailing.Application.Family.Models;
 using SilentMike.DietMenu.Mailing.Application.Identity.Commands;
@@ -17,19 +12,18 @@ using SilentMike.DietMenu.Shared.Email.Models;
 [TestClass]
 public sealed class EmailDataMessageConsumerTests
 {
-    private readonly Mock<ConsumeContext<IEmailDataMessage>> context = new();
+    private readonly ConsumeContext<IEmailDataMessage> context = Substitute.For<ConsumeContext<IEmailDataMessage>>();
     private readonly NullLogger<EmailDataMessageConsumer> logger = new();
-    private readonly Mock<ISender> mediator = new();
+    private readonly ISender mediator = Substitute.For<ISender>();
 
     [TestMethod]
     public async Task Should_Send_Reset_Password_Email_Request()
     {
+        //GIVEN
         SendResetPasswordEmail? sendResetPasswordEmailRequest = null;
 
-        //GIVEN
-        this.mediator
-            .Setup(service => service.Send(It.IsAny<SendResetPasswordEmail>(), It.IsAny<CancellationToken>()))
-            .Callback<IRequest, CancellationToken>((request, _) => sendResetPasswordEmailRequest = request as SendResetPasswordEmail);
+        await this.mediator
+            .Send(Arg.Do<SendResetPasswordEmail>(request => sendResetPasswordEmailRequest = request), Arg.Any<CancellationToken>());
 
         var payload = new ResetUserPasswordEmailPayload
         {
@@ -39,21 +33,21 @@ public sealed class EmailDataMessageConsumerTests
 
         var payloadJson = payload.ToJson();
 
-        var message = Mock.Of<IEmailDataMessage>(dataMessage =>
-            dataMessage.Payload == payloadJson
-            && dataMessage.PayloadType == typeof(ResetUserPasswordEmailPayload).FullName);
+        var message = Substitute.For<IEmailDataMessage>();
+        message.Payload.Returns(payloadJson);
+        message.PayloadType.Returns(typeof(ResetUserPasswordEmailPayload).FullName);
 
         this.context
-            .Setup(consumeContext => consumeContext.Message)
+            .Message
             .Returns(message);
 
-        var consumer = new EmailDataMessageConsumer(this.logger, this.mediator.Object);
+        var consumer = new EmailDataMessageConsumer(this.logger, this.mediator);
 
         //WHEN
-        await consumer.Consume(this.context.Object);
+        await consumer.Consume(this.context);
 
         //THEN
-        this.mediator.Verify(service => service.Send(It.IsAny<SendResetPasswordEmail>(), It.IsAny<CancellationToken>()), Times.Once);
+        _ = this.mediator.Received(1).Send(Arg.Any<SendResetPasswordEmail>(), Arg.Any<CancellationToken>());
 
         var expectedRequest = new SendResetPasswordEmail
         {
@@ -71,12 +65,11 @@ public sealed class EmailDataMessageConsumerTests
     [TestMethod]
     public async Task Should_Send_Verify_User_Email_Request()
     {
+        //GIVEN
         SendVerifyUserEmail? sendVerifyUserEmail = null;
 
-        //GIVEN
-        this.mediator
-            .Setup(service => service.Send(It.IsAny<SendVerifyUserEmail>(), It.IsAny<CancellationToken>()))
-            .Callback<IRequest, CancellationToken>((request, _) => sendVerifyUserEmail = request as SendVerifyUserEmail);
+        await this.mediator
+            .Send(Arg.Do<SendVerifyUserEmail>(request => sendVerifyUserEmail = request), Arg.Any<CancellationToken>());
 
         var payload = new ConfirmUserEmailPayload
         {
@@ -86,23 +79,23 @@ public sealed class EmailDataMessageConsumerTests
 
         var payloadJson = payload.ToJson();
 
-        var message = Mock.Of<IEmailDataMessage>(dataMessage =>
-            dataMessage.Payload == payloadJson
-            && dataMessage.PayloadType == typeof(ConfirmUserEmailPayload).FullName);
+        var message = Substitute.For<IEmailDataMessage>();
+        message.Payload.Returns(payloadJson);
+        message.PayloadType.Returns(typeof(ConfirmUserEmailPayload).FullName);
 
         this.context
-            .Setup(consumeContext => consumeContext.Message)
+            .Message
             .Returns(message);
 
-        var consumer = new EmailDataMessageConsumer(this.logger, this.mediator.Object);
+        var consumer = new EmailDataMessageConsumer(this.logger, this.mediator);
 
         //WHEN
-        await consumer.Consume(this.context.Object);
+        await consumer.Consume(this.context);
 
         //THEN
-        this.mediator.Verify(service => service.Send(It.IsAny<SendVerifyUserEmail>(), It.IsAny<CancellationToken>()), Times.Once);
+        _ = this.mediator.Received(1).Send(Arg.Any<SendVerifyUserEmail>(), Arg.Any<CancellationToken>());
 
-        var expectedRequest = new SendResetPasswordEmail
+        var expectedRequest = new SendVerifyUserEmail
         {
             Email = payload.Email,
             Url = payload.Url,
@@ -121,9 +114,8 @@ public sealed class EmailDataMessageConsumerTests
         //GIVEN
         SendImportedFamilyDataEmail? sendImportedFamilyDataEmail = null;
 
-        this.mediator
-            .Setup(service => service.Send(It.IsAny<SendImportedFamilyDataEmail>(), It.IsAny<CancellationToken>()))
-            .Callback<IRequest, CancellationToken>((request, _) => sendImportedFamilyDataEmail = request as SendImportedFamilyDataEmail);
+        await this.mediator
+            .Send(Arg.Do<SendImportedFamilyDataEmail>(request => sendImportedFamilyDataEmail = request), Arg.Any<CancellationToken>());
 
         var payloadResultError = new ImportFamilyDataError("error code", "error message");
 
@@ -149,21 +141,21 @@ public sealed class EmailDataMessageConsumerTests
 
         var payloadJson = payload.ToJson();
 
-        var message = Mock.Of<IEmailDataMessage>(dataMessage =>
-            dataMessage.Payload == payloadJson
-            && dataMessage.PayloadType == typeof(ImportedFamilyDataPayload).FullName);
+        var message = Substitute.For<IEmailDataMessage>();
+        message.Payload.Returns(payloadJson);
+        message.PayloadType.Returns(typeof(ImportedFamilyDataPayload).FullName);
 
         this.context
-            .Setup(consumeContext => consumeContext.Message)
+            .Message
             .Returns(message);
 
-        var consumer = new EmailDataMessageConsumer(this.logger, this.mediator.Object);
+        var consumer = new EmailDataMessageConsumer(this.logger, this.mediator);
 
         //WHEN
-        await consumer.Consume(this.context.Object);
+        await consumer.Consume(this.context);
 
         //THEN
-        this.mediator.Verify(service => service.Send(It.IsAny<SendImportedFamilyDataEmail>(), It.IsAny<CancellationToken>()), Times.Once);
+        _ = this.mediator.Received(1).Send(Arg.Any<SendImportedFamilyDataEmail>(), Arg.Any<CancellationToken>());
 
         var expectedRequest = new SendImportedFamilyDataEmail
         {
@@ -199,16 +191,17 @@ public sealed class EmailDataMessageConsumerTests
     public async Task Should_Throw_Format_Exception_When_Invalid_Payload_Type()
     {
         //GIVEN
-        var message = Mock.Of<IEmailDataMessage>(dataMessage => dataMessage.PayloadType == typeof(string).FullName);
+        var message = Substitute.For<IEmailDataMessage>();
+        message.PayloadType.Returns(typeof(string).FullName);
 
         this.context
-            .Setup(consumeContext => consumeContext.Message)
+            .Message
             .Returns(message);
 
-        var consumer = new EmailDataMessageConsumer(this.logger, this.mediator.Object);
+        var consumer = new EmailDataMessageConsumer(this.logger, this.mediator);
 
         //WHEN
-        var action = async () => await consumer.Consume(this.context.Object);
+        var action = async () => await consumer.Consume(this.context);
 
         //THEN
         await action.Should()

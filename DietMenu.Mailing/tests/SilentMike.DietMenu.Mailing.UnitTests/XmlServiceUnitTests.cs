@@ -1,7 +1,5 @@
 ﻿namespace SilentMike.DietMenu.Mailing.UnitTests;
 
-using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SilentMike.DietMenu.Mailing.Application.Exceptions;
 using SilentMike.DietMenu.Mailing.Application.Services;
 

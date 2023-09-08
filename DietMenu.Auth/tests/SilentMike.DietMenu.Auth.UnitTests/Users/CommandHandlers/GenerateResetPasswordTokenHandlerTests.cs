@@ -1,10 +1,5 @@
 ﻿namespace SilentMike.DietMenu.Auth.UnitTests.Users.CommandHandlers;
 
-using FluentAssertions;
-using MediatR;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using SilentMike.DietMenu.Auth.Application.Common.Constants;
 using SilentMike.DietMenu.Auth.Application.Exceptions.Users;
 using SilentMike.DietMenu.Auth.Application.Users.Commands;
@@ -21,7 +16,7 @@ public sealed class GenerateResetPasswordTokenHandlerTests
     private const string USER_ID = "aa4dbe6f-9548-4e51-80d8-ebd933aa7c6c";
 
     private readonly NullLogger<GenerateResetPasswordTokenHandler> logger = new();
-    private readonly Mock<IPublisher> mediator = new();
+    private readonly IPublisher mediator = Substitute.For<IPublisher>();
 
     [TestMethod]
     public async Task Should_Generate_Reset_Password_Token()
@@ -29,9 +24,8 @@ public sealed class GenerateResetPasswordTokenHandlerTests
         //GIVEN
         GeneratedResetPasswordToken? generatedResetPasswordTokenNotification = null;
 
-        this.mediator
-            .Setup(service => service.Publish(It.IsAny<GeneratedResetPasswordToken>(), It.IsAny<CancellationToken>()))
-            .Callback<GeneratedResetPasswordToken, CancellationToken>((notification, _) => generatedResetPasswordTokenNotification = notification);
+        await this.mediator
+            .Publish(Arg.Do<GeneratedResetPasswordToken>(notification => generatedResetPasswordTokenNotification = notification), Arg.Any<CancellationToken>());
 
         var user = new User
         {
@@ -41,12 +35,12 @@ public sealed class GenerateResetPasswordTokenHandlerTests
 
         var userManager = new FakeUserManagerBuilder()
             .With(manager => manager
-                .Setup(service => service.FindByEmailAsync(USER_EMAIL))
-                .ReturnsAsync(user)
+                .FindByEmailAsync(USER_EMAIL)
+                .Returns(user)
             )
             .With(manager => manager
-                .Setup(service => service.GeneratePasswordResetTokenAsync(It.IsAny<User>()))
-                .ReturnsAsync(RESET_PASSWORD_TOKEN)
+                .GeneratePasswordResetTokenAsync(Arg.Any<User>())
+                .Returns(RESET_PASSWORD_TOKEN)
             )
             .Build();
 
@@ -55,7 +49,7 @@ public sealed class GenerateResetPasswordTokenHandlerTests
             Email = USER_EMAIL,
         };
 
-        var handler = new GenerateResetPasswordTokenHandler(this.logger, this.mediator.Object, userManager.Object);
+        var handler = new GenerateResetPasswordTokenHandler(this.logger, this.mediator, userManager);
 
         //WHEN
         var action = async () => await handler.Handle(request, CancellationToken.None);
@@ -65,7 +59,7 @@ public sealed class GenerateResetPasswordTokenHandlerTests
                 .NotThrowAsync()
             ;
 
-        this.mediator.Verify(service => service.Publish(It.IsAny<GeneratedResetPasswordToken>(), It.IsAny<CancellationToken>()), Times.Once);
+        _ = this.mediator.Received(1).Publish(Arg.Any<GeneratedResetPasswordToken>(), Arg.Any<CancellationToken>());
 
         var expectedNotification = new GeneratedResetPasswordToken
         {
@@ -93,8 +87,8 @@ public sealed class GenerateResetPasswordTokenHandlerTests
 
         var userManager = new FakeUserManagerBuilder()
             .With(manager => manager
-                .Setup(service => service.FindByEmailAsync(USER_EMAIL))
-                .ReturnsAsync(user)
+                .FindByEmailAsync(USER_EMAIL)
+                .Returns(user)
             )
             .Build();
 
@@ -103,7 +97,7 @@ public sealed class GenerateResetPasswordTokenHandlerTests
             Email = "fake@domain.com",
         };
 
-        var handler = new GenerateResetPasswordTokenHandler(this.logger, this.mediator.Object, userManager.Object);
+        var handler = new GenerateResetPasswordTokenHandler(this.logger, this.mediator, userManager);
 
         //WHEN
         var action = async () => await handler.Handle(request, CancellationToken.None);
@@ -114,6 +108,6 @@ public sealed class GenerateResetPasswordTokenHandlerTests
                 .Where(i => i.Code == ErrorCodes.USER_NOT_FOUND)
             ;
 
-        this.mediator.Verify(service => service.Publish(It.IsAny<GeneratedResetPasswordToken>(), It.IsAny<CancellationToken>()), Times.Never);
+        _ = this.mediator.Received(0).Publish(Arg.Any<GeneratedResetPasswordToken>(), Arg.Any<CancellationToken>());
     }
 }
