@@ -75,14 +75,14 @@ public sealed class SendVerifyUserEmailHandlerTests
         //GIVEN
         const string plainTextResourceName = "SilentMike.DietMenu.Mailing.Application.Resources.Identity.VerifyUserPlainTextEmail.xslt";
 
-        var command = new SendVerifyUserEmail
+        var request = new SendVerifyUserEmail
         {
             Email = "test_email",
             Url = "url",
         };
 
         var serializer = new XmlSerializer(typeof(SendVerifyUserEmail));
-        var commandXml = serializer.Serialize(command);
+        var commandXml = serializer.Serialize(request);
         var xmlService = new XmlService();
         var htmlXsltString = await xmlService.GetXsltStringAsync(plainTextResourceName);
 

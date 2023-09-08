@@ -9,9 +9,10 @@ public sealed class FamilyFileNotFoundException : InfrastructureException
 {
     public override string Code => ErrorCodes.FAMILY_FILE_NOT_FOUND;
 
-    public FamilyFileNotFoundException(Guid familyId, string fileName)
+    public FamilyFileNotFoundException(string fileName)
         : base($"Family file with name '{fileName}' has not been found")
-        => this.Id = familyId;
+    {
+    }
 
     private FamilyFileNotFoundException(SerializationInfo info, StreamingContext context)
         : base(info, context)

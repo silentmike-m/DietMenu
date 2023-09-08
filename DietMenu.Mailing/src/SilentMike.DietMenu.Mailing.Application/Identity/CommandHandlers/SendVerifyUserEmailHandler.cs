@@ -36,10 +36,7 @@ internal sealed class SendVerifyUserEmailHandler : IRequestHandler<SendVerifyUse
 
         var email = await this.emailFactory.CreateEmailAsync(request.Email, requestXml, EMAIL_SUBJECT, XSLT_HTML_RESOURCE_NAME, XSLT_PLAIN_TEXT_RESOURCE_NAME, cancellationToken);
 
-        var command = new SendEmail
-        {
-            Email = email,
-        };
+        var command = new SendEmail(email);
 
         await this.mediator.Send(command, cancellationToken);
     }

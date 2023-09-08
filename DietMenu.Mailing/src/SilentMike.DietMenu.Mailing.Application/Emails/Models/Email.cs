@@ -2,9 +2,18 @@
 
 public sealed record Email
 {
-    public string HtmlMessage { get; init; } = string.Empty;
-    public IReadOnlyList<EmailLinkedResource> LinkedResources { get; init; } = new List<EmailLinkedResource>().AsReadOnly();
-    public string Receiver { get; init; } = string.Empty;
-    public string Subject { get; init; } = string.Empty;
-    public string TextMessage { get; init; } = string.Empty;
+    public string HtmlMessage { get; init; }
+    public IReadOnlyList<EmailLinkedResource> LinkedResources { get; init; }
+    public string Receiver { get; init; }
+    public string Subject { get; init; }
+    public string TextMessage { get; init; }
+
+    public Email(string htmlMessage, IReadOnlyList<EmailLinkedResource> linkedResources, string receiver, string subject, string textMessage)
+    {
+        this.HtmlMessage = htmlMessage;
+        this.LinkedResources = linkedResources;
+        this.Receiver = receiver;
+        this.Subject = subject;
+        this.TextMessage = textMessage;
+    }
 }

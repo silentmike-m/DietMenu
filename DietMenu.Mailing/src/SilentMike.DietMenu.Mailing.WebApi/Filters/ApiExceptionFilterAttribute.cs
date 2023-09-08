@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using SilentMike.DietMenu.Mailing.Application.Common;
 using SilentMike.DietMenu.Mailing.Application.Exceptions;
-using SilentMike.DietMenu.Mailing.Application.ViewModels;
+using SilentMike.DietMenu.Mailing.WebApi.Models.ViewModels;
 
 [ExcludeFromCodeCoverage]
 internal sealed class ApiExceptionFilterAttribute : ExceptionFilterAttribute

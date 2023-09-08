@@ -22,10 +22,7 @@ internal sealed class CreatedFamilyMessageConsumer : IConsumer<ICreatedFamilyMes
 
         this.logger.LogInformation("Received created family message");
 
-        var request = new ImportFamilyData
-        {
-            FamilyId = context.Message.Id,
-        };
+        var request = new ImportFamilyData(context.Message.Id);
 
         await this.mediator.Send(request, context.CancellationToken);
     }

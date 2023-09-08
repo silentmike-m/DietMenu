@@ -10,30 +10,31 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Using Include="MediatR"/>
-        <Using Include="Microsoft.Extensions.Logging"/>
-        <Using Include="SilentMike.DietMenu.Mailing.Application.Common.Constants"/>
+        <Using Include="MediatR" />
+        <Using Include="Microsoft.Extensions.Logging" />
+        <Using Include="SilentMike.DietMenu.Mailing.Application.Common.Constants" />
     </ItemGroup>
 
     <ItemGroup>
-        <EmbeddedResource Include="Resources\**"/>
+        <EmbeddedResource Include="Resources\**" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Remove="Resources\Core\ImportedCoreDataTextEmail.xslt"/>
-        <None Remove="Resources\Family\ImportedFamilyDataHtmlEmail.xslt"/>
-        <None Remove="Resources\Family\ImportedFamilyDataTextEmail.xslt"/>
+        <None Remove="Resources\Core\ImportedCoreDataTextEmail.xslt" />
+        <None Remove="Resources\Family\ImportedFamilyDataHtmlEmail.xslt" />
+        <None Remove="Resources\Family\ImportedFamilyDataTextEmail.xslt" />
     </ItemGroup>
 
     <ItemGroup>
-        <InternalsVisibleTo Include="SilentMike.DietMenu.Mailing.UnitTests"/>
-        <InternalsVisibleTo Include="SilentMike.DietMenu.Mailing.IntegrationTests"/>
+        <InternalsVisibleTo Include="SilentMike.DietMenu.Mailing.UnitTests" />
+        <InternalsVisibleTo Include="SilentMike.DietMenu.Mailing.IntegrationTests" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0"/>
-        <PackageReference Include="HtmlAgilityPack" Version="1.11.49"/>
-        <PackageReference Include="MediatR" Version="12.1.1"/>
+        <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
+        <PackageReference Include="HtmlAgilityPack" Version="1.11.52" />
+        <PackageReference Include="MediatR" Version="12.1.1" />
     </ItemGroup>
+
 
 </Project>

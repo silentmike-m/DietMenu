@@ -29,21 +29,9 @@ public sealed class FamilyMigrationServiceTests
         var familyId = Guid.NewGuid();
         var payload = new byte[128];
 
-        var fruitToImport = new IngredientToImport
-        {
-            Exchanger = 1.2,
-            Id = Guid.NewGuid(),
-            Name = "fruit",
-            UnitSymbol = "kg",
-        };
+        var fruitToImport = new IngredientToImport(Exchanger: 1.2, Guid.NewGuid(), "fruit", "kg");
 
-        var healthFatToImport = new IngredientToImport
-        {
-            Exchanger = 2.7,
-            Id = Guid.NewGuid(),
-            Name = "health fat",
-            UnitSymbol = "g",
-        };
+        var healthFatToImport = new IngredientToImport(Exchanger: 2.7, Guid.NewGuid(), "health fat", "g");
 
         var emptyIngredientsHashString = new List<IngredientToImport>().GetHashString();
 
@@ -202,7 +190,7 @@ public sealed class FamilyMigrationServiceTests
 
         var familyId = Guid.NewGuid();
 
-        var exception = new FamilyFileNotFoundException(familyId, "file name");
+        var exception = new FamilyFileNotFoundException("file name");
 
         this.mediator
             .Setup(service => service.Send(It.IsAny<GetFamilyIngredientsPayload>(), It.IsAny<CancellationToken>()))
@@ -299,11 +287,7 @@ public sealed class FamilyMigrationServiceTests
                     ? new List<ImportFamilyDataError>()
                     : new List<ImportFamilyDataError>
                     {
-                        new()
-                        {
-                            Code = exception.Code,
-                            Message = exception.Message,
-                        },
+                        new(exception.Code, exception.Message),
                     },
             }).ToList();
 
@@ -352,13 +336,7 @@ public sealed class FamilyMigrationServiceTests
             FamilyId = familyId,
         };
 
-        var fruitToImport = new IngredientToImport
-        {
-            Exchanger = 1.5,
-            Id = familyFruit.IngredientId,
-            Name = "fruit 2",
-            UnitSymbol = "g",
-        };
+        var fruitToImport = new IngredientToImport(Exchanger: 1.5, familyFruit.IngredientId, "fruit 2", "g");
 
         this.mediator
             .Setup(service => service.Send(It.IsAny<GetFamilyIngredientsPayload>(), It.IsAny<CancellationToken>()))
@@ -410,11 +388,7 @@ public sealed class FamilyMigrationServiceTests
                     ? new List<ImportFamilyDataError>()
                     : new List<ImportFamilyDataError>
                     {
-                        new()
-                        {
-                            Code = expectedException.Code,
-                            Message = expectedException.Message,
-                        },
+                        new(expectedException.Code, expectedException.Message),
                     },
             }).ToList();
 
@@ -459,13 +433,7 @@ public sealed class FamilyMigrationServiceTests
             FamilyId = familyId,
         };
 
-        var fruitToImport = new IngredientToImport
-        {
-            Exchanger = 1.5,
-            Id = familyFruit.IngredientId,
-            Name = "fruit 2",
-            UnitSymbol = "g",
-        };
+        var fruitToImport = new IngredientToImport(Exchanger: 1.5, familyFruit.IngredientId, "fruit 2", "g");
 
         this.mediator
             .Setup(service => service.Send(It.IsAny<GetFamilyIngredientsPayload>(), It.IsAny<CancellationToken>()))
@@ -517,11 +485,7 @@ public sealed class FamilyMigrationServiceTests
                     ? new List<ImportFamilyDataError>()
                     : new List<ImportFamilyDataError>
                     {
-                        new()
-                        {
-                            Code = expectedException.Code,
-                            Message = expectedException.Message,
-                        },
+                        new(expectedException.Code, expectedException.Message),
                     },
             }).ToList();
 
@@ -590,13 +554,7 @@ public sealed class FamilyMigrationServiceTests
             familyHealthFat,
         }.GetHashString();
 
-        var fruitToImport = new IngredientToImport
-        {
-            Exchanger = 1.5,
-            Id = familyFruit.IngredientId,
-            Name = "fruit 2",
-            UnitSymbol = "g",
-        };
+        var fruitToImport = new IngredientToImport(Exchanger: 1.5, familyFruit.IngredientId, "fruit 2", "g");
 
         var fruitsToImportHashString = new List<IngredientToImport>
         {

@@ -39,10 +39,7 @@ public sealed class CreatedFamilyMessageConsumerTests
         //THEN
         this.mediator.Verify(service => service.Send(It.IsAny<ImportFamilyData>(), It.IsAny<CancellationToken>()), Times.Once);
 
-        var expectedRequest = new ImportFamilyData
-        {
-            FamilyId = familyId,
-        };
+        var expectedRequest = new ImportFamilyData(familyId);
 
         importFamilyDataRequest.Should()
             .NotBeNull()

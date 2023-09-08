@@ -38,16 +38,15 @@ public sealed class SendEmailHandlerTests
             .Callback<MimeMessage, CancellationToken>((message, _) => sentMessage = message);
 
         var request = new SendEmail
-        {
-            Email = new Email
-            {
-                HtmlMessage = "html message",
-                LinkedResources = new List<EmailLinkedResource>(),
-                Receiver = "receiver@domain.com",
-                Subject = "subject",
-                TextMessage = "text message",
-            },
-        };
+        (
+            new Email
+            (
+                "html message",
+                new List<EmailLinkedResource>(),
+                "receiver@domain.com", "subject",
+                "text message"
+            )
+        );
 
         var handler = new SendEmailHandler(this.logger, this.mailService.Object, this.options);
 
@@ -93,7 +92,16 @@ public sealed class SendEmailHandlerTests
         using var cancellationTokenSource = new CancellationTokenSource();
         var cancellationToken = cancellationTokenSource.Token;
 
-        var request = new SendEmail();
+        var request = new SendEmail
+        (
+            new Email
+            (
+                "html message",
+                new List<EmailLinkedResource>(),
+                "receiver@domain.com", "subject",
+                "text message"
+            )
+        );
 
         var handler = new SendEmailHandler(this.logger, this.mailService.Object, this.options);
 

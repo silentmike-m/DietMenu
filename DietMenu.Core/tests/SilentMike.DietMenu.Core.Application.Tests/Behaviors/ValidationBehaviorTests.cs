@@ -23,13 +23,7 @@ public sealed class ValidationBehaviorTests
 
         var request = new CreateIngredient
         {
-            Ingredient = new IngredientToCreate
-            {
-                Exchanger = 1m,
-                Name = "ingredient name",
-                Type = IngredientTypeNames.Fruit,
-                UnitSymbol = "kg",
-            },
+            Ingredient = new IngredientToCreate(Exchanger: 1m, "ingredient name", IngredientTypeNames.Fruit, "kg"),
         };
 
         var behavior = new ValidationBehavior<CreateIngredient, Unit>(validators);
@@ -54,13 +48,7 @@ public sealed class ValidationBehaviorTests
 
         var request = new CreateIngredient
         {
-            Ingredient = new IngredientToCreate
-            {
-                Exchanger = -1,
-                Name = "ingredient name",
-                Type = "type",
-                UnitSymbol = "kg",
-            },
+            Ingredient = new IngredientToCreate(Exchanger: -1m, "ingredient name", "type", "kg"),
         };
 
         var behavior = new ValidationBehavior<CreateIngredient, Unit>(validators);

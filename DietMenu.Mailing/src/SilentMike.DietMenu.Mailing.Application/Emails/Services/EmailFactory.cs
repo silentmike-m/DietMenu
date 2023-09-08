@@ -18,14 +18,7 @@ public sealed class EmailFactory
     {
         var emailLinkedResources = await CreateLogoContentAsync(LOGO_RESOURCE_NAME, cancellationToken);
 
-        var email = new Email
-        {
-            HtmlMessage = text,
-            LinkedResources = emailLinkedResources,
-            Receiver = receiver,
-            Subject = subject,
-            TextMessage = text,
-        };
+        var email = new Email(text, emailLinkedResources, receiver, subject, text);
 
         return email;
     }
@@ -38,14 +31,7 @@ public sealed class EmailFactory
 
         var emailLinkedResources = await CreateLogoContentAsync(LOGO_RESOURCE_NAME, cancellationToken);
 
-        var email = new Email
-        {
-            HtmlMessage = htmlMessage,
-            LinkedResources = emailLinkedResources,
-            Receiver = receiver,
-            Subject = subject,
-            TextMessage = textMessage,
-        };
+        var email = new Email(htmlMessage, emailLinkedResources, receiver, subject, textMessage);
 
         return email;
     }
@@ -74,12 +60,7 @@ public sealed class EmailFactory
 
         var emailLinkedResources = new List<EmailLinkedResource>
         {
-            new()
-            {
-                ContentId = "logoId",
-                Data = logoData,
-                FileName = "logo64x64.png",
-            },
+            new("logoId", logoData, "logo64x64.png"),
         };
 
         return emailLinkedResources;

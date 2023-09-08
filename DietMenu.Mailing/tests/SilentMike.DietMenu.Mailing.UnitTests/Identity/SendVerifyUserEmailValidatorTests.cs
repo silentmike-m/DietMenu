@@ -13,15 +13,16 @@ public sealed class SendVerifyUserEmailValidatorTests
     public void Should_Pass_Validation()
     {
         //GIVEN
-        var command = new SendVerifyUserEmail
+        var request = new SendVerifyUserEmail
         {
-            Email = "test@test.pl",
+            Email = "test@.test.pl",
+            Url = "url",
         };
 
         var validator = new SendVerifyUserEmailValidator();
 
         //WHEN
-        var result = validator.Validate(command);
+        var result = validator.Validate(request);
 
         //THEN
         result.Errors.Should()
@@ -36,15 +37,16 @@ public sealed class SendVerifyUserEmailValidatorTests
     public void Should_Throw_Validation_Exception_When_Parameters_Are_Empty()
     {
         //GIVEN
-        var command = new SendVerifyUserEmail
+        var request = new SendVerifyUserEmail
         {
             Email = string.Empty,
+            Url = "url",
         };
 
         var validator = new SendVerifyUserEmailValidator();
 
         //WHEN
-        var result = validator.Validate(command);
+        var result = validator.Validate(request);
 
         //THEN
         result.Errors.Should()
@@ -64,15 +66,16 @@ public sealed class SendVerifyUserEmailValidatorTests
     public void ShouldP_Throw_Validation_Exception_When_Email_Is_Incorrect_Format()
     {
         //GIVEN
-        var command = new SendVerifyUserEmail
+        var request = new SendVerifyUserEmail
         {
             Email = "user.domain.com",
+            Url = "url",
         };
 
         var validator = new SendVerifyUserEmailValidator();
 
         //WHEN
-        var result = validator.Validate(command);
+        var result = validator.Validate(request);
 
         //THEN
         result.Errors.Should()

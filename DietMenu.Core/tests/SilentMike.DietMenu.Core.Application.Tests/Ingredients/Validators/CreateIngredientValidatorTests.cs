@@ -13,13 +13,7 @@ public sealed class CreateIngredientValidatorTests
     public async Task Should_Not_Pass_Validation_When_Data_Are_Not_Correct()
     {
         //GIVEN
-        var ingredientToCreate = new IngredientToCreate
-        {
-            Exchanger = -1m,
-            Name = " ",
-            Type = "type",
-            UnitSymbol = "kg",
-        };
+        var ingredientToCreate = new IngredientToCreate(Exchanger: -1m, " ", "type", "kg");
 
         var request = new CreateIngredient
         {
@@ -53,13 +47,7 @@ public sealed class CreateIngredientValidatorTests
     public async Task Should_Not_Pass_Validation_When_Exchanger_Is_Less_Than_Zero()
     {
         //GIVEN
-        var ingredientToCreate = new IngredientToCreate
-        {
-            Exchanger = -1m,
-            Name = "ingredient name",
-            Type = IngredientTypeNames.Fruit,
-            UnitSymbol = "kg",
-        };
+        var ingredientToCreate = new IngredientToCreate(Exchanger: -1m, "ingredient name", IngredientTypeNames.Fruit, "kg");
 
         var request = new CreateIngredient
         {
@@ -85,13 +73,7 @@ public sealed class CreateIngredientValidatorTests
     public async Task Should_Not_Pass_Validation_When_Name_Is_Empty()
     {
         //GIVEN
-        var ingredientToCreate = new IngredientToCreate
-        {
-            Exchanger = 1m,
-            Name = "",
-            Type = IngredientTypeNames.Fruit,
-            UnitSymbol = "kg",
-        };
+        var ingredientToCreate = new IngredientToCreate(Exchanger: 1m, "", IngredientTypeNames.Fruit, "kg");
 
         var request = new CreateIngredient
         {
@@ -117,13 +99,7 @@ public sealed class CreateIngredientValidatorTests
     public async Task Should_Not_Pass_Validation_When_Name_Is_White_Spaces()
     {
         //GIVEN
-        var ingredientToCreate = new IngredientToCreate
-        {
-            Exchanger = 1m,
-            Name = "    ",
-            Type = IngredientTypeNames.Fruit,
-            UnitSymbol = "kg",
-        };
+        var ingredientToCreate = new IngredientToCreate(Exchanger: 1m, "      ", IngredientTypeNames.Fruit, "kg");
 
         var request = new CreateIngredient
         {
@@ -149,13 +125,7 @@ public sealed class CreateIngredientValidatorTests
     public async Task Should_Pass_Validation_When_All_Data_Are_Correct(int exchanger)
     {
         //GIVEN
-        var ingredientToCreate = new IngredientToCreate
-        {
-            Exchanger = exchanger,
-            Name = "ingredient name",
-            Type = IngredientTypeNames.Fruit,
-            UnitSymbol = "kg",
-        };
+        var ingredientToCreate = new IngredientToCreate(exchanger, "ingredient name", IngredientTypeNames.Fruit, "kg");
 
         var request = new CreateIngredient
         {

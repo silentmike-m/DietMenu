@@ -1,5 +1,8 @@
 ﻿namespace SilentMike.DietMenu.Core.Domain.Types;
 
+using System.Diagnostics.CodeAnalysis;
+
+[ExcludeFromCodeCoverage]
 public abstract class StronglyTypedValue<T> : IEquatable<StronglyTypedValue<T>>
     where T : IComparable<T>
 {

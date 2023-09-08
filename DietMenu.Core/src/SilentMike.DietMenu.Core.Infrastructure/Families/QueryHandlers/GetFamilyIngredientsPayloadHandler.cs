@@ -26,7 +26,7 @@ internal sealed class GetFamilyIngredientsPayloadHandler : IRequestHandler<GetFa
 
         if (!fileInfo.Exists)
         {
-            throw new FamilyFileNotFoundException(request.FamilyId, INGREDIENTS_RESOURCE_NAME);
+            throw new FamilyFileNotFoundException(INGREDIENTS_RESOURCE_NAME);
         }
 
         var payload = this.fileProvider

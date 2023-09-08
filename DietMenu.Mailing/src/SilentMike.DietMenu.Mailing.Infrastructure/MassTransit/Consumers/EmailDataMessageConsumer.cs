@@ -1,6 +1,8 @@
 ﻿namespace SilentMike.DietMenu.Mailing.Infrastructure.MassTransit.Consumers;
 
 using global::MassTransit;
+using SilentMike.DietMenu.Mailing.Application.Family.Commands;
+using SilentMike.DietMenu.Mailing.Application.Family.Models;
 using SilentMike.DietMenu.Mailing.Application.Identity.Commands;
 using SilentMike.DietMenu.Mailing.Infrastructure.Extensions;
 using SilentMike.DietMenu.Shared.Email.Interfaces;
@@ -25,31 +27,75 @@ internal sealed class EmailDataMessageConsumer : IConsumer<IEmailDataMessage>
 
         if (context.Message.PayloadType == typeof(ResetUserPasswordEmailPayload).FullName)
         {
-            var payload = context.Message.Payload.To<ResetUserPasswordEmailPayload>();
-
-            var command = new SendResetPasswordEmail
-            {
-                Email = payload.Email,
-                Url = payload.Url,
-            };
-
-            await this.mediator.Send(command, CancellationToken.None);
+            await this.HandleResetPassword(context);
         }
         else if (context.Message.PayloadType == typeof(ConfirmUserEmailPayload).FullName)
         {
-            var payload = context.Message.Payload.To<ConfirmUserEmailPayload>();
-
-            var command = new SendVerifyUserEmail
-            {
-                Email = payload.Email,
-                Url = payload.Url,
-            };
-
-            await this.mediator.Send(command, CancellationToken.None);
+            await this.HandleVerifyUserEmail(context);
+        }
+        else if (context.Message.PayloadType == typeof(ImportedFamilyDataPayload).FullName)
+        {
+            await this.HandleImportedFamilyData(context);
         }
         else
         {
             throw new FormatException("Unsupported email data payload type");
         }
+    }
+
+    private async Task HandleImportedFamilyData(ConsumeContext<IEmailDataMessage> context)
+    {
+        var payload = context.Message.Payload.To<ImportedFamilyDataPayload>();
+
+        var results = payload.Results.Select(result =>
+            new ImportedFamilyDataResult
+            {
+                DataArea = result.DataArea,
+                Errors = result.Errors.Select(error =>
+                    new ImportedFamilyDataError
+                    {
+                        Code = error.Code,
+                        Message = error.Message,
+                    }
+                ).ToList(),
+            }
+        ).ToList();
+
+        var request = new SendImportedFamilyDataEmail
+        {
+            ErrorCode = payload.ErrorCode,
+            ErrorMessage = payload.ErrorMessage,
+            IsSuccess = payload.ErrorCode is null && results.TrueForAll(result => !result.Errors.Any()),
+            FamilyId = payload.FamilyId,
+            Results = results,
+        };
+
+        await this.mediator.Send(request, context.CancellationToken);
+    }
+
+    private async Task HandleResetPassword(ConsumeContext<IEmailDataMessage> context)
+    {
+        var payload = context.Message.Payload.To<ResetUserPasswordEmailPayload>();
+
+        var request = new SendResetPasswordEmail
+        {
+            Email = payload.Email,
+            Url = payload.Url,
+        };
+
+        await this.mediator.Send(request, context.CancellationToken);
+    }
+
+    private async Task HandleVerifyUserEmail(ConsumeContext<IEmailDataMessage> context)
+    {
+        var payload = context.Message.Payload.To<ConfirmUserEmailPayload>();
+
+        var request = new SendVerifyUserEmail
+        {
+            Email = payload.Email,
+            Url = payload.Url,
+        };
+
+        await this.mediator.Send(request, context.CancellationToken);
     }
 }
