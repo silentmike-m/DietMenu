@@ -21,35 +21,45 @@ public class CompleteUserRegistration : PageModel
         this.logger = logger;
     }
 
-    public Task<IActionResult> OnGet(string token, Guid userId)
+    public IActionResult OnGet(string returnUrl, string token, Guid userId)
     {
         if (string.IsNullOrEmpty(token))
         {
-            return Task.FromResult<IActionResult>(this.BadRequest("A token must be supplied for account confirmation."));
+            this.BadRequest("A token must be supplied for account confirmation.");
         }
 
         if (userId == Guid.Empty)
         {
-            return Task.FromResult<IActionResult>(this.BadRequest("A userId must be supplied for account confirmation."));
+            this.BadRequest("A userId must be supplied for account confirmation.");
         }
 
-        return Task.FromResult<IActionResult>(this.Page());
+        return this.Page();
     }
 
     public async Task<IActionResult> OnPostAsync(string returnUrl, string token, Guid userId)
     {
-        if (this.ModelState.IsValid is false)
+        if (string.IsNullOrEmpty(token))
+        {
+            return await Task.FromResult<IActionResult>(this.BadRequest("A token must be supplied for account confirmation."));
+        }
+
+        if (userId == Guid.Empty)
+        {
+            return await Task.FromResult<IActionResult>(this.BadRequest("A userId must be supplied for account confirmation."));
+        }
+
+        if (!this.ModelState.IsValid)
         {
             return this.Page();
         }
 
+        if (string.IsNullOrEmpty(returnUrl))
+        {
+            returnUrl = IdentityPageNames.LOGIN;
+        }
+
         try
         {
-            if (string.IsNullOrWhiteSpace(returnUrl))
-            {
-                returnUrl = IdentityPageNames.LOGIN;
-            }
-
             var tokenString = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
 
             var request = new Application.Users.Commands.CompleteUserRegistration

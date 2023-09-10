@@ -62,18 +62,12 @@ services:
         value: Server=localhost,1433;Database=silentmike_dietmenu;User Id=sa;Password=P@ssw0rd;MultipleActiveResultSets=true;TrustServerCertificate=true
       - name: CONFIG_CONNECTIONSTRINGS__HANGFIRECONNECTION
         value: Server=localhost,1433;Database=silentmike_hangfire;User Id=sa;Password=P@ssw0rd;MultipleActiveResultSets=true;TrustServerCertificate=true
+      - name: CONFIG_CORS__ALLOWEDORIGINS__2
+        value: https://localhost:30000       
       - name: CONFIG_IDENTITYSERVER4__AUDIENCE
-        value: https://localhost:8080/api
+        value: http://localhost:30002
       - name: CONFIG_IDENTITYSERVER4__AUTHORITY
-        value: https://localhost:30000
-      - name: CONFIG_MailingServer__BaseAddress
-        value: http://localhost:30003
-      - name: CONFIG_MAILINGSERVER__RETRYCOUNT
-        value: 3
-      - name: CONFIG_MAILINGSERVER__RETRYSLEEPDURATIONINMILLISECONDS
-        value: 5000
-      - name: CONFIG_MailingServer__TimeoutInMilliSeconds
-        value: 30000      
+        value: https://localhost:30000  
       - name: CONFIG_RABBITMQ__HOSTNAME
         value: localhost   
       - name: CONFIG_RABBITMQ__SERVER
