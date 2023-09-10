@@ -88,7 +88,7 @@ internal sealed class ApiExceptionFilterAttribute : ExceptionFilterAttribute
 
     private static void HandleInfrastructureException(ExceptionContext context)
     {
-        if (context.Exception is not DomainException exception)
+        if (context.Exception is not InfrastructureException exception)
         {
             throw new UnhandledErrorException();
         }

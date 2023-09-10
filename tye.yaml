@@ -68,9 +68,11 @@ services:
       - name: CONFIG_CONNECTIONSTRINGS__HANGFIRECONNECTION
         value: Server=localhost,1433;Database=silentmike_hangfire;User Id=sa;Password=P@ssw0rd;MultipleActiveResultSets=true;TrustServerCertificate=true
       - name: CONFIG_CORS__ALLOWEDORIGINS__2
-        value: https://localhost:30000       
+        value: https://localhost:8080
+      - name: CONFIG_CORS__ALLOWEDORIGINS__3
+        value: http://localhost:30002       
       - name: CONFIG_IDENTITYSERVER4__AUDIENCE
-        value: http://localhost:30002
+        value: https://localhost:8080/api
       - name: CONFIG_IDENTITYSERVER4__AUTHORITY
         value: https://localhost:30000  
       - name: CONFIG_RABBITMQ__HOSTNAME

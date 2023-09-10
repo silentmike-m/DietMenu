@@ -3,20 +3,32 @@
     "Clusters": {
       "UiCluster": {
         "Destinations": {
-          "SterlingUi": {
+          "DietMenuUi": {
             "Address": "http://localhost:30001"
           }
         }
       },
       "ApiCluster": {
         "Destinations": {
-          "SterlingApi": {
+          "DietMenuApi": {
             "Address": "http://localhost:30002"
           }
         }
       }
     },
     "Routes": {
+      "ApiHealthCheckRoute": {
+        "ClusterId": "ApiCluster",
+        "AuthorizationPolicy": "Anonymous",
+        "Match": {
+          "Path": "/api/health/{**catch-all}"
+        },
+        "Transforms": [
+          {
+            "PathRemovePrefix": "/api"
+          }
+        ]
+      },
       "ApiRoute": {
         "ClusterId": "ApiCluster",
         "AuthorizationPolicy": "uiPolicy",
