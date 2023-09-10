@@ -4,7 +4,10 @@
     "Clients": [
       {
         "Enabled": true,
+        "AbsoluteRefreshTokenLifetime": 3600,
+        "AccessTokenLifetime": 600,
         "AllowAccessTokensViaBrowser": true,
+        "AllowOfflineAccess": true,
         "AllowedCorsOrigins": [
           "https://localhost:8080",
           "https://localhost"
@@ -14,6 +17,7 @@
         ],
         "AllowedScopes": [
           "api1",
+          "offline_access",
           "openid",
           "profile",
           "user"
@@ -33,7 +37,11 @@
         ],
         "RedirectUris": [
           "https://localhost:8080/signin-oidc"
-        ]
+        ],
+        "RefreshTokenExpiration": "Absolute",
+        "RefreshTokenUsage": "OneTimeOnly",
+        "SlidingRefreshTokenLifetime": 300,
+        "UpdateAccessTokenClaimsOnRefresh": false
       },
       {
         "Enabled": true,
