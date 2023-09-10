@@ -130,8 +130,6 @@ try
 
     await app.RunAsync();
 
-    await app.RunAsync();
-
     return EXIT_SUCCESS;
 }
 catch (Exception exception)

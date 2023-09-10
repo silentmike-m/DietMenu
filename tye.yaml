@@ -1,3 +1,4 @@
+#8080  - proxy
 #30000 - identity
 #30002 - core
 #30003 - mailing
@@ -5,20 +6,24 @@
 name: dietmenu
 network: dietmenu-dev
 services:
-  # - name: proxy
-    # project: DietMenu.Proxy/src/SilentMike.DietMenu.Proxy.WebApi/SilentMike.DietMenu.Proxy.WebApi.csproj
-    # env:
-      # - name: CONFIG_IDENTITYSERVER4__AUDIENCE
-        # value: https://localhost:8080
-      # - name: CONFIG_IDENTITYSERVER4__AUTHORITY
-        # value: https://localhost:30000
-      # - name: CONFIG_IDENTITYSERVER4__CLIENTID
-        # value: bff
-      # - name: CONFIG_IDENTITYSERVER4__CLIENTSECRET
-        # value: secret   
-    # bindings:
-    # - protocol: https
-      # port: 8080   
+  - name: proxy
+    project: DietMenu.Proxy/src/SilentMike.DietMenu.Proxy.WebApi/SilentMike.DietMenu.Proxy.WebApi.csproj
+    env:
+      - name: CONFIG_IDENTITYSERVER4__AUDIENCE
+        value: https://localhost:8080
+      - name: CONFIG_IDENTITYSERVER4__AUTHORITY
+        value: https://localhost:30000
+      - name: CONFIG_IDENTITYSERVER4__CLIENTID
+        value: bff
+      - name: CONFIG_IDENTITYSERVER4__CLIENTSECRET
+        value: secret   
+      - name: CONFIG_SERILOG__WRITETO__1__NAME
+        value: Seq
+      - name: CONFIG_SERILOG__WRITETO__1__ARGS__SERVERURL
+        value: http://localhost:5341            
+    bindings:
+    - protocol: https
+      port: 8080   
   - name: identity
     project: DietMenu.Auth/src/SilentMike.DietMenu.Auth.Web/SilentMike.DietMenu.Auth.Web.csproj
     env:
@@ -82,6 +87,10 @@ services:
         value: user
       - name: CONFIG_RABBITMQ__PASSWORD
         value: P@ssw0rd          
+      - name: CONFIG_SERILOG__WRITETO__1__NAME
+        value: Seq
+      - name: CONFIG_SERILOG__WRITETO__1__ARGS__SERVERURL
+        value: http://localhost:5341         
     bindings:
     - port: 30002
       protocol: http
