@@ -37,6 +37,7 @@ internal static class DependencyInjection
                     );
                 }
             )
+            .AddDeveloperSigningCredential()
             .AddAspNetIdentity<User>()
             .AddInMemoryApiResources(Setup.GetApiResources())
             .AddInMemoryApiScopes(Setup.GetApiScopes())

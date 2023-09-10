@@ -15,7 +15,7 @@ internal sealed class FamilyRequestBehavior<TRequest, TResponse> : IPipelineBeha
     {
         var exists = await this.familyRepository.ExistsAsync(request.FamilyId, cancellationToken);
 
-        if (exists is false)
+        if (!exists)
         {
             throw new FamilyNotFoundException(request.FamilyId);
         }
